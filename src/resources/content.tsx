@@ -38,10 +38,10 @@ const social: Social = [
 
 const home: Home = {
   path: "/",
-  image: "/images/og/home.jpg",
+  image: "/og/og.jpg",
   label: "Home",
-  title: `${person.name}'s Portfolio`,
-  description: `Portfolio website showcasing my work as a ${person.role}`,
+  title: `Hugo Delacour – Front-End Web Developer`,
+  description: `Portfolio website showcasing my work as a Front-End Web Developer specializing in minimal UX, atomic design, accessibility, and clean interfaces.`,
   headline: <>Hugo Delacour</>,
   featured: {
     display: true,

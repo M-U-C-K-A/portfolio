@@ -50,7 +50,7 @@ const home: Home = {
         <strong className="ml-4">web Developer</strong>
         <Line background="brand-alpha-strong" vert height="20" />
         <Text marginRight="4" onBackground="brand-medium">
-          front-end & ux
+          UI & UX
         </Text>
       </Row>
     ),

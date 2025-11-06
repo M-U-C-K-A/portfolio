@@ -90,34 +90,34 @@ const about: About = {
       évolutifs.
       </>
     ),
-  },
-  work: {
-    display: true,
-    title: "Projets & Expériences",
-    experiences: [
-      {
-        company: "Finalytics",
-        timeframe: "2024 - présent",
-        role: "Fondateur & Développeur Front-End",
-        achievements: [
-          <>Développement d'un SaaS permettant de générer automatiquement des rapports financiers.</>,
-          <>Mise en place d'une architecture modulaire (atomic design + clean architecture front).</>,
-          <>Travail en continu sur UX, optimisation, accessibilité et cohérence visuelle.</>,
-        ],
-        images: [],
-      },
-      {
-        company: "Project Climat",
-        timeframe: "2024",
-        role: "Développeur Web",
-        achievements: [
-          <>Création d’un blog / site éditorial centré sur les enjeux climatiques.</>,
-          <>Conception d'une interface claire, lisible et pensée pour le confort de lecture.</>,
-        ],
-        images: [],
-      },
-    ],
-  },
+  },work: {
+  display: true,
+  title: "Projets & Expériences",
+  experiences: [
+    {
+      company: "Finalytics",
+      timeframe: "2024 - présent",
+      role: "Fondateur & Développeur Front-End",
+      achievements: [
+        <>Développement d'un SaaS permettant de générer automatiquement des rapports financiers.</>,
+        <>Mise en place d'une architecture modulaire (atomic design + clean architecture front).</>,
+        <>Travail en continu sur UX, optimisation, accessibilité et cohérence visuelle.</>,
+      ],
+      images: [],
+    },
+    {
+      company: "Veoneer France Safety Systems",
+      timeframe: "2024",
+      role: "Développeur Fullstack (Stage)",
+      achievements: [
+        <>Développement complet d’une application interne en <b>SvelteKit</b> (de la conception à la mise en production).</>,
+        <>Création et intégration d’API backend, gestion de l’authentification, flux de données et permissions utilisateurs.</>,
+        <>Mise en place d’une architecture propre, documentation et transfert de compétences auprès des équipes.</>,
+      ],
+      images: [],
+    },
+  ],
+},
   studies: {
     display: true,
     title: "Études",

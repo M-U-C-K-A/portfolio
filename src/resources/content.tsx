@@ -54,7 +54,7 @@ const home: Home = {
         </Text>
       </Row>
     ),
-    href: "/work/building-once-ui-a-customizable-design-system",
+    href: "/work/finalytics",
   },
   subline: (
     <>

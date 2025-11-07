@@ -38,7 +38,7 @@ const social: Social = [
 
 const home: Home = {
   path: "/",
-  image: "/og/og-image-2.png",
+  image: "/og/og-image.png",
   label: "Home",
   title: `Hugo Delacour – Front-End Web Developer`,
   description: `Portfolio website showcasing my work as a Front-End Web Developer specializing in minimal UX, atomic design, accessibility, and clean interfaces.`,

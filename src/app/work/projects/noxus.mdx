@@ -1,7 +1,7 @@
 ---
-title: "Noxus – Maîtriser les Mathématiques, de A à Z"
+title: "Noxus – La cartographie du savoir mathématique"
 publishedAt: "2024-12-10"
-summary: "Noxus révolutionne l'apprentissage des mathématiques avec une approche systémique. Du CP à l'université, progressez à travers un graphe de connaissances interconnectées."
+summary: "Une plateforme d'apprentissage systémique qui visualise les mathématiques comme un graphe de connaissances interconnectées, du CP à l'Université."
 images:
   - "/images/projects/noxus/placeholder.png"
 team:
@@ -14,27 +14,35 @@ link: "#"
 
 ## Overview
 
-Noxus n'est pas juste une série d'exercices, c'est une cartographie du savoir mathématique. L'application part du constat que les mathématiques sont une construction logique : on ne peut pas maîtriser la multiplication sans avoir compris l'addition.
+Noxus casse la linéarité classique des manuels scolaires. L'application part du principe qu'une lacune en mathématiques est souvent un problème de **dépendance manquante** : on ne peut pas comprendre les puissances sans maîtriser la multiplication.
 
-L'application organise le savoir sous forme de **catégories** (Arithmétique, Statistique, Math Eco, Stat Inf...) contenant chacune des centaines de modules.
-
----
-
-## Key Features
-
-- **Système de Nodes & Graphes**
-  La force majeure de Noxus. L'apprentissage est visualisé sous forme d'arbre de compétences. Bloquez sur une notion ? Remontez la branche pour trouver la lacune précédente. Débloquez les **puissances** après avoir maîtrisé les **multiplications**.
-
-- **Couverture Complète**
-  Des bases élémentaires (niveau CP) jusqu'aux mathématiques universitaires complexes.
-
-- **Parcours Personnalisé**
-  L'application s'adapte au niveau de l'utilisateur et propose des chemins d'apprentissage logiques.
+L'interface est volontairement **sobre et professionnelle**, inspirée d'outils de productivité comme Obsidian, pour mettre l'utilisateur dans une posture d'apprentissage sérieuse, quel que soit son âge.
 
 ---
 
-## Technologies Used
+## Fonctionnalités Clés
 
-- **React Native + Expo** pour une expérience fluide sur mobile
-- **Graph Visualization** pour le rendu interactif des arbres de compétences
-- **Gamification** pour maintenir l'engagement sur le long terme
+### 🕸️ Le Knowledge Graph
+Le cœur de l'application est un système de **Noeuds et de Graphes**.
+- Chaque notion est un noeud.
+- Les liens représentent les pré-requis.
+- L'utilisateur visualise son chemin de progression et peut &quot;remonter la source&quot; d'une incompréhension.
+
+### 📚 Modules Riches & Hybrides
+Les cours ne sont pas de simples textes. Le moteur de rendu supporte :
+- **Markdown & LaTeX** : Pour des formules mathématiques au rendu impeccable.
+- **Média Intégrés** : Vidéos, GIFs explicatifs, images.
+- **Tableaux & Références** : Pour structurer la donnée complexe.
+
+### 🎯 Adaptabilité du Contenu
+Si l'interface principale reste unifiée et élégante (gestion fine des thèmes Dark/Light, contrastes), le **contenu pédagogique** s'adapte à la cible.
+- Un module &quot;Addition&quot; pour le CP utilisera des emojis et des exemples ludiques.
+- Un module &quot;Statistiques Inférentielles&quot; pour la fac restera académique.
+
+---
+
+## Stack Technique
+
+- **React Native (Expo)** : Performance native et itération rapide.
+- **Moteur de Rendu Custom** : Parser Markdown optimisé pour le rendu LaTeX sur mobile.
+- **Architecture Modulaire** : Gestion de centaines de modules interconnectés.

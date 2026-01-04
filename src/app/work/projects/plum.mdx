@@ -1,12 +1,12 @@
 ---
-title: "Plum – L'assistant mémoire bienveillant"
+title: "Plum – L'assistant mémoire qui rassure"
 publishedAt: "2024-11-20"
-summary: "Plum est une application conçue pour accompagner les personnes souffrant de troubles de la mémoire ou d'Alzheimer. Elle permet de vérifier les tâches quotidiennes grâce à la preuve par photo."
+summary: "Plum est une application mobile double-interface conçue pour l'autonomie des personnes ayant des troubles de la mémoire, sécurisée par un mode aidant."
 images:
   - "/images/projects/plum/placeholder.png"
 team:
   - name: "Hugo Delacour"
-    role: "Mobile Developer"
+    role: "Mobile Developer & UX Designer"
     avatar: "/images/avatar.png"
     linkedIn: "https://www.linkedin.com/in/hugo-delacour/"
 link: "#"
@@ -14,28 +14,34 @@ link: "#"
 
 ## Overview
 
-Plum répond à une angoisse quotidienne : &quot;Ai-je bien fermé la porte ?&quot;, &quot;Ai-je éteint le gaz ?&quot;. Pour les personnes atteintes d'Alzheimer ou ayant des difficultés de mémoire, ces doutes peuvent devenir obsédants.
+Plum répond à une anxiété précise : la peur de l'oubli immédiat (&quot;Ai-je bien fermé la porte ?&quot;). L'application structure le quotidien sous forme de **routines** (tâches) à valider par une preuve photo.
 
-L'application propose une solution simple et rassurante : une **To-Do list visuelle** où chaque tâche validée doit être accompagnée d'une **photo**. Cette preuve visuelle permet à l'utilisateur de se rassurer à tout moment en consultant l'historique de sa journée.
-
----
-
-## Key Features
-
-- **Preuve par l'image**
-  Validation des tâches uniquement via la prise d'une photo (porte fermée, médicaments pris...).
-
-- **Interface Adaptée**
-  Design épuré, gros boutons, textes lisibles et contraste élevé pour une accessibilité maximale.
-
-- **Modèle Économique Flexible**
-  - **Abonnement Solo (0.99€/mois)** : Organisation par groupes (Maison, Travail...).
-  - **Abonnement Famille/Aidant (4.99€/mois)** : Permet d'inviter des proches, d'envoyer des notifications et de suivre la réalisation des tâches à distance.
+Pensée avec une approche **Inclusive Design**, elle propose une interface &quot;pro&quot; mais sans friction, loin des designs infantilisants souvent proposés pour ce public.
 
 ---
 
-## Technologies Used
+## Fonctionnalités Clés
 
-- **React Native + Expo** pour le développement cross-platform performant
-- **Camera API** pour la capture et la gestion des preuves
-- **Push Notifications** pour les rappels et le lien avec les aidants
+### 🌗 Double Mode : Autonomie & Sécurité
+L'application s'adapte au degré d'autonomie de l'utilisateur :
+- **Mode Standard** : L'utilisateur gère ses routines, les ajoute et les supprime librement.
+- **Mode Aidant** : Une fois activé, l'utilisateur possède un accès en lecture seule sur la gestion des tâches. Il ne peut que les valider. Cela évite les suppressions accidentelles.
+
+### 📸 Preuve par l'Image & Confidentialité
+- La validation d'une routine exige une photo (ex: photo de la porte verrouillée).
+- **Privacy-First** : Par défaut, tout reste en local.
+- **Synchronisation Sécurisée** : Si un aidant est connecté, la photo est envoyée sur un serveur sécurisé via un flux chiffré, puis **supprimée immédiatement** après consultation. Aucune donnée n'est conservée inutilement.
+
+### ♿ Accessibilité Certifiée
+En tant que développeur certifié **Opquast**, j'ai porté une attention radicale à l'UX :
+- Contrastes forts (Respect des normes WCAG AAA).
+- Navigation simplifiée (pas de menus cachés ou complexes).
+- Support natif des thèmes Clair et Sombre pour le confort visuel.
+
+---
+
+## Stack Technique
+
+- **React Native / Expo** : Pour un déploiement fluide sur iOS et Android.
+- **Expo Camera** : Gestion matérielle de la prise de vue.
+- **Chiffrement** : Sécurisation des flux de données aidant-utilisateur.

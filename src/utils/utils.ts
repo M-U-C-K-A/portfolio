@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { cookies } from "next/headers";
 
 type Team = {
   name: string;
@@ -21,6 +22,8 @@ type Metadata = {
 };
 
 import { notFound } from "next/navigation";
+
+export type Language = "fr" | "en";
 
 function getMDXFiles(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -52,21 +55,82 @@ function readMDXFile(filePath: string) {
   return { metadata, content };
 }
 
-function getMDXData(dir: string) {
-  const mdxFiles = getMDXFiles(dir);
-  return mdxFiles.map((file) => {
-    const { metadata, content } = readMDXFile(path.join(dir, file));
-    const slug = path.basename(file, path.extname(file));
-
-    return {
-      metadata,
-      slug,
-      content,
-    };
-  });
+// Get the base slug without language suffix
+function getBaseSlug(filename: string): string {
+  const slug = path.basename(filename, ".mdx");
+  // Remove .fr or .en suffix if present
+  return slug.replace(/\.(fr|en)$/, "");
 }
 
-export function getPosts(customPath = ["", "", "", ""]) {
+// Get the language from a filename
+function getLanguageFromFilename(filename: string): Language | null {
+  if (filename.endsWith(".fr.mdx")) return "fr";
+  if (filename.endsWith(".en.mdx")) return "en";
+  return null;
+}
+
+// Group files by base slug
+function groupFilesBySlug(files: string[]): Map<string, { fr?: string; en?: string }> {
+  const groups = new Map<string, { fr?: string; en?: string }>();
+
+  for (const file of files) {
+    const baseSlug = getBaseSlug(file);
+    const lang = getLanguageFromFilename(file);
+
+    if (!groups.has(baseSlug)) {
+      groups.set(baseSlug, {});
+    }
+
+    const group = groups.get(baseSlug)!;
+    if (lang === "fr") {
+      group.fr = file;
+    } else if (lang === "en") {
+      group.en = file;
+    } else {
+      // Fallback for files without language suffix (treat as FR)
+      group.fr = file;
+    }
+  }
+
+  return groups;
+}
+
+function getMDXData(dir: string, language: Language = "fr") {
+  const mdxFiles = getMDXFiles(dir);
+  const groupedFiles = groupFilesBySlug(mdxFiles);
+
+  const posts: Array<{ metadata: Metadata; slug: string; content: string }> = [];
+
+  groupedFiles.forEach((files, baseSlug) => {
+    // Prefer the requested language, fall back to other language
+    const fileToUse = files[language] || files.fr || files.en;
+
+    if (fileToUse) {
+      const { metadata, content } = readMDXFile(path.join(dir, fileToUse));
+      posts.push({
+        metadata,
+        slug: baseSlug,
+        content,
+      });
+    }
+  });
+
+  return posts;
+}
+
+export function getPosts(customPath = ["", "", "", ""], language: Language = "fr") {
   const postsDir = path.join(process.cwd(), ...customPath);
-  return getMDXData(postsDir);
+  return getMDXData(postsDir, language);
+}
+
+// Helper to get language from cookies (for server components)
+export async function getLanguageFromCookies(): Promise<Language> {
+  try {
+    const cookieStore = await cookies();
+    const langCookie = cookieStore.get("data-language");
+    if (langCookie?.value === "en") return "en";
+    return "fr";
+  } catch {
+    return "fr";
+  }
 }

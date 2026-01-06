@@ -1,4 +1,4 @@
-import { getPosts } from "@/utils/utils";
+import { getPosts, getLanguageFromCookies } from "@/utils/utils";
 import { Column } from "@once-ui-system/core";
 import { ProjectCard } from "@/components";
 
@@ -7,8 +7,9 @@ interface ProjectsProps {
   exclude?: string[];
 }
 
-export function Projects({ range, exclude }: ProjectsProps) {
-  let allProjects = getPosts(["src", "app", "work", "projects"]);
+export async function Projects({ range, exclude }: ProjectsProps) {
+  const language = await getLanguageFromCookies();
+  let allProjects = getPosts(["src", "app", "work", "projects"], language);
 
   // Exclude by slug (exact match)
   if (exclude && exclude.length > 0) {

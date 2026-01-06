@@ -9,6 +9,7 @@ import {
   SmartLink,
   Text,
 } from "@once-ui-system/core";
+import { useLanguage } from "@/components/i18n";
 
 interface ProjectCardProps {
   href: string;
@@ -30,13 +31,20 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   avatars,
   link,
 }) => {
+  const { language } = useLanguage();
+
+  const labels = {
+    readCase: language === "fr" ? "Lire le cas d'étude" : "Read case study",
+    viewProject: language === "fr" ? "Voir le projet" : "View project",
+  };
+
   return (
     <Column fillWidth gap="m">
       <Carousel
         sizes="(max-width: 960px) 100vw, 960px"
-        items={images.map((image) => ({
+        items={images.map((image, index) => ({
           slide: image,
-          alt: title,
+          alt: `${title} - ${index + 1}`,
         }))}
       />
       <Flex
@@ -69,7 +77,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                   style={{ margin: "0", width: "fit-content" }}
                   href={href}
                 >
-                  <Text variant="body-default-s">Read case study</Text>
+                  <Text variant="body-default-s">{labels.readCase}</Text>
                 </SmartLink>
               )}
               {link && (
@@ -78,7 +86,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                   style={{ margin: "0", width: "fit-content" }}
                   href={link}
                 >
-                  <Text variant="body-default-s">View project</Text>
+                  <Text variant="body-default-s">{labels.viewProject}</Text>
                 </SmartLink>
               )}
             </Flex>

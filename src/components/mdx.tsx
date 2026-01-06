@@ -1,6 +1,7 @@
 import { MDXRemote, MDXRemoteProps } from "next-mdx-remote/rsc";
 import React, { ReactNode } from "react";
 import { slugify as transliterate } from "transliteration";
+import { ImageCarousel } from "@/components/ui/image-carousel";
 
 import {
   Heading,
@@ -16,6 +17,7 @@ import {
   Feedback,
   Button,
   Card,
+  Carousel,
   Grid,
   Row,
   Column,
@@ -193,6 +195,7 @@ const components = {
   Accordion,
   AccordionGroup,
   Table,
+  Carousel,
   Feedback,
   Button,
   Card,
@@ -202,6 +205,7 @@ const components = {
   Icon,
   Media,
   SmartLink,
+  ImageCarousel,
 };
 
 type CustomMDXProps = MDXRemoteProps & {

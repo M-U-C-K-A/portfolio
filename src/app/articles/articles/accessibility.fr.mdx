@@ -1,0 +1,72 @@
+---
+title: "L'accessibilité ne tue pas le design : Créer des composants complexes en 2026"
+publishedAt: "2026-01-22"
+summary: "Modales, Drag & Drop, menus imbriqués... Comment respecter les normes WCAG sans sacrifier l'esthétique de vos interfaces Next.js."
+tags: ["A11y", "Design", "React", "UX"]
+---
+
+Une idée reçue persiste dans le monde du développement web : un site accessible serait forcément un site "moche" ou dépouillé. En 2026, avec les outils dont nous disposons, c'est un mythe qu'il est temps de déconstruire.
+
+L'accessibilité n'est pas une check-list de contraintes qui brident votre créativité, c'est un cadre qui pousse à un design plus intelligent et plus robuste. Voyons comment gérer deux des composants les plus complexes : la **Modale** et le **Drag & Drop**.
+
+---
+
+## 1. La Modale : Dompter le focus
+
+Une modale mal conçue est un mur infranchissable pour un utilisateur naviguant au clavier ou avec un lecteur d'écran. Pour qu'elle soit accessible, elle doit respecter trois règles d'or techniques.
+
+### Le Focus Trap (Piège à focus)
+Lorsqu'une modale est ouverte, le focus doit rester confiné à l'intérieur de celle-ci. Si l'utilisateur appuie sur `Tab` et que le focus retourne sur un lien en arrière-plan, l'expérience est brisée.
+
+
+
+### La gestion du clavier
+Une modale "AAA" (norme WCAG la plus haute) doit répondre à des attentes précises :
+* **ESC :** Ferme immédiatement la modale.
+* **Initial Focus :** Le focus doit se placer sur le premier élément interactif (souvent le bouton de fermeture ou le champ principal).
+* **Restore Focus :** À la fermeture, le focus doit revenir sur le bouton qui a ouvert la modale.
+
+### Design Tip : Le focus visible
+Ne supprimez pas le `outline: none`. Utilisez plutôt `:focus-visible` pour créer un indicateur stylisé qui ne s'affiche que pour les utilisateurs au clavier, préservant ainsi l'esthétique pour les utilisateurs à la souris.
+
+---
+
+## 2. Le Drag & Drop : Au-delà de la souris
+
+Le "Glisser-Déposer" est par essence une interaction visuelle et motrice. Pourtant, il est tout à fait possible de le rendre accessible sans en changer le look "Apple-like".
+
+### La communication via ARIA-Live
+Lorsqu'un utilisateur déplace un élément, il faut informer vocalement le lecteur d'écran de ce qui se passe.
+* "Élément sélectionné, position 1 sur 5."
+* "Élément déplacé en position 3."
+
+### L'alternative clavier
+L'astuce consiste à permettre le déplacement via les touches fléchées après avoir activé le mode "déplacement" avec la touche `Espace` ou `Entrée`.
+
+
+
+---
+
+## 3. Synthèse des exigences WCAG pour les composants
+
+| Fonctionnalité | Rôle ARIA | Comportement Clavier | Feedback Visuel |
+| :--- | :--- | :--- | :--- |
+| **Modale** | `role="dialog"` | Tab (trap), ESC (close) | Overlay sombre, focus clair |
+| **Drag & Drop** | `aria-dropeffect` | Flèches (move), Space (grab) | Changement de curseur, ombre |
+| **Tooltips** | `role="tooltip"` | Focus / Hover | Contraste élevé (ratio 4.5:1) |
+
+---
+
+## 4. Les outils pour Next.js en 2026
+
+Inutile de réinventer la roue. Pour garantir l'accessibilité sans effort colossal, je m'appuie sur des bibliothèques "headless" qui gèrent la logique A11y tout en me laissant un contrôle total sur le style CSS :
+
+1.  **Radix UI / Shadcn UI :** Les primitives sont déjà testées pour l'accessibilité.
+2.  **React Aria (Adobe) :** Probablement la bibliothèque la plus avancée pour gérer les comportements complexes (comme le Drag & Drop).
+3.  **Headless UI (Tailwind Labs) :** Idéal pour des transitions fluides et accessibles.
+
+---
+
+## Conclusion
+
+L'accessibilité est le sommet de l'élégance technique. Un composant qui fonctionne parfaitement pour tout le monde, quelle que soit la méthode de navigation, est un composant mieux codé. En tant que développeurs front-end, notre rôle est de prouver que **l'inclusion est le moteur d'un meilleur design.**

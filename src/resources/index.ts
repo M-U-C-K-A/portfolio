@@ -8,6 +8,7 @@ export {
   blog,
   work,
   gallery,
+  articles,
   contentByLanguage,
   getContent,
 } from "./content";

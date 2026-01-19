@@ -1,4 +1,4 @@
-import { About, Blog, Gallery, Home, Newsletter, Person, Social, Work, IANATimeZone } from "@/types";
+import { About, Blog, Gallery, Home, Newsletter, Person, Social, Work, Articles, IANATimeZone } from "@/types";
 import { Line, Logo, Row, Text } from "@once-ui-system/core";
 import { Language } from "@/components/i18n";
 
@@ -231,6 +231,13 @@ const workFr: Work = {
   description: `Projets de design & développement réalisés par ${personBase.name}`,
 };
 
+const articlesFr: Articles = {
+  path: "/articles",
+  label: "Articles",
+  title: `Articles – ${personBase.name}`,
+  description: `Articles et réflexions par ${personBase.name}`,
+};
+
 // ===========================================
 // ENGLISH CONTENT
 // ===========================================
@@ -377,6 +384,13 @@ const workEn: Work = {
   description: `Design & development projects by ${personBase.name}`,
 };
 
+const articlesEn: Articles = {
+  path: "/articles",
+  label: "Articles",
+  title: `Articles – ${personBase.name}`,
+  description: `Articles and thoughts by ${personBase.name}`,
+};
+
 // ===========================================
 // CONTENT BY LANGUAGE
 // ===========================================
@@ -389,6 +403,7 @@ const contentByLanguage = {
     blog: blogFr,
     work: workFr,
     gallery: galleryFr,
+    articles: articlesFr,
   },
   en: {
     person: personEn,
@@ -397,6 +412,7 @@ const contentByLanguage = {
     blog: blogEn,
     work: workEn,
     gallery: galleryEn,
+    articles: articlesEn,
   },
 };
 
@@ -409,5 +425,6 @@ const home = homeFr;
 const about = aboutFr;
 const blog = blogFr;
 const work = workFr;
+const articles = articlesFr;
 
-export { person, social, newsletter, home, about, blog, work, gallery, contentByLanguage };
+export { person, social, newsletter, home, about, blog, work, gallery, articles, contentByLanguage };

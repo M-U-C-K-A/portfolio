@@ -1,0 +1,97 @@
+---
+title: "i18n & Next.js : Le guide pour traduire vos dApps et sites sans douleur"
+publishedAt: "2026-01-25"
+summary: "Découvrez comment structurer l'internationalisation de votre application Next.js : routage, middleware, typage TypeScript et bonnes pratiques SEO."
+tags: ["i18n", "NextJS", "TypeScript", "SEO"]
+---
+
+Traduire un site ne se résume pas à remplacer "Bonjour" par "Hello". C'est un défi d'architecture qui impacte le routage, le SEO, la performance et surtout l'expérience développeur.
+
+En 2026, avec l'App Router de Next.js, l'internationalisation (i18n) est devenue plus structurée, mais demande une configuration rigoureuse pour rester performante.
+
+---
+
+## 1. Le Routage : Pourquoi `/fr` est indispensable ?
+
+Il existe plusieurs façons de gérer la langue (cookies, local storage, headers). Cependant, pour le SEO, la structure d'URL est la seule méthode viable.
+
+* **Sous-chemins (Recommandé) :** `monsite.com/fr` ou `monsite.com/en`.
+* **Domaines :** `monsite.fr` ou `monsite.com`.
+
+L'utilisation du sous-chemin permet aux moteurs de recherche d'indexer chaque version de votre page indépendamment. Next.js facilite cela grâce au **Middleware**, qui intercepte la requête, détecte la langue du navigateur et redirige l'utilisateur vers le bon préfixe si nécessaire.
+
+
+
+---
+
+## 2. Organisation des dictionnaires : Le Typage d'abord
+
+L'erreur classique est d'utiliser des objets JSON simples sans protection. En tant que développeur full-stack, vous voulez que TypeScript vous engueule si vous oubliez une clé de traduction dans une langue.
+
+### La structure recommandée
+```text
+messages/
+  en.json
+  fr.json
+
+```
+
+### Typage strict des traductions
+
+En utilisant des bibliothèques comme `next-intl` ou `i18next`, vous pouvez lier vos fichiers JSON à vos types :
+
+```typescript
+// Exemple de composant typé
+import { useTranslations } from 'next-intl';
+
+export function LoginButton() {
+  const t = useTranslations('Auth');
+
+  // TypeScript validera que 'login_label' existe bien dans fr.json et en.json
+  return <button>{t('login_label')}</button>;
+}
+
+```
+
+---
+
+## 3. SEO et Accessibilité : Les oubliés de l'i18n
+
+Traduire l'interface c'est bien, mais il ne faut pas oublier les métadonnées techniques.
+
+1. **L'attribut `lang` :** Votre balise `<html lang="fr">` doit changer dynamiquement. C'est crucial pour les lecteurs d'écran (Accessibilité) afin qu'ils utilisent la bonne synthèse vocale.
+2. **Les balises `hreflang` :** Elles indiquent à Google la relation entre vos pages. Si je suis sur la page "À propos" en français, la balise `hreflang` doit pointer vers la version "About" en anglais.
+
+---
+
+## 4. Dates, Chiffres et Currencies : L'API Intl
+
+Ne traduisez jamais manuellement les dates ou les devises. Le navigateur et Node.js possèdent une API native ultra-puissante : `Intl`.
+
+```javascript
+const price = 1250.50;
+new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price);
+// Résultat : 1 250,50 €
+
+new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
+// Résultat : $1,250.50
+
+```
+
+---
+
+## 5. Comparatif des solutions en 2026
+
+| Librairie | Avantages | Inconvénients |
+| --- | --- | --- |
+| **next-intl** | Conçu pour l'App Router, ultra léger, excellent support des Server Components. | Configuration initiale un peu plus longue. |
+| **i18next** | L'écosystème le plus vaste, plugins pour tout (backend, mobile). | Plus lourd, parfois complexe avec les Server Components. |
+| **FormatJS** | Standardisé, très robuste pour les très gros projets. | Plus verbeux. |
+
+---
+
+## Conclusion
+
+L'i18n est un investissement technique qui rend votre application "World Ready". En combinant le **Middleware de Next.js** pour le routage, **TypeScript** pour la sécurité, et l'**API Intl** pour les données locales, vous créez une base solide prête pour n'importe quel marché.
+
+Mon conseil : automatisez au maximum. Liez vos fichiers de traduction à un outil comme Phrase ou Lokalise pour que vos traducteurs puissent travailler sans toucher au code !

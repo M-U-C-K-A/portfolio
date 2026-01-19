@@ -48,7 +48,7 @@ export const Header = () => {
   const pathname = usePathname() ?? "";
   const { language } = useLanguage();
   const content = contentByLanguage[language];
-  const { person, about, work, gallery } = content;
+  const { person, about, work, gallery, articles } = content;
 
   return (
     <>
@@ -137,6 +137,26 @@ export const Header = () => {
                       href="/work"
                       selected={pathname.startsWith("/work")}
                       aria-label={work.label}
+                    />
+                  </Row>
+                </>
+              )}
+              {routes["/articles"] && (
+                <>
+                  <Row s={{ hide: true }}>
+                    <ToggleButton
+                      prefixIcon="document"
+                      href="/articles"
+                      label={articles.label}
+                      selected={pathname.startsWith("/articles")}
+                    />
+                  </Row>
+                  <Row hide s={{ hide: false }}>
+                    <ToggleButton
+                      prefixIcon="document"
+                      href="/articles"
+                      selected={pathname.startsWith("/articles")}
+                      aria-label={articles.label}
                     />
                   </Row>
                 </>

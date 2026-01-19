@@ -8,6 +8,7 @@ import { home, about, person, baseURL } from "@/resources";
 import { Mailchimp } from "@/components";
 import { HomeContent } from "@/components/HomeContent";
 import { ProjectsClient } from "@/components/work/ProjectsClient";
+import { ArticlesCarousel } from "@/components/articles/ArticlesCarousel";
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -36,6 +37,7 @@ export default function Home() {
         }}
       />
       <HomeContent />
+      <ArticlesCarousel />
       <RevealFx translateY="16" delay={0.6}>
         <ProjectsClient range={[1, 1]} />
       </RevealFx>
@@ -44,3 +46,4 @@ export default function Home() {
     </Column>
   );
 }
+

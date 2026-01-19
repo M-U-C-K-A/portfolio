@@ -1,0 +1,135 @@
+---
+title: "REST, GraphQL, WebSockets... Le guide ultime des architectures d'API en 2026"
+publishedAt: "2026-01-19"
+summary: "Marre de confondre REST et GraphQL ? Vous hésitez entre WebSockets et SSE ? On décortique chaque techno avec des dialogues concrets pour choisir la bonne stack."
+tags: ["Architecture", "API", "NextJS", "Fullstack", "Web3"]
+---
+
+Choisir comment vos données circulent entre le client et le serveur est l'une des décisions les plus critiques d'un projet. C'est le système nerveux de votre application.
+
+En tant que dev Full-stack, j'aime voir les API comme des types de conversations. Parfois on veut un rapport formel, parfois un simple SMS, et parfois une discussion téléphonique qui ne s'arrête jamais.
+
+---
+
+## 1. REST : Le Standard (La lettre recommandée)
+
+C’est la base du Web moderne. Chaque URL est une ressource. C'est robuste, prévisible et tout le monde le comprend.
+
+**La conversation :**
+> **Client :** "Salut ! Je suis l'utilisateur X, voici mon token JWT. Je voudrais les données de la page `/dashboard/profile`."
+>
+> **Serveur :** "C'est en règle. Voici l'objet JSON complet avec ton nom, ton email, tes 50 paramètres de compte et ton historique (même si tu n'as demandé que le nom)."
+
+* **Idéal pour :** CRUD classique, sites e-commerce, blogs.
+
+
+
+---
+
+## 2. Le Polling : "On arrive quand ?"
+
+Quand le serveur a besoin de temps pour traiter une info, le client doit vérifier si c'est prêt.
+
+### A. Short Polling (L'enfant impatient)
+On envoie une requête toutes les X secondes.
+> **Client :** "Le rapport est prêt ?" -> **Serveur :** "Non."
+> **Client (2s plus tard) :** "Le rapport est prêt ?" -> **Serveur :** "Non."
+> **Client (4s plus tard) :** "Le rapport est prêt ?" -> **Serveur :** "Oui, le voilà."
+
+### B. Long Polling (La ligne d'attente)
+Le serveur garde la requête ouverte jusqu'à ce qu'il ait une réponse.
+> **Client :** "Je cherche une info, je reste en ligne, réponds-moi dès que c'est prêt."
+> **Serveur :** *(Attend 20 secondes...)* "Tiens, voilà l'info !"
+
+
+
+---
+
+## 3. GraphQL : Le "Personal Shopper"
+
+Pourquoi récupérer tout un JSON quand on ne veut qu'un prénom ? GraphQL permet au front-end de dicter ses besoins.
+
+**La conversation :**
+> **Client :** "Salut, je veux juste le `username` et la `photo_url` de l'ID #42. Rien d'autre."
+>
+> **Serveur :** "Pas de problème. Voici un objet avec exactement ces deux champs. On gagne de la bande passante !"
+
+* **Idéal pour :** Dashboards complexes, applications mobiles (économise la data).
+
+---
+
+## 4. WebSockets : La Ligne Ouverte (Le téléphone)
+
+Ici, on ne ferme pas la porte. On établit une connexion bidirectionnelle persistante.
+
+**La conversation :**
+> **Client :** "Je me connecte au canal de trading."
+>
+> **Serveur :** "OK, la ligne reste ouverte. Je t'envoie les prix du Bitcoin chaque seconde, et toi envoie-moi tes ordres d'achat quand tu veux."
+
+* **Idéal pour :** Trading, Chat, Jeux vidéo, Outils collaboratifs (Figma-like).
+
+
+
+---
+
+## 5. SSE (Server-Sent Events) : La Radio
+
+C'est comme les WebSockets, mais dans un seul sens : du serveur vers le client. C'est plus léger et tourne sur du HTTP standard.
+
+**La conversation :**
+> **Client :** "Je m'abonne aux notifications de score."
+>
+> **Serveur :** "Ça marche. Ne dis rien, je te pousse une info dès qu'il y a un but."
+
+* **Idéal pour :** Flux de prix, notifications push, fils d'actualité en direct.
+
+---
+
+## 6. Webhooks : "Ne m'appelle pas, je t'appelle"
+
+C'est l'inverse d'une API classique. C'est le serveur (souvent tiers) qui envoie une donnée vers votre serveur dès qu'un événement se produit.
+
+**La conversation :**
+> **Stripe (Serveur tiers) :** "Hé, ton client vient de payer sa facture ! Je t'envoie les détails sur ton endpoint `/api/webhook` pour que tu mettes ta base de données à jour."
+>
+> **Votre Serveur :** "Reçu ! Je traite ça de suite."
+
+
+
+---
+
+## 7. gRPC : La Formule 1 (Haute Performance)
+
+Très utilisé en microservices ou dans le Web3 pour la vitesse. On utilise des "Protocol Buffers" (binaire) au lieu du JSON (texte).
+
+**La conversation :**
+> **Microservice A :** *(Envoie un paquet binaire ultra-compressé et typé)* "Calcul-moi-ça-vite."
+>
+> **Microservice B :** *(Répond instantanément en binaire)* "Voilà-le-résultat."
+
+---
+
+## Le Grand Comparatif : Quelle techno pour quel besoin ?
+
+| Technologie | Efficacité | Difficulté Setup | Stack recommandée | Cas d'usage idéal |
+| :--- | :--- | :--- | :--- | :--- |
+| **REST** | 🟠 Moyen | ⭐ Facile | Next.js, Express, PHP | CRUD, Public APIs |
+| **Short Polling** | 🔴 Faible | ⭐ Facile | N'importe quoi | Quick fix temporaire |
+| **Long Polling** | 🟠 Moyen | ⭐⭐ Moyen | Node.js, Python | Fallback temps réel |
+| **GraphQL** | 🟢 Haute | ⭐⭐⭐ Complexe | Apollo, Yoga, Nexus | App Data-heavy |
+| **SSE** | 🟢 Haute | ⭐⭐ Moyen | Node.js, Go | Notifications, Flux |
+| **WebSockets** | 🚀 Max (Live) | ⭐⭐⭐⭐ Difficile | Socket.io, Fastify | Chat, Gaming, Collaboration |
+| **Webhooks** | 🟢 Haute | ⭐ Facile | Stripe, GitHub, Vercel | Automatisation, Paiement |
+| **gRPC** | 🚀 Max (Perf) | ⭐⭐⭐⭐⭐ Expert | Go, Rust, C# | Microservices, High-load |
+
+---
+
+## Conclusion : Que choisir pour votre portfolio ?
+
+Si vous développez avec **Next.js**, la combinaison gagnante est souvent :
+1. **REST / Server Actions** pour 90% des cas.
+2. **Webhooks** pour gérer les paiements (Stripe) ou l'auth (Clerk/Auth0).
+3. **SSE ou WebSockets** si vous ajoutez une petite fonctionnalité temps réel.
+
+Le secret d'un bon dev, ce n'est pas de connaître la techno la plus "hype", mais d'utiliser celle qui résout le problème avec le moins de complexité inutile !

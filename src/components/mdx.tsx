@@ -3,6 +3,7 @@ import React, { ReactNode } from "react";
 import { slugify as transliterate } from "transliteration";
 import { ImageCarousel } from "@/components/ui/image-carousel";
 
+
 import {
   Heading,
   HeadingLink,
@@ -92,7 +93,20 @@ function createHeading(as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6") {
     children,
     ...props
   }: Omit<React.ComponentProps<typeof HeadingLink>, "as" | "id">) => {
-    const slug = slugify(children as string);
+    // Safely extract text from children for slug generation
+    const extractText = (node: ReactNode): string => {
+      if (typeof node === "string") return node;
+      if (typeof node === "number") return String(node);
+      if (Array.isArray(node)) return node.map(extractText).join("");
+      if (typeof node === "object" && node !== null && "props" in node) {
+        return extractText((node as any).props.children);
+      }
+      return "";
+    };
+
+    const text = extractText(children);
+    const slug = slugify(text || "heading");
+
     return (
       <HeadingLink marginTop="24" marginBottom="12" as={as} id={slug} {...props}>
         {children}
@@ -172,6 +186,61 @@ function createHR() {
   );
 }
 
+function createTable(props: any) {
+  return (
+    <Column
+      fillWidth
+      overflowX="auto"
+      marginBottom="40"
+      border="neutral-alpha-medium"
+      radius="m"
+    >
+      <Table {...props} />
+    </Column>
+  );
+}
+
+function createThead(props: any) {
+  return <thead style={{ borderBottom: "1px solid var(--neutral-alpha-medium)" }} {...props} />;
+}
+
+function createTbody(props: any) {
+  return <tbody {...props} />;
+}
+
+function createTr(props: any) {
+  return <tr style={{ borderBottom: "1px solid var(--neutral-alpha-weak)" }} {...props} />;
+}
+
+function createTh({ children, ...props }: any) {
+  return (
+    <Text
+      as="th"
+      variant="label-default-s"
+      onBackground="neutral-weak"
+      padding="16"
+      align="left"
+      {...props}
+    >
+      {children}
+    </Text>
+  );
+}
+
+function createTd({ children, ...props }: any) {
+  return (
+    <Text
+      as="td"
+      variant="body-default-xs"
+      onBackground="neutral-medium"
+      padding="16"
+      {...props}
+    >
+      {children}
+    </Text>
+  );
+}
+
 const components = {
   p: createParagraph as any,
   h1: createHeading("h1") as any,
@@ -188,6 +257,12 @@ const components = {
   ul: createList as any,
   li: createListItem as any,
   hr: createHR as any,
+  table: createTable as any,
+  thead: createThead as any,
+  tbody: createTbody as any,
+  tr: createTr as any,
+  th: createTh as any,
+  td: createTd as any,
   Heading,
   Text,
   CodeBlock,
@@ -212,6 +287,18 @@ type CustomMDXProps = MDXRemoteProps & {
   components?: typeof components;
 };
 
+import remarkGfm from "remark-gfm";
+
 export function CustomMDX(props: CustomMDXProps) {
-  return <MDXRemote {...props} components={{ ...components, ...(props.components || {}) }} />;
+  return (
+    <MDXRemote
+      {...props}
+      components={{ ...components, ...(props.components || {}) }}
+      options={{
+        mdxOptions: {
+          remarkPlugins: [remarkGfm],
+        },
+      }}
+    />
+  );
 }

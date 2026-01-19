@@ -102,6 +102,7 @@ export function ArticlesCarousel({ limit = 3 }: ArticlesCarouselProps) {
 									style={{
 										minWidth: "280px",
 										maxWidth: "320px",
+										height: "404px",
 										scrollSnapAlign: "start",
 										transition: "all 0.2s ease"
 									}}

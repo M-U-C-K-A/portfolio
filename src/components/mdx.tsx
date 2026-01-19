@@ -195,7 +195,7 @@ function createTable(props: any) {
       border="neutral-alpha-medium"
       radius="m"
     >
-      <Table {...props} />
+      <table style={{ width: "100%", borderCollapse: "collapse" }} {...props} />
     </Column>
   );
 }

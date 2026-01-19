@@ -1,0 +1,92 @@
+---
+title: "Atomic Design: Structuring your Next.js projects for eternity"
+publishedAt: "2026-01-26"
+summary: "Tired of 'components' folders overflowing? Discover how the Atomic Design methodology allows creating robust and maintainable UI systems."
+tags: ["Architecture", "DesignSystem", "React", "NextJS"]
+---
+
+When starting a project, we often create a `components` folder and throw everything in there: buttons, navbars, modals, forms. Six months later, the project becomes an unmanageable maze.
+
+**Atomic Design**, conceptualized by Brad Frost, proposes a chemistry-based approach to organize our interfaces logically and hierarchically.
+
+---
+
+## 1. The 5 Levels of Atomic Design
+
+The idea is to start from the smallest element (the atom) to build increasingly complex sets.
+
+### A. Atoms
+These are the indivisible basic building blocks of your UI. They cannot be broken down without losing their function.
+* **Examples:** A button, a label, an input, an icon, a color palette.
+* **Golden Rule:** An atom is often very generic and reusable everywhere.
+
+### B. Molecules
+A molecule is a group of atoms bonded together. This is where the interface starts to come to life with a precise function.
+* **Example:** A search field (Label + Input + Button).
+* **Golden Rule:** A molecule must remain simple and focus on a single task (Single Responsibility Principle).
+
+### C. Organisms
+These are complex sections of the interface, composed of molecules and/or atoms. They form a distinct part of the page.
+* **Example:** A navigation bar (Logo + Menu + Search Bar).
+* **Golden Rule:** Organisms are often the elements we move most easily from one template to another.
+
+### D. Templates
+At this stage, we abandon the chemical metaphor. A template is a page layout that defines the page structure without final content.
+* **Golden Rule:** We use placeholders to visualize hierarchy and content zones.
+
+### E. Pages
+This is the final instance. We inject real data (from your API or CMS) into templates. This is where we test design effectiveness with real text and real images.
+
+---
+
+## 2. Implementation in Next.js (App Router)
+
+In 2026, Atomic Design pairs perfectly with **React Server Components (RSC)**. Here is a typical folder structure:
+
+```text
+src/
+  components/
+    atoms/
+      Button.tsx
+      Input.tsx
+    molecules/
+      SearchField.tsx
+      FormField.tsx
+    organisms/
+      Navbar.tsx
+      UserCardGrid.tsx
+    templates/
+      DashboardLayout.tsx
+  app/
+    dashboard/
+      page.tsx (The Page consuming the Template)
+```
+
+---
+
+## 3. Why is it a "Game Changer" for a Front-End Dev?
+
+1. **Visual Consistency:** By modifying the `Button` atom, you update the entire site instantly.
+2. **Communication with Designers:** If your team uses Figma, you finally speak the same language. Designers create "components", you create "atoms".
+3. **Ease of Testing:** Testing an atom is extremely simple. You can use **Storybook** to document each level independently.
+4. **Facilitated Accessibility:** If your `Input` atom is perfectly accessible (ARIA, labels, focus), all molecules and organisms using it will be accessible by inheritance.
+
+---
+
+## 4. Summary Table: When to Create What?
+
+| Level | Contains What? | Business Logic? | Reusability |
+| --- | --- | --- | --- |
+| **Atoms** | Pure HTML, base styles | ❌ None | 🚀 Maximal |
+| **Molecules** | Group of atoms | 🟠 Very Little | 🟢 High |
+| **Organisms** | Molecules + Atoms | ✅ Yes | 🟠 Medium |
+| **Templates** | Page Skeleton | ❌ None | 🔴 Low |
+| **Pages** | Real Data, API | ✅ Total | ❌ Unique |
+
+---
+
+## Conclusion
+
+Atomic Design requires an initial investment to set up the structure, but it's a massive time saver in the long run. For your Next.js projects, it allows you to cleanly separate **presentation logic** (Atoms/Molecules) from **data logic** (Pages/Organisms).
+
+Adopting this method means moving from "page coder" to "design system architect".

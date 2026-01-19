@@ -1,0 +1,78 @@
+---
+title: "SSR & Web3: Why Server-Side Rendering is the future of decentralization"
+publishedAt: "2026-01-21"
+summary: "SSR isn't just about SEO. It's the indispensable bridge to make Web3 dApps fast, accessible, and indexable."
+tags: ["NextJS", "Web3", "SSR", "Performance"]
+---
+
+For a long time, Web3 was synonymous with somewhat slow "Single Page Applications" (SPA). You arrived on a site, saw a loader for 5 seconds while JavaScript woke up and queried the blockchain.
+
+In 2026, those days are over. **SSR (Server-Side Rendering)** has become the standard for offering a Web2-worthy user experience, while keeping the power of the blockchain.
+
+---
+
+## 1. What is SSR again?
+
+To understand, let's compare it to classic rendering (CSR).
+
+### Client-Side Rendering (CSR) - "The IKEA Kitchen"
+> **User:** "I want to see my NFT collection."
+>
+> **Server:** "Here, take this empty page and a huge box of spare parts (JavaScript). Figure out how to assemble the furniture."
+>
+> **Browser:** *(Assembles parts, calls blockchain, waits...)* "Done, I finished!"
+
+### Server-Side Rendering (SSR) - "The Hot Delivered Meal"
+> **User:** "I want to see my NFT collection."
+>
+> **Server:** "Don't move. I'll ask the blockchain myself what you own, prepare the ready-made HTML page, and send it to you."
+>
+> **Browser:** "Oh, it's already ready! displaying it right away."
+
+---
+
+## 2. Why is it vital for Web3?
+
+### A. Indexing (SEO)
+Google's robots aren't very patient. If your dApp waits for a MetaMask connection to display content, Google will see an empty page. With SSR, blockchain content (token price, DAO description) is present in the HTML source code.
+
+### B. Perceived Speed (FCP)
+In Web3, we often query RPC (Remote Procedure Call) nodes which can be slow. By doing this request server-side, we can cache results or use more powerful servers than the user's phone.
+
+### C. Security (Key Masking)
+To talk to certain APIs or private nodes, you need API keys.
+* **In CSR:** Your key is visible in the browser's "Network" tab.
+* **In SSR:** The key stays warm on your server. The user only sees the result.
+
+---
+
+## 3. The Technological Landscape in 2026
+
+SSR is no longer limited to Next.js. Here are the major players:
+
+| Technology | Ecosystem | Strong Point |
+| :--- | :--- | :--- |
+| **Next.js** | React | The undisputed king. Perfect integration with Vercel and Server Components. |
+| **Nuxt.js** | Vue.js | An incredible developer experience and very fluid SSR management. |
+| **Remix** | React | Focused on web standards and advanced form management. |
+| **SvelteKit** | Svelte | Ultra light, ultra fast, perfect for high-performance dApps. |
+| **Astro** | Multi-framework | Ideal if you have a lot of static content and few islands of interactivity. |
+
+---
+
+## 4. How does it fit into Web3?
+
+The Web3 challenge is that data is **decentralized**.
+
+In a modern SSR architecture, your Next.js server acts as an **aggregator**. It will fetch info from IPFS for images, Ethereum for transactions, and a classic database (like PostgreSQL) for user preferences.
+
+### Accessibility: The Hidden Bonus
+As a dev sensitive to accessibility (A11y), SSR is my best friend. If JavaScript crashes or takes too long to load, the user still has access to essential textual information. This is called **graceful degradation**.
+
+---
+
+## Conclusion
+
+SSR is not a step back to the old PHP sites of the 2000s. It is a hybrid evolution. We use the power of the server to deliver instant content, and we use JavaScript (via hydration) to make the page interactive once it is displayed.
+
+For your dApps, don't force your users to wait. **Serve them HTML.**

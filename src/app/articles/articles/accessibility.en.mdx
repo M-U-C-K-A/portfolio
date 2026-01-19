@@ -1,0 +1,68 @@
+---
+title: "Accessibility doesn't kill design: Creating complex components in 2026"
+publishedAt: "2026-01-22"
+summary: "Modals, Drag & Drop, nested menus... How to meet WCAG standards without sacrificing the aesthetics of your Next.js interfaces."
+tags: ["A11y", "Design", "React", "UX"]
+---
+
+A persistent myth in the web development world is that an accessible site must be "ugly" or stripped down. In 2026, with the tools at our disposal, it's time to deconstruct this myth.
+
+Accessibility isn't a checklist of constraints that limit your creativity; it's a framework that drives smarter, more robust design. Let's look at how to handle two of the most complex components: the **Modal** and **Drag & Drop**.
+
+---
+
+## 1. The Modal: Taming Focus
+
+A poorly designed modal is an impassable wall for a user navigating with a keyboard or screen reader. To be accessible, it must follow three golden technical rules.
+
+### The Focus Trap
+When a modal is open, focus must be confined within it. If the user presses `Tab` and focus returns to a link in the background, the experience is broken.
+
+### Keyboard Management
+A "AAA" (highest WCAG standard) modal must meet specific expectations:
+* **ESC:** Immediately closes the modal.
+* **Initial Focus:** Focus should be placed on the first interactive element (often the close button or main field).
+* **Restore Focus:** On closing, focus must return to the button that opened the modal.
+
+### Design Tip: Visible Focus
+Don't remove `outline: none`. Instead, use `:focus-visible` to create a stylized indicator that only appears for keyboard users, preserving aesthetics for mouse users.
+
+---
+
+## 2. Drag & Drop: Beyond the Mouse
+
+"Drag and Drop" is inherently a visual and motor interaction. Yet, it is entirely possible to make it accessible without changing its "Apple-like" look.
+
+### Communication via ARIA-Live
+When a user moves an element, you must verbally inform the screen reader of what is happening.
+* "Item selected, position 1 of 5."
+* "Item moved to position 3."
+
+### Keyboard Alternative
+The trick is to allow movement via arrow keys after activating "move" mode with the `Space` or `Enter` key.
+
+---
+
+## 3. WCAG Requirements Synthesis for Components
+
+| Feature | ARIA Role | Keyboard Behavior | Visual Feedback |
+| :--- | :--- | :--- | :--- |
+| **Modal** | `role="dialog"` | Tab (trap), ESC (close) | Dark overlay, clear focus |
+| **Drag & Drop** | `aria-dropeffect` | Arrows (move), Space (grab) | Cursor change, shadow |
+| **Tooltips** | `role="tooltip"` | Focus / Hover | High contrast (4.5:1 ratio) |
+
+---
+
+## 4. Tools for Next.js in 2026
+
+No need to reinvent the wheel. To guarantee accessibility without colossal effort, I rely on "headless" libraries that handle A11y logic while leaving me total control over CSS styling:
+
+1.  **Radix UI / Shadcn UI:** Primitives are already tested for accessibility.
+2.  **React Aria (Adobe):** Probably the most advanced library for handling complex behaviors (like Drag & Drop).
+3.  **Headless UI (Tailwind Labs):** Ideal for fluid and accessible transitions.
+
+---
+
+## Conclusion
+
+Accessibility is the pinnacle of technical elegance. A component that works perfectly for everyone, regardless of navigation method, is a better-coded component. As front-end developers, our role is to prove that **inclusion is the engine of better design.**

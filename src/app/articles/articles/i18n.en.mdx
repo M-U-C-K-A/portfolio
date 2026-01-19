@@ -1,0 +1,92 @@
+---
+title: "i18n & Next.js: The guide to painless dApp and site translation"
+publishedAt: "2026-01-25"
+summary: "Discover how to structure internalization for your Next.js application: routing, middleware, TypeScript typing, and SEO best practices."
+tags: ["i18n", "NextJS", "TypeScript", "SEO"]
+---
+
+Translating a site isn't just about replacing "Bonjour" with "Hello". It is an architectural challenge that impacts routing, SEO, performance, and above all, developer experience.
+
+In 2026, with the Next.js App Router, internationalization (i18n) has become more structured, but requires rigorous configuration to remain performant.
+
+---
+
+## 1. Routing: Why is `/fr` indispensable?
+
+There are several ways to handle language (cookies, local storage, headers). However, for SEO, URL structure is the only viable method.
+
+* **Sub-paths (Recommended):** `mysite.com/fr` or `mysite.com/en`.
+* **Domains:** `mysite.fr` or `mysite.com`.
+
+Using sub-paths allows search engines to index each version of your page independently. Next.js facilitates this thanks to **Middleware**, which intercepts the request, detects the browser language, and redirects the user to the correct prefix if necessary.
+
+---
+
+## 2. Dictionary Organization: Typing First
+
+The classic mistake is to use simple JSON objects without protection. As a full-stack developer, you want TypeScript to yell at you if you forget a translation key in a language.
+
+### Recommended Structure
+```text
+messages/
+  en.json
+  fr.json
+```
+
+### Strict Translation Typing
+
+By using libraries like `next-intl` or `i18next`, you can bind your JSON files to your types:
+
+```typescript
+// Example of typed component
+import { useTranslations } from 'next-intl';
+
+export function LoginButton() {
+  const t = useTranslations('Auth');
+
+  // TypeScript will validate that 'login_label' exists in fr.json and en.json
+  return <button>{t('login_label')}</button>;
+}
+```
+
+---
+
+## 3. SEO and Accessibility: The Forgotten Ones of i18n
+
+Translating the interface is good, but technical metadata must not be forgotten.
+
+1. **The `lang` attribute:** Your `<html lang="fr">` tag must change dynamically. This is crucial for screen readers (Accessibility) so they use the correct voice synthesis.
+2. **`hreflang` tags:** They indicate to Google the relationship between your pages. If I am on the "À propos" page in French, the `hreflang` tag must point to the "About" version in English.
+
+---
+
+## 4. Dates, Numbers, and Currencies: The Intl API
+
+Never translate dates or currencies manually. The browser and Node.js have an ultra-powerful native API: `Intl`.
+
+```javascript
+const price = 1250.50;
+new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price);
+// Result: 1 250,50 €
+
+new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
+// Result: $1,250.50
+```
+
+---
+
+## 5. Solution Comparison in 2026
+
+| Library | Advantages | Disadvantages |
+| --- | --- | --- |
+| **next-intl** | Designed for App Router, ultra-light, excellent Server Components support. | Initial configuration a bit longer. |
+| **i18next** | The vastest ecosystem, plugins for everything (backend, mobile). | Heavier, sometimes complex with Server Components. |
+| **FormatJS** | Standardized, very robust for very large projects. | More verbose. |
+
+---
+
+## Conclusion
+
+i18n is a technical investment that makes your application "World Ready". By combining **Next.js Middleware** for routing, **TypeScript** for safety, and the **Intl API** for local data, you create a solid foundation ready for any market.
+
+My advice: automate as much as possible. Link your translation files to a tool like Phrase or Lokalise so your translators can work without touching the code!

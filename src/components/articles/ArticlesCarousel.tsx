@@ -4,6 +4,7 @@ import { Column, Flex, Heading, Text, Row, SmartLink, Tag, Media, RevealFx } fro
 import { useLanguage } from "@/components/i18n";
 import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formatDate";
+import { ThemeImage } from "@/components/ThemeImage";
 
 interface ArticleData {
 	slug: string;
@@ -82,9 +83,8 @@ export function ArticlesCarousel({ limit = 3 }: ArticlesCarouselProps) {
 				fillWidth
 				gap="m"
 				style={{
-					overflowX: "auto",
-					scrollSnapType: "x mandatory",
-					paddingBottom: "8px"
+					overflowX: "hidden",
+					paddingBottom: "8px",
 				}}
 			>
 				{articles.map((article, index) => {
@@ -94,29 +94,29 @@ export function ArticlesCarousel({ limit = 3 }: ArticlesCarouselProps) {
 						<RevealFx key={article.slug} translateY="8" delay={0.1 * index}>
 							<SmartLink href={`/articles/${article.slug}`} style={{ textDecoration: "none" }}>
 								<Column
-									gap="s"
-									padding="m"
+									gap="m"
 									background="surface"
 									border="neutral-alpha-weak"
 									radius="l"
 									style={{
-										minWidth: "280px",
+										minWidth: "300px",
 										maxWidth: "320px",
-										height: "404px",
 										scrollSnapAlign: "start",
-										transition: "all 0.2s ease"
+										transition: "all 0.25s ease",
+										overflow: "hidden"
 									}}
 								>
 									{coverImage && (
-										<Media
-											aspectRatio="16 / 9"
-											radius="s"
-											alt={article.metadata.title}
+										<ThemeImage
 											src={coverImage}
+											alt={article.metadata.title}
+											aspectRatio="16/9"
+											sizes="(max-width: 640px) 100vw, 320px"
+											priority={index === 0}
 										/>
 									)}
-									<Column gap="4">
-										<Row gap="8" vertical="center">
+									<Column gap="s" padding="m" style={{ paddingTop: coverImage ? "0" : undefined }}>
+										<Row gap="8" vertical="center" wrap>
 											<Text variant="body-default-xs" onBackground="neutral-weak">
 												{formatDate(article.metadata.publishedAt)}
 											</Text>
@@ -143,6 +143,9 @@ export function ArticlesCarousel({ limit = 3 }: ArticlesCarouselProps) {
 												{article.metadata.summary}
 											</Text>
 										)}
+										<Text variant="label-default-s" onBackground="brand-medium" marginTop="4">
+											{labels.readArticle} →
+										</Text>
 									</Column>
 								</Column>
 							</SmartLink>

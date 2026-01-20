@@ -5,7 +5,6 @@ import { useLanguage } from "@/components/i18n";
 import { useEffect, useState, useRef } from "react";
 import { formatDate } from "@/utils/formatDate";
 import { ThemeImage } from "@/components/ThemeImage";
-import Image from "next/image";
 
 interface ArticleData {
 	slug: string;
@@ -120,11 +119,11 @@ export function ArticlesClient({ range, exclude }: ArticlesClientProps) {
 							}}
 						>
 							{coverImage && (
-								<Image
+								<ThemeImage
 									src={coverImage}
 									alt={article.metadata.title}
-									width={960}
-									height={540}
+									aspectRatio="21/9"
+									sizes="(max-width: 960px) 100vw, 960px"
 									priority={index === 0}
 								/>
 							)}

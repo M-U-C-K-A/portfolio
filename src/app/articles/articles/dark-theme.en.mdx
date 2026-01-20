@@ -3,32 +3,40 @@ title: "Dark Mode: The Clean Method in 2026"
 publishedAt: "2026-01-23"
 summary: "No more white flash on load. Discover how to implement a robust dark mode with Next.js, Server Components, and new native CSS functions."
 tags: ["CSS", "NextJS", "UX", "WebPerf"]
+image: ""
 ---
 
-Dark mode is no longer a "nice-to-have" option, it is a basic expectation. But implementing it poorly can harm user experience, especially with the infamous **FOUC** (*Flash of Unstyled Content*): that violent white flash that occurs for a few milliseconds before JavaScript detects your preferences.
+<div className="block dark:hidden">
+  ![Aesthetic Transitions Header](/images/articles/aesthetic-transitions-light.png)
+</div>
+<div className="hidden dark:block">
+  ![Aesthetic Transitions Header](/images/articles/aesthetic-transitions-dark.png)
+</div>
 
-In 2026, we have native tools to solve this cleanly.
+Dark mode is no longer a "nice option", it's a baseline expectation. But implementing it poorly can harm user experience, notably with the famous **FOUC** (*Flash of Unstyled Content*): that violent white flash that occurs for a few milliseconds before JavaScript detects your preferences.
+
+In 2026, we have native tools to fix this cleanly.
 
 ---
 
 ## 1. The Foundation: `color-scheme`
 
-Before writing your first CSS variable, you must inform the browser that your site supports both modes. This allows the browser to adapt native elements (scrollbars, default buttons, forms).
+Before even writing your first CSS variable, you must inform the browser that your site supports both modes. This allows the browser to adapt native elements (scrollbars, default buttons, forms).
 
 ```css
 :root {
-  /* Tells the browser that the site supports both modes */
+  /* Tells the browser the site supports both modes */
   color-scheme: light dark;
 }
 ```
 
-This simple line changes the game: if the user is in dark mode, the default background page becomes black and text white, even before your CSS is fully loaded.
+This simple line changes the game: if the user is in dark mode, the default page background becomes black and text white, even before your CSS is fully loaded.
 
 ---
 
 ## 2. The Revolution: The `light-dark()` Function
 
-Forget complex `.dark-mode` selectors. Modern CSS offers us the `light-dark(light-value, dark-value)` function.
+Forget complex `.dark-mode` selectors. Modern CSS offers the `light-dark(light-value, dark-value)` function.
 
 ```css
 :root {
@@ -49,11 +57,11 @@ The browser automatically chooses the right value based on the element's `color-
 
 ## 3. Avoiding the "White Flash" in Next.js
 
-The flash problem occurs when the server renders "neutral" (white) HTML and the client must wait for JS to load to apply the `.dark` class.
+The flash problem occurs when the server renders "neutral" (white) HTML and the client has to wait for JS loading to apply the `.dark` class.
 
 ### The 2026 Solution: The Critical Blocking Script
 
-The most reliable method remains injecting a small inline script into the `<head>` of your `layout.tsx` file. This script runs **before** the rest of the page is drawn.
+The most reliable method remains injecting a small inline script into the `<head>` of your `layout.tsx`. This script executes **before** the rest of the page is drawn.
 
 ```tsx
 // In your RootLayout
@@ -76,14 +84,62 @@ The most reliable method remains injecting a small inline script into the `<head
 
 Thanks to Next.js **Server Components**, this script is sent as-is in the initial HTML, guaranteeing an invisible transition.
 
+### Understanding the Resolution Flow
+
+```mermaid
+graph TD
+    A[Client Request] --> B[Next.js Server]
+    B -->|Generates HTML| C{Blocking Script present?}
+    C -->|No| D[Neutral HTML displayed]
+    D --> E[White Flash (FOUC) 😱]
+    D --> F[JS Hydration]
+    F --> G[Theme Application]
+
+    C -->|Yes| H[Head Script Execution]
+    H -->|Reads localStorage/OS| I[Adds 'dark' class]
+    I --> J[HTML Display (Already dark) 😎]
+```
+
 ---
 
-## 4. Accessibility and Dark Mode
+## 4. Architecture: "Semantic Tokens"
 
-Dark mode isn't just about aesthetics; it's also about visual comfort.
+Never hardcode hex colors in dark mode (#000). Use an abstraction layer.
 
-* **Contrast:** Check that your contrasts remain WCAG compliant in dark mode. sometimes, a blue that looks good on white becomes unreadable on a dark gray background.
-* **Images:** Consider slightly reducing the brightness of overly bright images in dark mode to avoid dazzling the user.
+### Level 1: Primitive Tokens
+This is your raw palette.
+```css
+:root {
+  --blue-500: #3b82f6;
+  --slate-100: #f1f5f9;
+  --slate-900: #0f172a;
+}
+```
+
+### Level 2: Semantic Tokens (Abstract)
+This is what you use in your components. They change based on the theme.
+```css
+:root {
+  --bg-primary: var(--slate-100);
+  --text-primary: var(--slate-900);
+}
+
+[data-theme='dark'] {
+  --bg-primary: var(--slate-900);
+  --text-primary: var(--slate-100);
+}
+```
+
+**Advantage:** If tomorrow you want to change your brand "Blue", you only touch Primitives. If you want to adjust dark mode contrast, you only touch Semantics.
+
+---
+
+## 5. Accessibility and Dark Mode
+
+Dark mode isn't just about aesthetics, it's also about visual comfort.
+
+* **Contrasts:** Verify that your contrasts remain WCAG compliant in dark mode. sometimes, a blue that works well on white becomes unreadable on a dark gray background.
+* **Images:** Consider slightly reducing the brightness of overly bright images in dark mode to not dazzle the user.
 
 ```css
 .dark img {
@@ -93,7 +149,7 @@ Dark mode isn't just about aesthetics; it's also about visual comfort.
 
 ---
 
-## 5. Method Comparison Table
+## 6. Method Comparison Table
 
 | Method | Performance | Complexity | Flash Removal |
 | --- | --- | --- | --- |
@@ -106,6 +162,6 @@ Dark mode isn't just about aesthetics; it's also about visual comfort.
 
 ## Conclusion
 
-In 2026, theme management must be **invisible**. By combining the power of Next.js for critical script injection and new CSS functions like `light-dark()`, we get a system that is robust, performant, and respectful of user preferences.
+In 2026, theme management must be **invisible**. By combining the power of Next.js for critical script injection and new CSS functions like `light-dark()`, we get a robust, performant system that respects user preferences.
 
-Your site shouldn't just "have a dark mode", it should be "designed for light and darkness".
+Your site shouldn't just "have a dark mode", it should "be designed for light and darkness".

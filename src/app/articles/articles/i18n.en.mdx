@@ -1,17 +1,25 @@
 ---
-title: "i18n & Next.js: The guide to painless dApp and site translation"
+title: "i18n & Next.js: The Guide to Translating Your dApps and Sites Without Pain"
 publishedAt: "2026-01-25"
-summary: "Discover how to structure internalization for your Next.js application: routing, middleware, TypeScript typing, and SEO best practices."
+summary: "Discover how to structure internationalization for your Next.js application: routing, middleware, TypeScript typing, and SEO best practices."
 tags: ["i18n", "NextJS", "TypeScript", "SEO"]
+image: ""
 ---
 
-Translating a site isn't just about replacing "Bonjour" with "Hello". It is an architectural challenge that impacts routing, SEO, performance, and above all, developer experience.
+<div className="block dark:hidden">
+  ![i18n Header](/images/articles/i18n-light.png)
+</div>
+<div className="hidden dark:block">
+  ![i18n Header](/images/articles/i18n-dark.png)
+</div>
 
-In 2026, with the Next.js App Router, internationalization (i18n) has become more structured, but requires rigorous configuration to remain performant.
+Translating a site isn't just about replacing "Bonjour" with "Hello". It is an architectural challenge that impacts routing, SEO, performance, and above all user experience.
+
+In 2026, with the Next.js App Router, internationalization (i18n) has become more structured, but demands rigorous configuration to remain performant.
 
 ---
 
-## 1. Routing: Why is `/fr` indispensable?
+## 1. Routing: Why `/fr` is Indispensable
 
 There are several ways to handle language (cookies, local storage, headers). However, for SEO, URL structure is the only viable method.
 
@@ -22,9 +30,37 @@ Using sub-paths allows search engines to index each version of your page indepen
 
 ---
 
-## 2. Dictionary Organization: Typing First
+## 2. The Middleware: The Conductor (Concrete Example)
 
-The classic mistake is to use simple JSON objects without protection. As a full-stack developer, you want TypeScript to yell at you if you forget a translation key in a language.
+This is where the magic happens. The middleware intercepts every request to direct the user to the right language.
+
+```typescript
+import createMiddleware from 'next-intl/middleware';
+
+export default createMiddleware({
+  // A list of all supported locales
+  locales: ['en', 'fr'],
+
+  // If no locale matches, use this one
+  defaultLocale: 'fr',
+
+  // Redirect / to /fr
+  localePrefix: 'always'
+});
+
+export const config = {
+  // Match only internationalized pages
+  matcher: ['/', '/(fr|en)/:path*']
+};
+```
+
+This simple configuration automatically handles browser language detection and 307 redirects.
+
+---
+
+## 3. Organizing Dictionaries: Typing First
+
+The classic mistake is using simple JSON objects without protection. As a full-stack developer, you want TypeScript to yell at you if you forget a translation key in one language.
 
 ### Recommended Structure
 ```text
@@ -35,7 +71,7 @@ messages/
 
 ### Strict Translation Typing
 
-By using libraries like `next-intl` or `i18next`, you can bind your JSON files to your types:
+By using libraries like `next-intl` or `i18next`, you can link your JSON files to your types:
 
 ```typescript
 // Example of typed component
@@ -51,18 +87,18 @@ export function LoginButton() {
 
 ---
 
-## 3. SEO and Accessibility: The Forgotten Ones of i18n
+## 4. SEO and Accessibility: The Forgotten Ones of i18n
 
-Translating the interface is good, but technical metadata must not be forgotten.
+Translating the interface is good, but don't forget technical metadata.
 
-1. **The `lang` attribute:** Your `<html lang="fr">` tag must change dynamically. This is crucial for screen readers (Accessibility) so they use the correct voice synthesis.
-2. **`hreflang` tags:** They indicate to Google the relationship between your pages. If I am on the "À propos" page in French, the `hreflang` tag must point to the "About" version in English.
+1. **The `lang` attribute:** Your `<html lang="fr">` tag must change dynamically. It is crucial for screen readers (Accessibility) so they use the correct voice synthesis.
+2. **`hreflang` tags:** They indicate to Google the relationship between your pages. If I am on the French "About" page, the `hreflang` tag must point to the English "About" version.
 
 ---
 
-## 4. Dates, Numbers, and Currencies: The Intl API
+## 5. Dates, Numbers, and Currencies: The Intl API
 
-Never translate dates or currencies manually. The browser and Node.js have an ultra-powerful native API: `Intl`.
+Never translate dates or currencies manually. The browser and Node.js process an ultra-powerful native API: `Intl`.
 
 ```javascript
 const price = 1250.50;
@@ -75,13 +111,38 @@ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(pr
 
 ---
 
-## 5. Solution Comparison in 2026
+## 6. Solution Comparison in 2026
 
-| Library | Advantages | Disadvantages |
+| Library | Pros | Cons |
 | --- | --- | --- |
-| **next-intl** | Designed for App Router, ultra-light, excellent Server Components support. | Initial configuration a bit longer. |
-| **i18next** | The vastest ecosystem, plugins for everything (backend, mobile). | Heavier, sometimes complex with Server Components. |
+| **next-intl** | Designed for App Router, ultra lightweight, excellent Server Components support. | Initial configuration a bit longer. |
+| **i18next** | Largest ecosystem, plugins for everything (backend, mobile). | Heavier, sometimes complex with Server Components. |
 | **FormatJS** | Standardized, very robust for very large projects. | More verbose. |
+
+---
+
+## 7. International SEO: The Devil is in the Details
+
+Having a `/fr` and an `/en` isn't enough. Google must understand the link between them.
+
+### Hreflang & Canonicals
+`next-sitemap` or `next-seo` don't always handle this perfectly.
+Ensure your `<head>` contains:
+```html
+<link rel="alternate" hreflang="en" href="https://site.com/en/blog" />
+<link rel="alternate" hreflang="fr" href="https://site.com/fr/blog" />
+<link rel="alternate" hreflang="x-default" href="https://site.com/en/blog" />
+```
+Without the `x-default`, Google might ignore your pages for users who speak neither FR nor EN.
+
+### Localized Images
+It is often forgotten: show a screenshot of the EN interface for English speakers, and FR for French speakers.
+
+```tsx
+const screenshot = locale === 'fr' ? '/img/app-fr.png' : '/img/app-en.png';
+<Image src={screenshot} alt={t('screenshot_alt')} />
+```
+This kind of detail increases your conversion rate by 15%.
 
 ---
 

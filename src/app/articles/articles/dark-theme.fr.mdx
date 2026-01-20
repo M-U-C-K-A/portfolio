@@ -2,22 +2,11 @@
 title: "Dark Mode : La méthode propre en 2026"
 publishedAt: "2026-01-23"
 summary: "Fini le flash blanc au chargement. Découvrez comment implémenter un mode sombre robuste avec Next.js, les Server Components et les nouvelles fonctions CSS natives."
+lang: "fr"
 tags: ["CSS", "NextJS", "UX", "WebPerf"]
-image: ""
+image: "/images/articles/aesthetic-transitions"
 ---
 
-<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
-  <img
-    src="/images/articles/aesthetic-transitions-light.png"
-    alt="Dark Theme Header"
-    className="w-full h-auto block dark:hidden"
-  />
-  <img
-    src="/images/articles/aesthetic-transitions-dark.png"
-    alt="Dark Theme Header"
-    className="w-full h-auto hidden dark:block"
-  />
-</div>
 
 Le mode sombre n'est plus une "option sympa", c'est une attente de base. Mais mal l'implémenter peut nuire à l'expérience utilisateur, notamment avec le fameux **FOUC** (*Flash of Unstyled Content*) : ce flash blanc violent qui survient pendant quelques millisecondes avant que le JavaScript ne détecte vos préférences.
 

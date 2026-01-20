@@ -4,21 +4,9 @@ publishedAt: "2026-01-23"
 summary: "No more white flash on load. Discover how to implement a robust dark mode with Next.js, Server Components, and new native CSS functions."
 lang: "en"
 tags: ["CSS", "NextJS", "UX", "WebPerf"]
-image: ""
+image: "/images/articles/aesthetic-transitions"
 ---
 
-<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
-  <img
-    src="/images/articles/aesthetic-transitions-light.png"
-    alt="Dark Theme Header"
-    className="w-full h-auto block dark:hidden"
-  />
-  <img
-    src="/images/articles/aesthetic-transitions-dark.png"
-    alt="Dark Theme Header"
-    className="w-full h-auto hidden dark:block"
-  />
-</div>
 
 Dark mode is no longer a "nice option", it is a baseline expectation. But implementing it poorly can harm the user experience, especially with the famous **FOUC** (*Flash of Unstyled Content*): that violent white flash that occurs for a few milliseconds before JavaScript detects your preferences.
 

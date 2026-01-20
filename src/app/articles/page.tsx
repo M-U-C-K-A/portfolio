@@ -11,7 +11,7 @@ export default function Articles() {
 	const { articles, about, person } = content;
 
 	return (
-		<Column maxWidth="m" className="bg-red-500" paddingTop="24">
+		<Column maxWidth="xl" paddingTop="24">
 			<Schema
 				as="webPage"
 				baseURL={baseURL}

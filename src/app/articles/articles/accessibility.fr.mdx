@@ -3,7 +3,21 @@ title: "L'accessibilité ne tue pas le design : Créer des composants complexes 
 publishedAt: "2026-01-22"
 summary: "Modales, Drag & Drop, menus imbriqués... Comment respecter les normes WCAG sans sacrifier l'esthétique de vos interfaces Next.js."
 tags: ["A11y", "Design", "React", "UX"]
+image: ""
 ---
+
+<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
+  <img
+    src="/images/articles/accessibility-wcag-light.png"
+    alt="Accessibility Header"
+    className="w-full h-auto block dark:hidden"
+  />
+  <img
+    src="/images/articles/accessibility-wcag-dark.png"
+    alt="Accessibility Header"
+    className="w-full h-auto hidden dark:block"
+  />
+</div>
 
 Une idée reçue persiste dans le monde du développement web : un site accessible serait forcément un site "moche" ou dépouillé. En 2026, avec les outils dont nous disposons, c'est un mythe qu'il est temps de déconstruire.
 
@@ -61,9 +75,80 @@ L'astuce consiste à permettre le déplacement via les touches fléchées après
 
 Inutile de réinventer la roue. Pour garantir l'accessibilité sans effort colossal, je m'appuie sur des bibliothèques "headless" qui gèrent la logique A11y tout en me laissant un contrôle total sur le style CSS :
 
-1.  **Radix UI / Shadcn UI :** Les primitives sont déjà testées pour l'accessibilité.
-2.  **React Aria (Adobe) :** Probablement la bibliothèque la plus avancée pour gérer les comportements complexes (comme le Drag & Drop).
-3.  **Headless UI (Tailwind Labs) :** Idéal pour des transitions fluides et accessibles.
+### Toolkit 2026 : Le Comparatif
+
+| Outil | Type | Meilleur pour... | Complexité |
+| :--- | :--- | :--- | :--- |
+| **Radix UI** | Primitives (Headless) | Construire son propre Design System | 🟡 Moyenne |
+| **Shadcn UI** | Composants (Copy/Paste) | Prototypage rapide & Apps SaaS | 🟢 Faible |
+| **React Aria** | Hooks & Composants | Apps très complexes (Drag&Drop, Grilles) | 🔴 Élevée |
+| **Headless UI** | Primitives simples | Projets Tailwind purs | 🟢 Faible |
+
+### Avant / Après : L'impact du code
+
+Un exemple concret vaut mille mots. Voici comment rendre un simple bouton "X" accessible.
+
+#### ❌ AVANT (Inaccessible)
+Le lecteur d'écran lira simplement "bouton", sans contexte.
+
+```tsx
+<button className="p-2 bg-red-500 rounded">
+  <IconX />
+</button>
+```
+
+#### ✅ APRÈS (Accessible)
+Le lecteur lira "Fermer la modale".
+
+```tsx
+<button
+  className="p-2 bg-red-500 rounded"
+  aria-label="Fermer la modale"
+  onClick={closeModal}
+>
+  <IconX aria-hidden="true" />
+</button>
+```
+
+---
+
+---
+
+## 4. Au-delà des Divs : Le HTML Sémantique
+
+Le premier outil d'accessibilité n'est pas ARIA, c'est le HTML.
+Un `<div>` ne dit rien. Un `<nav>` dit tout.
+
+### Les Landmarks (Points de Repère)
+Les lecteurs d'écran permettent de sauter d'une section à l'autre.
+* `<main>` : Le contenu principal (unique par page).
+* `<nav>` : Les liens de navigation majeurs.
+* `<aside>` : Contenu complémentaire (sidebar, pub).
+* `<article>` : Un contenu autonome (blog post, tweet).
+
+Remplacer vos divs par ces balises améliore instantanément la navigabilité de votre page de 50%.
+
+---
+
+## 5. Le Focus Management dans une SPA
+
+C'est LE problème des applications React/Next.js.
+Quand vous changez de page (route), le navigateur ne recharge pas. Le focus reste souvent "perdu" sur le `body` ou sur le dernier bouton cliqué (qui a peut-être disparu).
+
+### La technique du "Skip Link" et du Reset
+À chaque changement de route, vous devez idéalement remettre le focus sur le titre principal (`h1`) ou sur un conteneur `<main>` focalisable.
+
+```tsx
+// Exemple simple dans un useEffect de route
+useEffect(() => {
+  const main = document.getElementById('main-content');
+  if (main) {
+    main.focus();
+  }
+}, [pathname]); // Se déclenche quand l'URL change
+```
+
+Sans ça, l'utilisateur au clavier doit tout retabuler depuis le début à chaque clic.
 
 ---
 

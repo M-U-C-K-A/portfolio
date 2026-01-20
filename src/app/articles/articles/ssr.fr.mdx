@@ -3,7 +3,21 @@ title: "SSR & Web3 : Pourquoi le rendu serveur est le futur de la décentralisat
 publishedAt: "2026-01-21"
 summary: "Le SSR n'est pas qu'une question de SEO. C'est le pont indispensable pour rendre les dApps Web3 rapides, accessibles et indexables."
 tags: ["NextJS", "Web3", "SSR", "Performance"]
+image: ""
 ---
+
+<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
+  <img
+    src="/images/articles/ssr-web3-networks-light.png"
+    alt="SSR Header"
+    className="w-full h-auto block dark:hidden"
+  />
+  <img
+    src="/images/articles/ssr-web3-networks-dark.png"
+    alt="SSR Header"
+    className="w-full h-auto hidden dark:block"
+  />
+</div>
 
 Pendant longtemps, le Web3 a été synonyme de "Single Page Applications" (SPA) un peu lentes. On arrivait sur un site, on voyait un loader pendant 5 secondes le temps que le JavaScript se réveille et interroge la blockchain.
 
@@ -62,6 +76,67 @@ Le SSR ne se limite plus à Next.js. Voici les acteurs majeurs :
 
 ---
 
+## 4. Le Grand Malentendu : L'Hydratation
+
+Le SSR a un "côté obscur" qu'il faut connaître : la vallée de l'étrange (Uncanny Valley).
+
+Votre serveur envoie le HTML (le site a l'air prêt), mais le JavaScript n'a pas encore pris le relais.
+* **Résultat :** L'utilisateur voit un bouton, clique dessus... et rien ne se passe.
+
+### La solution : Progressive Hydration
+Avec React 19 et Next.js, on ne bloque plus toute la page. L'hydratation se fait par "îlots" de priorité. React va hydrater en priorité les composants visibles ou ceux avec lesquels l'utilisateur tente d'interagir.
+
+---
+
+## 5. Streaming & Suspense : Ne bloquez pas le thread !
+
+C'est l'erreur numéro 1 des juniors en 2026. Attendre que TOUTES les données soient prêtes avant d'envoyer le HTML.
+
+Si votre API de prix crypto met 3 secondes à répondre, votre utilisateur voit une page blanche pendant 3 secondes. Avec le Streaming, on envoie le squelette de la page *immédiatement*, et on "stream" le prix quand il arrive.
+
+```tsx
+import { Suspense } from 'react'
+import { PriceTicker } from './PriceTicker'
+import { PriceSkeleton } from './skeletons'
+
+export default function Dashboard() {
+  return (
+    <main>
+      <h1>Mon Dashboard Crypto</h1>
+
+      {/* Le reste de la page s'affiche tout de suite */}
+      <section>
+        <h2>Mes Assets</h2>
+        {/* Seul ce bloc affichera un loader */}
+        <Suspense fallback={<PriceSkeleton />}>
+          <PriceTicker />
+        </Suspense>
+      </section>
+    </main>
+  )
+}
+```
+
+---
+
+## 6. Edge vs Node.js : Où exécuter votre SSR ?
+
+En 2026, vous avez deux endroits pour faire votre rendu serveur :
+
+### 1. Node.js (Serverless Lambda)
+* **C'est quoi ?** Un vrai petit serveur Linux qui démarre pour chaque requête.
+* **Avantages :** Accès à tout l'écosystème Node (fs, bases de données classiques avec drivers lourds).
+* **Inconvénients :** Cold starts (démarrage lent si l'app n'est pas utilisée).
+
+### 2. The Edge (Cloudflare Workers, Vercel Edge)
+* **C'est quoi ?** Du JavaScript V8 qui tourne directement sur les CDN, au plus près de l'utilisateur.
+* **Avantages :** Latence nulle (0ms cold start).
+* **Inconvénients :** Pas de `fs`, pas de TCP direct (besoin de drivers DB compatibles HTTP/WebSocket).
+
+**Verdict Web3 :** Le Edge est parfait pour vérifier une signature de wallet ou rediriger un utilisateur, mais pour le rendu d'une page lourde, Node.js reste plus robuste.
+
+---
+
 ## 4. Comment ça s'inscrit dans le Web3 ?
 
 Le défi du Web3, c'est que la donnée est **décentralisée**.
@@ -72,6 +147,17 @@ Dans une architecture SSR moderne, votre serveur Next.js agit comme un **agréga
 
 ### L'accessibilité : Le bonus caché
 En tant que dev sensible à l'accessibilité (A11y), le SSR est mon meilleur ami. Si le JavaScript plante ou met trop de temps à charger, l'utilisateur a quand même accès aux informations textuelles essentielles. C'est ce qu'on appelle la **dégradation élégante**.
+
+---
+
+## 5. Le Futur Proche : Partial Prerendering (PPR)
+
+Plus besoin de choisir entre Statique et Dynamique. Le PPR permet de livrer une coquille vide statique (ultra rapide) du CDN, puis de "streamer" les trous dynamiques.
+
+* **La Coquille :** Header, Footer, Sidebar (Statique, Instantané).
+* **Le Contenu :** Liste des NFTs, Prix (Dynamique, Streamé).
+
+C'est le meilleur des deux mondes.
 
 ---
 

@@ -3,7 +3,21 @@ title: "Atomic Design : Structurer vos projets Next.js pour l'éternité"
 publishedAt: "2026-01-26"
 summary: "Marre des dossiers 'components' qui débordent ? Découvrez comment la méthodologie Atomic Design permet de créer des systèmes UI robustes et maintenables."
 tags: ["Architecture", "DesignSystem", "React", "NextJS"]
+image: ""
 ---
+
+<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
+  <img
+    src="/images/articles/atomic-design-light.png"
+    alt="Atomic Design Header"
+    className="w-full h-auto block dark:hidden"
+  />
+  <img
+    src="/images/articles/atomic-design-dark.png"
+    alt="Atomic Design Header"
+    className="w-full h-auto hidden dark:block"
+  />
+</div>
 
 Lorsqu'on débute un projet, on crée souvent un dossier `components` et on y jette tout en vrac : boutons, navbars, modales, formulaires. Six mois plus tard, le projet devient un labyrinthe ingérable.
 
@@ -67,7 +81,49 @@ src/
 
 ---
 
-## 3. Pourquoi c'est un "game changer" pour un développeur Front ?
+## 3. Le Cas Pratique : Atomic Design & Shadcn UI
+
+En théorie, l'Atomic Design est limpide. En pratique, et particulièrement avec la popularité de **Shadcn UI** en 2026, une question revient constamment : "Où je mets mes composants shadcn ?"
+
+### Le conflit "Flat" vs "Nested"
+Shadcn propose par défaut une structure plate : tous les composants UI vont dans `components/ui`. Cela semble aller à l'encontre de la hiérarchie atomique. Pourtant, c'est une évolution pragmatique.
+
+### L'approche Hybride (Recommandée)
+Au lieu de forcer Shadcn dans des dossiers `atoms/` ou `molecules/`, considérez le dossier `ui` comme votre dossier d'atomes spécialisés.
+
+#### Structure de dossiers comparée
+
+```text
+src/
+  components/
+    ui/                <-- VOS ATOMES (Button, Input, Card...)
+      button.tsx
+      card.tsx
+    domain/            <-- VOS MOLÉCULES & ORGANISMES
+      auth/
+        login-form.tsx      (Molécule)
+      dashboard/
+        stats-grid.tsx      (Organisme)
+        sidebar.tsx         (Organisme)
+    layout/            <-- VOS TEMPLATES
+      page-shell.tsx
+```
+
+### Shadcn comme bibliothèque d'Atomes
+Les composants que vous installez via `npx shadcn@latest add ...` sont techniquement des atomes ou des molécules très simples.
+* **Button, Badge, Skeleton** = Atomes purs.
+* **Card, Accordion, Sheet** = Molécules composites (elles ont une structure interne).
+
+### Tableau comparatif : Strict vs Pragmatique
+
+| Critère | Approche Stricte (Brad Frost) | Approche "Shadcn Modern" |
+| :--- | :--- | :--- |
+| **Dossier racine** | `src/components/atoms`, `molecules`... | `src/components/ui` + `src/components/layout` |
+| **Complexité** | Élevée (beaucoup de dossiers) | Faible (colocation par feature) |
+| **Maintenance** | Difficile si mal définie | Facile (tout est plat ou par domaine) |
+| **Scalabilité** | Bonne pour les Design Systems géants | Excellente pour les apps SaaS |
+
+---
 
 1. **Cohérence Visuelle :** En modifiant l'atome `Button`, vous mettez à jour l'ensemble du site instantanément.
 2. **Communication avec les Designers :** Si votre équipe utilise Figma, vous parlez enfin le même langage. Les designers créent des "composants", vous créez des "atomes".
@@ -85,6 +141,49 @@ src/
 | **Organismes** | Molécules + Atomes | ✅ Oui | 🟠 Moyenne |
 | **Templates** | Squelette de page | ❌ Aucune | 🔴 Faible |
 | **Pages** | Données réelles, API | ✅ Totale | ❌ Unique |
+
+---
+
+## 5. Design Patterns Avancés : Le State Management
+
+L'erreur numéro 1 en Atomic Design est de vouloir rendre les composants "intelligents" trop tôt.
+
+### La règle du "Smart vs Dumb"
+* **Molecules & Atoms (Dumb) :** Ils reçoivent des données via `props` et émettent des événements via `callbacks`. Ils n'ont AUCUNE dépendance externe (pas de `useAuth`, pas de `fetch`).
+* **Organisms (Smart/Dumb) :** C'est la zone grise. Un `Header` peut être connecté à un store pour afficher l'utilisateur courant, mais idéalement, il devrait recevoir l'user en prop.
+* **Templates & Pages (Smart) :** C'est ici que vous connectez **Zustand**, **Redux**, ou **React Query**.
+
+### Exemple : UserCard (Organism)
+```tsx
+// ❌ MAUVAIS : L'organisme est couplé à l'API
+export const UserCard = () => {
+  const { data } = useQuery('user', fetchUser);
+  return <div>{data.name}</div>
+}
+
+// ✅ BON : L'organisme est pur, la Page fait l'injection
+export const UserCard = ({ user }) => (
+  <div>{user.name}</div>
+)
+
+// Dans la page
+export default function ProfilePage() {
+  const { data } = useQuery('user', fetchUser);
+  return <UserCard user={data} />
+}
+```
+
+---
+
+## 6. La Clé du Succès : Storybook
+
+Atomic Design sans documentation, c'est comme une bibliothèque sans étiquettes. **Storybook** est l'outil qui permet de développer vos atomes en isolation.
+
+1. **Développement Isolé :** Plus besoin de lancer toute l'app pour coder un bouton.
+2. **Visual Testing :** Vérifiez automatiquement qu'un commit n'a pas cassé le style de votre `DatePicker`.
+3. **Catalogue pour Designers :** Vos designers peuvent voir *exactement* ce qui est codé en production.
+
+Si vous ne documentez pas vos molécules, vos développeurs finiront par recoder 10 fois le même composant.
 
 ---
 

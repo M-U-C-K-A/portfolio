@@ -1,129 +1,137 @@
 ---
-title: "Dark Mode : La méthode propre en 2026"
-publishedAt: "2026-01-23"
-summary: "Fini le flash blanc au chargement. Découvrez comment implémenter un mode sombre robuste avec Next.js, les Server Components et les nouvelles fonctions CSS natives."
-tags: ["CSS", "NextJS", "UX", "WebPerf"]
+title: "Performance Next.js : Le guide ultime pour des Core Web Vitals à 100/100"
+publishedAt: "2026-01-24"
+summary: "LCP, CLS, et le petit nouveau INP... Découvrez comment tirer parti des fonctionnalités de Next.js pour offrir une expérience utilisateur ultra-fluide."
+tags: ["NextJS", "Performance", "WebPerf", "SEO"]
+image: ""
 ---
 
-Le mode sombre n'est plus une "option sympa", c'est une attente de base. Mais mal l'implémenter peut nuire à l'expérience utilisateur, notamment avec le fameux **FOUC** (*Flash of Unstyled Content*) : ce flash blanc violent qui survient pendant quelques millisecondes avant que le JavaScript ne détecte vos préférences.
+<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
+  <img
+    src="/images/articles/core-web-vitals-light.png"
+    alt="Core Web Vitals Header"
+    className="w-full h-auto block dark:hidden"
+  />
+  <img
+    src="/images/articles/core-web-vitals-dark.png"
+    alt="Core Web Vitals Header"
+    className="w-full h-auto hidden dark:block"
+  />
+</div>
 
-En 2026, nous avons des outils natifs pour régler ça proprement.
+En 2026, la performance n'est plus un "bonus", c'est le socle de l'expérience utilisateur et du SEO. Google ne se contente plus de mesurer si votre site est rapide, il mesure s'il est **stable** et **réactif**.
 
----
-
-## 1. La fondation : `color-scheme`
-
-Avant même d'écrire votre première variable CSS, vous devez informer le navigateur que votre site supporte les deux modes. Cela permet au navigateur d'adapter les éléments natifs (barres de défilement, boutons par défaut, formulaires).
-
-```css
-:root {
-  /* Indique au navigateur que le site supporte les deux modes */
-  color-scheme: light dark;
-}
-
-```
-
-Cette simple ligne change la donne : si l'utilisateur est en mode sombre, le fond de page par défaut devient noir et le texte blanc, même avant que votre CSS ne soit totalement chargé.
-
----
-
-## 2. La révolution : La fonction `light-dark()`
-
-Oubliez les sélecteurs complexes `.dark-mode` à rallonge. Le CSS moderne nous offre la fonction `light-dark(valeur-claire, valeur-sombre)`.
-
-```css
-:root {
-  --bg-color: light-dark(#ffffff, #0f172a);
-  --text-color: light-dark(#1e293b, #f8fafc);
-  --accent: #3b82f6;
-}
-
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
-```
-
-Le navigateur choisit automatiquement la bonne valeur en fonction de la propriété `color-scheme` de l'élément. C'est propre, lisible et ultra-performant.
+Next.js offre des outils puissants, mais mal utilisés, ils peuvent dégrader vos scores. Décortiquons les trois piliers des Core Web Vitals (CWV) et comment les dompter.
 
 ---
 
-## 3. Éviter le "Flash Blanc" dans Next.js
+## 1. LCP (Largest Contentful Paint) : La vitesse perçue
 
-Le problème du flash survient quand le serveur rend du HTML "neutre" (blanc) et que le client doit attendre le chargement du JS pour appliquer la classe `.dark`.
+Le LCP mesure le temps nécessaire pour afficher le plus grand élément visible (souvent l'image de hero ou un titre H1).
 
-### La solution 2026 : Le script bloquant critique
+### Optimiser les images avec `next/image`
+L'erreur classique est de laisser le navigateur découvrir l'image trop tard.
+* **La propriété `priority` :** Ajoutez-la systématiquement à votre image de Hero. Cela ajoute une balise `preload` dans le HTML pour que le téléchargement commence avant même que le CSS ne soit lu.
+* **Le placeholder 'blur' :** Utilisez `placeholder="blur"` pour améliorer le LCP perçu en affichant une version très légère de l'image immédiatement.
 
-La méthode la plus fiable reste d'injecter un petit script inline dans le `<head>` de votre fichier `layout.tsx`. Ce script s'exécute **avant** que le reste de la page ne soit dessiné.
+### Le chargement des polices avec `next/font`
+Les polices sont souvent responsables d'un retard du LCP. `next/font` auto-héberge vos polices et utilise la propriété CSS `size-adjust` pour que la police système et la police finale prennent la même place, évitant ainsi un recalcul du layout.
+
+
+
+---
+
+## 2. CLS (Cumulative Layout Shift) : La stabilité visuelle
+
+Rien n'est plus frustrant qu'un bouton qui bouge au moment où l'on va cliquer dessus. Le CLS mesure ces décalages inattendus.
+
+### Réserver l'espace pour le contenu dynamique
+Si vous affichez des bannières publicitaires ou des listes chargées côté client, vous **devez** réserver l'espace à l'avance.
+* **Aspect Ratio :** Utilisez des conteneurs avec un ratio d'aspect fixe (`aspect-ratio: 16 / 9`) ou des squelettes de chargement (Skeletons).
+* **Suspense & Streaming :** Avec Next.js, utilisez `Suspense`. Le serveur envoie d'abord les parties statiques de la page, et "stream" les composants lourds une fois prêts, sans décaler le reste du contenu.
 
 ```tsx
-// Dans votre RootLayout
-<head>
-  <script
-    dangerouslySetInnerHTML={{
-      __html: `
-        try {
-          if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark')
-          } else {
-            document.documentElement.classList.remove('dark')
-          }
-        } catch (_) {}
-      `,
-    }}
-  />
-</head>
+// Exemple de streaming pour éviter le CLS
+<Suspense fallback={<SkeletonChart />}>
+  <SlowDataChart />
+</Suspense>
 
 ```
 
-Grâce aux **Server Components** de Next.js, ce script est envoyé tel quel dans le HTML initial, garantissant une transition invisible.
+---
+
+## 3. INP (Interaction to Next Paint) : La réactivité
+
+L'INP a officiellement remplacé le FID (First Input Delay). Il mesure le délai entre une interaction (clic, touche clavier) et la réponse visuelle du navigateur.
+
+### Minimiser le temps de blocage du Main Thread
+
+Le coupable principal de l'INP est l'exécution trop longue du JavaScript (Hydratation).
+
+* **Server Components (RSC) :** En utilisant les RSC par défaut, vous envoyez moins de JS au client. Moins de JS = un thread principal plus libre pour répondre aux clics.
+* **`useTransition` :** Pour les mises à jour d'état lourdes (ex: filtrer une longue liste), utilisez le hook `useTransition`. Il permet de marquer une mise à jour comme non prioritaire, laissant le champ libre aux interactions urgentes.
 
 ---
 
-## 4. Accessibilité et Mode Sombre
+## 4. Les Outils Pro pour Debugger
 
-Le mode sombre n'est pas qu'une question d'esthétique, c'est aussi une question de confort visuel.
+Lighthouse ne suffit pas. Pour comprendre pourquoi votre INP est mauvais, il faut aller plus loin.
 
-* **Contrastes :** Vérifiez que vos contrastes restent conformes aux normes WCAG en mode sombre. Parfois, un bleu qui passe bien sur blanc devient illisible sur un fond gris foncé.
-* **Images :** Pensez à réduire légèrement la luminosité des images trop claires en mode sombre pour ne pas éblouir l'utilisateur.
+### 1. Chrome Performance Tab (Le Flamegraph)
+C'est l'outil ultime.
+* **Recording :** Enregistrez une session de 10s.
+* **Main Thread :** Cherchez les barres rouges. Si une barre fait > 50ms, c'est une "Long Task" qui bloque l'INP.
+* **Layout Shifts :** Visualisez exactement quel élément a bougé et à quel frame.
 
-```css
-.dark img {
-  filter: brightness(0.8) contrast(1.1);
+### 2. CrUX (Chrome User Experience Report)
+Ce sont les "vraies" données récoltées anonymement par Google sur les utilisateurs Chrome.
+* **Pourquoi c'est vital ?** Vous pouvez avoir 100/100 sur votre MacBook Pro (connexion Fibre), mais vos utilisateurs sur Android à 200€ en 4G ont une expérience terrible. CrUX vous montre la vérité.
+
+---
+
+## 5. Stratégies de Caching et Rendu
+
+Le choix de votre stratégie de rendu impacte directement le **TTFB** (Time to First Byte), qui conditionne tout le reste.
+
+| Stratégie | Impact CWV | Cas d'usage |
+| --- | --- | --- |
+| **Static Export** | 🚀 Ultra-rapide | Documentation, Blog |
+| **ISR (Incremental)** | 🟢 Excellent | E-commerce, Catalogues |
+| **SSR (Server Side)** | 🟠 Variable (dépend du serveur) | Pages personnalisées, Dashboards |
+| **PPR (Partial Prerendering)** | 💎 Le futur (Next 15+) | Mix de statique et dynamique |
+
+**PPR (Partial Prerendering) :** C'est la nouveauté majeure. Next.js pré-génère une coquille statique de votre page (LCP et CLS parfaits) et injecte les trous dynamiques au fur et à mesure.
+
+---
+
+## 5. Mesurer pour progresser
+
+Ne devinez pas, mesurez. Intégrez le composant `<SpeedInsights />` de Vercel dans votre `layout.tsx`. Il vous permet de voir les scores réels de vos utilisateurs (Real User Monitoring - RUM) directement dans votre dashboard, ce qui est bien plus précis que les tests synthétiques de Lighthouse.
+
+```tsx
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
+export default function Layout({ children }) {
+  return (
+    <html lang="fr">
+      <body>
+        {children}
+        <SpeedInsights />
+      </body>
+    </html>
+  )
 }
 
 ```
-
----
-
-## 5. Tableau comparatif des méthodes
-
-| Méthode | Performance | Complexité | Suppression du Flash |
-| --- | --- | --- | --- |
-| **Classes CSS simples** | 🟠 Moyen | ⭐ | ❌ Non |
-| **Media Queries (`@prefers-color-scheme`)** | 🚀 Excellente | ⭐⭐ | ✅ Oui |
-| **light-dark() + Script Inline** | 🚀 Maximale | ⭐⭐⭐ | ✅ Oui (Recommandé) |
-| **Context API (JS pur)** | 🔴 Faible | ⭐⭐ | ❌ Non |
 
 ---
 
 ## Conclusion
 
-En 2026, la gestion du thème doit être **invisible**. En combinant la puissance de Next.js pour l'injection de scripts critiques et les nouvelles fonctions CSS comme `light-dark()`, on obtient un système robuste, performant et respectueux des préférences de l'utilisateur.
+Optimiser les Core Web Vitals sur Next.js demande une approche holistique :
 
-Votre site ne doit pas simplement "avoir un mode sombre", il doit "être conçu pour la lumière et l'obscurité".
+1. **Prioriser** les ressources critiques (images, polices).
+2. **Stabiliser** l'interface via le Streaming et les placeholders.
+3. **Alléger** le client en déportant la logique sur les Server Components.
 
-```
-
----
-
-### Quelle est la suite pour ton blog ?
-Nous avons déjà couvert :
-1. Les API (REST, GraphQL, etc.)
-2. Les couleurs (OKLCH & Gradients)
-3. Le SSR & Web3
-4. L'accessibilité (Modales & D&D)
-5. Le Dark Mode
-
-**Souhaites-tu que nous passions à l'article sur l'optimisation des "Core Web Vitals" ou celui sur "l'Atomic Design" ?**
+En suivant ces principes, vous ne construisez pas seulement un site qui plaît aux algorithmes de Google, vous construisez un produit fluide et agréable pour vos utilisateurs.

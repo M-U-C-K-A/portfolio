@@ -3,7 +3,21 @@ title: "Sortir de la zone grise : Maîtriser les dégradés avec OKLCH et le CSS
 publishedAt: "2026-01-20"
 summary: "Pourquoi vos dégradés CSS ont-ils parfois l'air ternes ? Plongée dans les espaces de couleurs, de l'antique RGB au révolutionnaire OKLCH."
 tags: ["Design", "CSS", "Frontend", "Accessibility"]
+image: ""
 ---
+
+<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
+  <img
+    src="/images/articles/gradient-oklch-light.png"
+    alt="Gradients Header"
+    className="w-full h-auto block dark:hidden"
+  />
+  <img
+    src="/images/articles/gradient-oklch-dark.png"
+    alt="Gradients Header"
+    className="w-full h-auto hidden dark:block"
+  />
+</div>
 
 On a tous déjà essayé de faire un dégradé entre deux couleurs vibrantes, comme un bleu profond et un jaune éclatant, pour finir avec une bande de gris tout moche au milieu.
 
@@ -77,6 +91,28 @@ Grâce au CSS moderne, on peut dire au navigateur dans quel espace de couleur il
 
 ---
 
+## 4. Niveau Expert : Les "Mesh Gradients"
+
+Vous avez vu ces fonds magnifiques sur Stripe ou Apple qui semblent bouger comme de la fumée ? Ce sont des **Mesh Gradients**.
+
+Contrairement à un dégradé linéaire (point A vers point B), un Mesh Gradient utilise plusieurs points de couleur flottant dans un espace 2D.
+
+### Comment les recréer en CSS ?
+L'astuce consiste à superposer plusieurs `radial-gradient` avec des positions variées et du flou.
+
+```css
+.mesh-gradient {
+  background-color: #000;
+  background-image:
+    radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+  filter: blur(100px); /* Le secret est ici */
+}
+```
+
+---
+
 ## 4. Tableau comparatif : Quel espace choisir ?
 
 | Espace | Perception Humaine | Facilité de code | Support Navigateur | Cas d'usage |
@@ -93,6 +129,20 @@ Grâce au CSS moderne, on peut dire au navigateur dans quel espace de couleur il
 En utilisant **OKLCH**, vous pouvez générer des palettes de couleurs entières de manière programmatique tout en garantissant le contraste.
 
 Si votre texte est blanc sur un fond avec une Luminance (L) de 30%, il restera lisible que le fond soit bleu, rouge ou vert. En HSL, ce serait impossible à garantir sans ajustements manuels.
+
+---
+
+## 6. Performance & Accessibilité
+
+Un dégradé c'est beau, mais ça peut tuer votre CPU.
+
+### Animer sans laguer
+N'animez jamais `background-position` sur un dégradé géant, c'est un repeint complet à chaque frame.
+* **Astuce :** Mettez le dégradé dans un `::before` et animez `transform: translate()` ou `opacity`. Le GPU gère ces propriétés nativement.
+
+### Texte sur dégradé : Le test WCAG
+Écrire en blanc sur un dégradé changeant est risqué.
+* **Solution :** Ajoutez toujours un léger `text-shadow: 0 1px 2px rgba(0,0,0,0.2)` pour détacher le texte du fond, quelle que soit la couleur derrière.
 
 ---
 

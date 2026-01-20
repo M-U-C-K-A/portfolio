@@ -3,7 +3,21 @@ title: "REST, GraphQL, WebSockets... Le guide ultime des architectures d'API en 
 publishedAt: "2026-01-19"
 summary: "Marre de confondre REST et GraphQL ? Vous hésitez entre WebSockets et SSE ? On décortique chaque techno avec des dialogues concrets pour choisir la bonne stack."
 tags: ["Architecture", "API", "NextJS", "Fullstack", "Web3"]
+image: ""
 ---
+
+<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
+  <img
+    src="/images/articles/api-integration-light.png"
+    alt="API Architecture Header"
+    className="w-full h-auto block dark:hidden"
+  />
+  <img
+    src="/images/articles/api-integration-dark.png"
+    alt="API Architecture Header"
+    className="w-full h-auto hidden dark:block"
+  />
+</div>
 
 Choisir comment vos données circulent entre le client et le serveur est l'une des décisions les plus critiques d'un projet. C'est le système nerveux de votre application.
 
@@ -110,7 +124,78 @@ Très utilisé en microservices ou dans le Web3 pour la vitesse. On utilise des 
 
 ---
 
-## Le Grand Comparatif : Quelle techno pour quel besoin ?
+## 8. Le Cas Pratique 2026 : Server Actions & tRPC
+
+Avec l'avènement des **React Server Components (RSC)**, la frontière entre clic et requête s'efface.
+
+### Server Actions : La méthode "Magique"
+Plus d'API route à déclarer manuellement. Vous importez une fonction serveur directement dans votre composant client.
+
+```tsx
+// actions.ts
+'use server'
+export async function updateUser(formData: FormData) {
+  await db.user.update(...)
+}
+
+// Button.tsx
+import { updateUser } from './actions'
+<form action={updateUser}>
+  <button>Save</button>
+</form>
+```
+* **Avantage :** Vitesse de dév fulgurante. Pas de glue code.
+* **Inconvénient :** Difficile à exposer à des clients externes (Mobile, Public).
+
+### tRPC : La méthode "Type-Safe"
+Si vous aimez TypeScript, tRPC est une religion. Le backend exporte ses types, et le frontend les consomme. Si vous changez le nom d'un champ côté serveur, votre IDE devient rouge côté client instantanément.
+
+### Comparatif Stacks Modernes
+
+| Critère | API Rest Classique | Next.js Server Actions | tRPC |
+| :--- | :--- | :--- | :--- |
+| **Typage** | Manuel (Zod/Swagger) | Automatique (Partiel) | 🚀 Parfait (End-to-end) |
+| **Vitesse Dév** | 🐢 Lente | 🚀 Très Rapide | 🐇 Rapide |
+| **Payload** | JSON lourd | Binaire optimisé (RSC) | JSON optimisé |
+| **Client Externe** | ✅ Facile | ❌ Compliqué | 🟠 Possible mais spécifique |
+
+---
+
+## 9. Sécurité : Rate Limiting & Auth
+
+Ouvrir une API, c'est ouvrir une porte. Il faut un vigile.
+
+### Le Rate Limiting (Le Vigile)
+Empêcher un script de spammer votre API est vital.
+Dans le monde Serverless (Vercel/Cloudflare), on utilise souvent **Upstash (Redis)** pour implémenter un "Leaky Bucket".
+
+```tsx
+// Middleware Next.js (Conceptuel)
+import { Ratelimit } from "@upstash/ratelimit";
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, "10 s"), // 10 requêtes par 10s
+});
+
+export async function middleware(req) {
+  const ip = req.ip ?? "127.0.0.1";
+  const { success } = await ratelimit.limit(ip);
+
+  if (!success) {
+    return new Response("Trop de requêtes", { status: 429 });
+  }
+}
+```
+
+### Auth : JWT vs Session (Le Débat Éternel)
+Avec l'App Router de Next.js, la tendance revient aux **Sessions (Cookies HttpOnly)** gérées par des librairies comme **Lucia Auth** ou **NextAuth v5**. Pourquoi ?
+* **JWT (Stateless) :** Bien pour les microservices, mais on ne peut pas les révoquer facilement.
+* **Session (Database) :** Plus sûr, révocation instantanée (idéal pour un bouton "Se déconnecter de tous les appareils").
+
+---
+
+## Conclusion
 
 | Technologie | Efficacité | Difficulté Setup | Stack recommandée | Cas d'usage idéal |
 | :--- | :--- | :--- | :--- | :--- |

@@ -3,7 +3,21 @@ title: "Dark Mode : La méthode propre en 2026"
 publishedAt: "2026-01-23"
 summary: "Fini le flash blanc au chargement. Découvrez comment implémenter un mode sombre robuste avec Next.js, les Server Components et les nouvelles fonctions CSS natives."
 tags: ["CSS", "NextJS", "UX", "WebPerf"]
+image: ""
 ---
+
+<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
+  <img
+    src="/images/articles/aesthetic-transitions-light.png"
+    alt="Dark Theme Header"
+    className="w-full h-auto block dark:hidden"
+  />
+  <img
+    src="/images/articles/aesthetic-transitions-dark.png"
+    alt="Dark Theme Header"
+    className="w-full h-auto hidden dark:block"
+  />
+</div>
 
 Le mode sombre n'est plus une "option sympa", c'est une attente de base. Mais mal l'implémenter peut nuire à l'expérience utilisateur, notamment avec le fameux **FOUC** (*Flash of Unstyled Content*) : ce flash blanc violent qui survient pendant quelques millisecondes avant que le JavaScript ne détecte vos préférences.
 
@@ -81,7 +95,59 @@ Grâce aux **Server Components** de Next.js, ce script est envoyé tel quel dans
 
 ---
 
-## 4. Accessibilité et Mode Sombre
+### Comprendre le Flux de Résolution
+
+Voici ce qui se passe exactement quand un utilisateur arrive sur votre site.
+
+```mermaid
+graph TD
+    A[Requête Client] --> B[Serveur Next.js]
+    B -->|Génère HTML| C{Script Bloquant présent ?}
+    C -->|Non| D[HTML Neutre affiché]
+    D --> E[Flash Blanc (FOUC) 😱]
+    D --> F[Hydration JS]
+    F --> G[Application du Thème]
+
+    C -->|Oui| H[Exécution Script Head]
+    H -->|Lit localStorage/OS| I[Ajoute classe 'dark']
+    I --> J[Affichage HTML (Déjà sombre) 😎]
+```
+
+---
+
+## 4. Architecture : Les "Semantic Tokens"
+
+Ne hardcodez jamais des couleurs hex en mode sombre (#000). Utilisez une couche d'abstraction.
+
+### Niveau 1 : Primitive Tokens
+C'est votre palette brute.
+```css
+:root {
+  --blue-500: #3b82f6;
+  --slate-100: #f1f5f9;
+  --slate-900: #0f172a;
+}
+```
+
+### Niveau 2 : Semantic Tokens (Abstrait)
+C'est ce que vous utilisez dans vos composants. Ils changent selon le thème.
+```css
+:root {
+  --bg-primary: var(--slate-100);
+  --text-primary: var(--slate-900);
+}
+
+[data-theme='dark'] {
+  --bg-primary: var(--slate-900);
+  --text-primary: var(--slate-100);
+}
+```
+
+**Avantage :** Si demain vous voulez changer le "Bleu" de votre marque, vous ne touchez qu'aux Primitives. Si vous voulez ajuster le contraste du mode sombre, vous ne touchez qu'aux Semantics.
+
+---
+
+## 5. Accessibilité et Mode Sombre
 
 Le mode sombre n'est pas qu'une question d'esthétique, c'est aussi une question de confort visuel.
 

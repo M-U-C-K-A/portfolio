@@ -52,3 +52,11 @@
   --scheme-neutral-600-50: rgba(137,152,159,0.5);
   /*
 }*/
+
+[data-theme='light'] .dark-only {
+  display: none !important;
+}
+
+[data-theme='dark'] .light-only {
+  display: none !important;
+}

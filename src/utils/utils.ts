@@ -104,8 +104,8 @@ function getMDXData(dir: string, language: Language = "fr") {
   const posts: Array<{ metadata: Metadata; slug: string; content: string }> = [];
 
   groupedFiles.forEach((files, baseSlug) => {
-    // Prefer the requested language, fall back to other language
-    const fileToUse = files[language] || files.fr || files.en;
+    // Strictly prefer the requested language
+    const fileToUse = files[language];
 
     if (fileToUse) {
       const { metadata, content } = readMDXFile(path.join(dir, fileToUse));

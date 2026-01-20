@@ -1,19 +1,26 @@
 ---
-title: "Atomic Design: Structuring Your Next.js Projects for Eternity"
+title: "Atomic Design: Structuring your Next.js projects for eternity"
 publishedAt: "2026-01-26"
 summary: "Tired of overflowing 'components' folders? Discover how the Atomic Design methodology allows you to create robust and maintainable UI systems."
+lang: "en"
 tags: ["Architecture", "DesignSystem", "React", "NextJS"]
 image: ""
 ---
 
-<div className="block dark:hidden">
-  ![Atomic Design Header](/images/articles/atomic-design-light.png)
-</div>
-<div className="hidden dark:block">
-  ![Atomic Design Header](/images/articles/atomic-design-dark.png)
+<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
+  <img
+    src="/images/articles/atomic-design-light.png"
+    alt="Atomic Design Header"
+    className="w-full h-auto block dark:hidden"
+  />
+  <img
+    src="/images/articles/atomic-design-dark.png"
+    alt="Atomic Design Header"
+    className="w-full h-auto hidden dark:block"
+  />
 </div>
 
-When starting a project, we often create a `components` folder and throw everything in there: buttons, navbars, modals, forms. Six months later, the project becomes an unmanageable maze.
+When starting a project, we often create a `components` folder and throw everything in there: buttons, navbars, modals, forms. Six months later, the project becomes an unmanageable labyrinth.
 
 **Atomic Design**, conceptualized by Brad Frost, proposes an approach modeled on chemistry to organize our interfaces logically and hierarchically.
 
@@ -21,7 +28,7 @@ When starting a project, we often create a `components` folder and throw everyth
 
 ## 1. The 5 Levels of Atomic Design
 
-The idea is to start from the smallest element (the atom) to build increasingly complex sets.
+The idea is to start from the smallest element (the atom) to build increasingly complex ensembles.
 
 ### A. Atoms
 These are the indivisible building blocks of your UI. They cannot be broken down without losing their function.
@@ -29,9 +36,9 @@ These are the indivisible building blocks of your UI. They cannot be broken down
 * **Golden Rule:** An atom is often very generic and reusable everywhere.
 
 ### B. Molecules
-A molecule is a group of atoms bonded together. This is where the interface starts to come alive with a specific function.
+A molecule is a group of atoms bonded together. This is where the interface begins to come alive with a specific function.
 * **Example:** A search field (Label + Input + Button).
-* **Golden Rule:** A molecule must remain simple and focus on a single task (single responsibility principle).
+* **Golden Rule:** A molecule must remain simple and focus on a single task (the single responsibility principle).
 
 ### C. Organisms
 These are complex sections of the interface, composed of molecules and/or atoms. They form a distinct part of the page.
@@ -39,11 +46,11 @@ These are complex sections of the interface, composed of molecules and/or atoms.
 * **Golden Rule:** Organisms are often the elements that are most easily moved from one template to another.
 
 ### D. Templates
-At this stage, we abandon the chemical metaphor. A template is a layout that defines the page structure without the final content.
+At this stage, we abandon the chemical metaphor. A template is a layout that defines the structure of the page without the final content.
 * **Golden Rule:** We use "placeholders" to visualize the hierarchy and content zones.
 
 ### E. Pages
-This is the final instance. We inject real data (from your API or CMS) into the templates. This is where we test the design's effectiveness with real text and real images.
+This is the final instance. We inject real data (from your API or CMS) into the templates. This is where we test the effectiveness of the design with real text and real images.
 
 ---
 
@@ -67,7 +74,8 @@ src/
       DashboardLayout.tsx
   app/
     dashboard/
-      page.tsx (The Page consuming the Template)
+      page.tsx (The Page that consumes the Template)
+
 ```
 
 ---
@@ -77,7 +85,7 @@ src/
 In theory, Atomic Design is crystal clear. In practice, and particularly with the popularity of **Shadcn UI** in 2026, a question constantly comes up: "Where do I put my shadcn components?"
 
 ### The "Flat" vs "Nested" Conflict
-Shadcn defaults to a flat structure: all UI components go into `components/ui`. This seems to go against atomic hierarchy. Yet, it is a pragmatic evolution.
+Shadcn by default proposes a flat structure: all UI components go into `components/ui`. This seems to go against atomic hierarchy. However, it is a pragmatic evolution.
 
 ### The Hybrid Approach (Recommended)
 Instead of forcing Shadcn into `atoms/` or `molecules/` folders, consider the `ui` folder as your folder of specialized atoms.
@@ -100,32 +108,32 @@ src/
       page-shell.tsx
 ```
 
-### Shadcn as an Atom Library
-The components you install via `npx shadcn@latest add ...` are technically very simple atoms or molecules.
+### Shadcn as a Library of Atoms
+The components you install via `npx shadcn@latest add ...` are technically atoms or very simple molecules.
 * **Button, Badge, Skeleton** = Pure Atoms.
 * **Card, Accordion, Sheet** = Composite Molecules (they have internal structure).
 
-### Comparison Table: Strict vs Pragmatic
+### Comparative Table: Strict vs Pragmatic
 
-| Criterion | Strict Approach (Brad Frost) | "Shadcn Modern" Approach |
+| Criteria | Strict Approach (Brad Frost) | "Shadcn Modern" Approach |
 | :--- | :--- | :--- |
 | **Root Folder** | `src/components/atoms`, `molecules`... | `src/components/ui` + `src/components/layout` |
-| **Complexity** | High (lots of folders) | Low (colocation by feature) |
+| **Complexity** | High (many folders) | Low (colocation by feature) |
 | **Maintenance** | Difficult if poorly defined | Easy (everything is flat or by domain) |
 | **Scalability** | Good for giant Design Systems | Excellent for SaaS apps |
 
 ---
 
-1. **Visual Consistency:** By modifying the `Button` atom, you instantly update the entire site.
+1. **Visual Consistency:** By modifying the `Button` atom, you update the entire site instantly.
 2. **Communication with Designers:** If your team uses Figma, you finally speak the same language. Designers create "components", you create "atoms".
-3. **Ease of Testing:** Testing an atom is extremely simple. You can use **Storybook** to document each level independently.
-4. **Facilitated Accessibility:** If your `Input` atom is perfectly accessible (ARIA, labels, focus), all molecules and organisms using it will be too by inheritance.
+3. **Ease of Test:** Testing an atom is extremely simple. You can use **Storybook** to document each level independently.
+4. **Facilitated Accessibility:** If your `Input` atom is perfectly accessible (ARIA, labels, focus), all molecules and organisms that use it will be too by inheritance.
 
 ---
 
-## 4. Summary Table: When to Create What?
+## 4. Summary Table: When to create what?
 
-| Level | Contains What? | Business Logic? | Reusability |
+| Level | Contains what? | Business Logic? | Reusability |
 | --- | --- | --- | --- |
 | **Atoms** | Pure HTML, base styles | ❌ None | 🚀 Maximal |
 | **Molecules** | Group of atoms | 🟠 Very little | 🟢 High |
@@ -140,7 +148,7 @@ The components you install via `npx shadcn@latest add ...` are technically very 
 The number 1 mistake in Atomic Design is wanting to make components "smart" too early.
 
 ### The "Smart vs Dumb" Rule
-* **Molecules & Atoms (Dumb):** They receive data via `props` and emit events via `callbacks`. They have NO external dependencies (no `useAuth`, no `fetch`).
+* **Molecules & Atoms (Dumb):** They receive data via `props` and emit events via `callbacks`. They have NO external dependency (no `useAuth`, no `fetch`).
 * **Organisms (Smart/Dumb):** This is the gray area. A `Header` might be connected to a store to display the current user, but ideally, it should receive the user as a prop.
 * **Templates & Pages (Smart):** This is where you connect **Zustand**, **Redux**, or **React Query**.
 
@@ -171,7 +179,7 @@ export default function ProfilePage() {
 Atomic Design without documentation is like a library without labels. **Storybook** is the tool that allows you to develop your atoms in isolation.
 
 1. **Isolated Development:** No need to launch the whole app to code a button.
-2. **Visual Testing:** Automatically check that a commit hasn't broken the style of your `DatePicker`.
+2. **Visual Testing:** Automatically verify that a commit hasn't broken the style of your `DatePicker`.
 3. **Catalog for Designers:** Your designers can see *exactly* what is coded in production.
 
 If you don't document your molecules, your developers will end up recoding the same component 10 times.
@@ -180,6 +188,6 @@ If you don't document your molecules, your developers will end up recoding the s
 
 ## Conclusion
 
-Atomic Design requires an initial investment to configure the structure, but it is a massive time saver in the long run. For your Next.js projects, it allows you to cleanly separate **presentation logic** (Atoms/Molecules) from **data logic** (Pages/Organisms).
+Atomic Design requires an initial investment to set up the structure, but it is a massive time saver in the long run. For your Next.js projects, it allows you to cleanly separate **presentation logic** (Atoms/Molecules) from **data logic** (Pages/Organisms).
 
-Adopting this method means moving from the status of "page coder" to "design systems architect".
+Adopting this method allows you to move from the status of "page coder" to that of "design system architect".

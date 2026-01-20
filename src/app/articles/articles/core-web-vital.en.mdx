@@ -2,15 +2,22 @@
 title: "Next.js Performance: The Ultimate Guide for 100/100 Core Web Vitals"
 publishedAt: "2026-01-24"
 summary: "LCP, CLS, and the new INP... Discover how to leverage Next.js features to offer an ultra-smooth user experience."
+lang: "en"
 tags: ["NextJS", "Performance", "WebPerf", "SEO"]
 image: ""
 ---
 
-<div className="block dark:hidden">
-  ![Core Web Vitals Header](/images/articles/core-web-vitals-light.png)
-</div>
-<div className="hidden dark:block">
-  ![Core Web Vitals Header](/images/articles/core-web-vitals-dark.png)
+<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
+  <img
+    src="/images/articles/core-web-vitals-light.png"
+    alt="Core Web Vitals Header"
+    className="w-full h-auto block dark:hidden"
+  />
+  <img
+    src="/images/articles/core-web-vitals-dark.png"
+    alt="Core Web Vitals Header"
+    className="w-full h-auto hidden dark:block"
+  />
 </div>
 
 In 2026, performance is no longer a "bonus", it is the foundation of user experience and SEO. Google no longer just measures if your site is fast, it measures if it is **stable** and **responsive**.
@@ -21,62 +28,63 @@ Next.js offers powerful tools, but used incorrectly, they can degrade your score
 
 ## 1. LCP (Largest Contentful Paint): Perceived Speed
 
-LCP measures the time it takes to display the largest visible element (often the hero image or an H1 title).
+LCP measures the time needed to display the largest visible element (often the hero image or an H1 title).
 
-### Optimizing Images with `next/image`
+### Optimizing images with `next/image`
 The classic mistake is letting the browser discover the image too late.
-* **The `priority` property:** Add it systematically to your Hero image. This adds a `preload` tag to the HTML so that downloading starts even before CSS is parsed.
-* **The 'blur' placeholder:** Use `placeholder="blur"` to improve perceived LCP by displaying a very lightweight version of the image immediately.
+* **The `priority` property:** Add it systematically to your Hero image. This adds a `preload` tag in the HTML so that downloading starts even before the CSS is read.
+* **The 'blur' placeholder:** Use `placeholder="blur"` to improve perceived LCP by displaying a very light version of the image immediately.
 
-### Font Loading with `next/font`
-Fonts are often responsible for LCP delay. `next/font` self-hosts your fonts and uses the CSS `size-adjust` property so that the system font and the final font take up the same space, avoiding a layout recalculation.
+### Font loading with `next/font`
+Fonts are often responsible for LCP delay. `next/font` auto-hosts your fonts and uses the `size-adjust` CSS property so that the system font and the final font take up the same space, thus avoiding layout recalculation.
 
 ---
 
 ## 2. CLS (Cumulative Layout Shift): Visual Stability
 
-Nothing is more frustrating than a button that moves just as you are about to click it. CLS measures these unexpected shifts.
+Nothing is more frustrating than a button that moves just when you are about to click it. CLS measures these unexpected shifts.
 
-### Reserve Space for Dynamic Content
-If you display ad banners or client-side loaded lists, you **must** reserve space in advance.
-* **Aspect Ratio:** Use containers with a fixed aspect ratio (`aspect-ratio: 16 / 9`) or loading skeletons.
-* **Suspense & Streaming:** With Next.js, use `Suspense`. The server first sends the static parts of the page, and "streams" heavy components once ready, without shifting the rest of the content.
+### Reserve space for dynamic content
+If you display ad banners or lists loaded client-side, you **must** reserve space in advance.
+* **Aspect Ratio:** Use containers with a fixed aspect ratio (`aspect-ratio: 16 / 9`) or loading skeletons (Skeletons).
+* **Suspense & Streaming:** With Next.js, use `Suspense`. The server first sends the static parts of the page, and "streams" the heavy components once ready, without shifting the rest of the content.
 
 ```tsx
 // Example of streaming to avoid CLS
 <Suspense fallback={<SkeletonChart />}>
   <SlowDataChart />
 </Suspense>
+
 ```
 
 ---
 
 ## 3. INP (Interaction to Next Paint): Responsiveness
 
-INP has officially replaced FID (First Input Delay). It measures the delay between an interaction (click, key press) and the visual response from the browser.
+INP has officially replaced FID (First Input Delay). It measures the delay between an interaction (click, keyboard key) and the browser's visual response.
 
 ### Minimize Main Thread Blocking Time
 
 The main culprit of INP is overly long JavaScript execution (Hydration).
 
 * **Server Components (RSC):** By using RSCs by default, you send less JS to the client. Less JS = a freer main thread to respond to clicks.
-* **`useTransition`:** For heavy state updates (e.g., filtering a long list), use the `useTransition` hook. It allows marking an update as non-urgent, leaving the field open for urgent interactions.
+* **`useTransition`:** For heavy state updates (e.g. filtering a long list), use the `useTransition` hook. It allows marking an update as non-priority, leaving the field open for urgent interactions.
 
 ---
 
-## 4. The Pro Tools for Debugging
+## 4. Pro Tools for Debugging
 
-Lighthouse is not enough. To understand why your INP is bad, you have to go further.
+Lighthouse is not enough. To understand why your INP is bad, you need to go further.
 
 ### 1. Chrome Performance Tab (The Flamegraph)
 This is the ultimate tool.
 * **Recording:** Record a 10s session.
-* **Main Thread:** Look for red bars. If a bar is > 50ms, it is a "Long Task" that blocks INP.
+* **Main Thread:** Look for red bars. If a bar is > 50ms, it is a "Long Task" blocking INP.
 * **Layout Shifts:** Visualize exactly which element moved and at which frame.
 
 ### 2. CrUX (Chrome User Experience Report)
 These are the "real" data collected anonymously by Google on Chrome users.
-* **Why is it vital?** You might have 100/100 on your MacBook Pro (Fiber connection), but your users on a $200 Android on 4G have a terrible experience. CrUX shows you the truth.
+* **Why is it vital?** You might have 100/100 on your MacBook Pro (Fiber connection), but your users on 200€ Androids on 4G have a terrible experience. CrUX shows you the truth.
 
 ---
 
@@ -88,16 +96,16 @@ The choice of your rendering strategy directly impacts **TTFB** (Time to First B
 | --- | --- | --- |
 | **Static Export** | 🚀 Ultra-fast | Documentation, Blog |
 | **ISR (Incremental)** | 🟢 Excellent | E-commerce, Catalogs |
-| **SSR (Server Side)** | 🟠 Variable (depends on server) | Personalized Pages, Dashboards |
-| **PPR (Partial Prerendering)** | 💎 The Future (Next 15+) | Mix of static and dynamic |
+| **SSR (Server Side)** | 🟠 Variable (depends on server) | Personalized pages, Dashboards |
+| **PPR (Partial Prerendering)** | 💎 The future (Next 15+) | Mix of static and dynamic |
 
-**PPR (Partial Prerendering):** This is the major new feature. Next.js pre-generates a static shell of your page (perfect LCP and CLS) and injects dynamic holes as they come.
+**PPR (Partial Prerendering):** This is the major novelty. Next.js pre-generates a static shell of your page (perfect LCP and CLS) and injects dynamic holes as it goes.
 
 ---
 
-## 6. Measure to Progress
+## 5. Measure to progress
 
-Don't guess, measure. Integrate Vercel's `<SpeedInsights />` component into your `layout.tsx`. It allows you to see the real scores of your users (Real User Monitoring - RUM) directly in your dashboard, which is much more accurate than synthetic Lighthouse tests.
+Don't guess, measure. Integrate Vercel's `<SpeedInsights />` component into your `layout.tsx`. It allows you to see the real scores of your users (Real User Monitoring - RUM) directly in your dashboard, which is much more precise than synthetic Lighthouse tests.
 
 ```tsx
 import { SpeedInsights } from "@vercel/speed-insights/next"
@@ -112,6 +120,7 @@ export default function Layout({ children }) {
     </html>
   )
 }
+
 ```
 
 ---
@@ -120,8 +129,8 @@ export default function Layout({ children }) {
 
 Optimizing Core Web Vitals on Next.js requires a holistic approach:
 
-1. **Prioritize** critical resources (images, fonts).
-2. **Stabilize** the interface via Streaming and placeholders.
-3. **Lighten** the client by offloading logic to Server Components.
+1.  **Prioritize** critical resources (images, fonts).
+2.  **Stabilize** the interface via Streaming and placeholders.
+3.  **Lighten** the client by offloading logic to Server Components.
 
-By following these principles, you are not only building a site that pleases Google's algorithms, you are building a fluid and enjoyable product for your users.
+By following these principles, you are not just building a site that pleases Google's algorithms, you are building a fluid and pleasant product for your users.

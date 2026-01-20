@@ -1,52 +1,59 @@
 ---
-title: "Accessibility Doesn't Kill Design: Creating Complex Components in 2026"
+title: "Accessibility doesn't kill design: Creating complex components in 2026"
 publishedAt: "2026-01-22"
 summary: "Modals, Drag & Drop, nested menus... How to respect WCAG standards without sacrificing the aesthetics of your Next.js interfaces."
+lang: "en"
 tags: ["A11y", "Design", "React", "UX"]
 image: ""
 ---
 
-<div className="block dark:hidden">
-  ![Accessibility Header](/images/articles/accessibility-wcag-light.png)
-</div>
-<div className="hidden dark:block">
-  ![Accessibility Header](/images/articles/accessibility-wcag-dark.png)
+<div className="w-full my-8 relative rounded-xl overflow-hidden border border-border">
+  <img
+    src="/images/articles/accessibility-wcag-light.png"
+    alt="Accessibility Header"
+    className="w-full h-auto block dark:hidden"
+  />
+  <img
+    src="/images/articles/accessibility-wcag-dark.png"
+    alt="Accessibility Header"
+    className="w-full h-auto hidden dark:block"
+  />
 </div>
 
-A persistent misconception in the web development world is that an accessible site must necessarily be "ugly" or stripped down. In 2026, with the tools at our disposal, it is a myth that it is time to deconstruct.
+A common misconception persists in the web development world: an accessible site must necessarily be "ugly" or stripped down. In 2026, with the tools we have, it is a myth that it is time to deconstruct.
 
-Accessibility is not a checklist of constraints that curb your creativity, it is a framework that pushes for smarter and more robust design. Let's see how to handle two of the most complex components: the **Modal** and **Drag & Drop**.
+Accessibility is not a checklist of constraints that curb your creativity, it is a framework that pushes for smarter and more robust design. Let's see how to manage two of the most complex components: the **Modal** and **Drag & Drop**.
 
 ---
 
-## 1. The Modal: Taming the Focus
+## 1. The Modal: Taming the focus
 
-A poorly designed modal is an insurmountable wall for a user navigating with a keyboard or screen reader. To be accessible, it must respect three technical golden rules.
+A poorly designed modal is an insurmountable wall for a user navigating with a keyboard or screen reader. To be accessible, it must follow three golden technical rules.
 
 ### The Focus Trap
-When a modal is open, focus must remain confined inside it. If the user presses `Tab` and focus returns to a link in the background, the experience is broken.
+When a modal is open, the focus must remain confined inside it. If the user presses `Tab` and the focus returns to a link in the background, the experience is broken.
 
 ### Keyboard Management
-A "AAA" (highest WCAG standard) modal must meet precise expectations:
+A "AAA" modal (highest WCAG standard) must meet precise expectations:
 * **ESC:** Immediately closes the modal.
-* **Initial Focus:** Focus should be placed on the first interactive element (often the close button or main field).
-* **Restore Focus:** upon closure, focus must return to the button that opened the modal.
+* **Initial Focus:** Focus should be placed on the first interactive element (often the close button or the main field).
+* **Restore Focus:** On closing, focus must return to the button that opened the modal.
 
 ### Design Tip: Visible Focus
-Do not remove `outline: none`. Instead, use `:focus-visible` to create a stylized indicator that only appears for keyboard users, preserving aesthetics for mouse users.
+Do not remove `outline: none`. Instead, use `:focus-visible` to create a stylized indicator that only appears for keyboard users, thus preserving the aesthetic for mouse users.
 
 ---
 
-## 2. Drag & Drop: Beyond the Mouse
+## 2. Drag & Drop: Beyond the mouse
 
-"Drag and Drop" is by essence a visual and motor interaction. However, it is entirely possible to make it accessible without changing the "Apple-like" look.
+"Drag and Drop" is essentially a visual and motor interaction. However, it is quite possible to make it accessible without changing the "Apple-like" look.
 
 ### Communication via ARIA-Live
-When a user moves an element, the screen reader must be visually informed of what is happening.
-* "Element selected, position 1 of 5."
-* "Element moved to position 3."
+When a user moves an item, the screen reader must be verbally informed of what is happening.
+* "Item selected, position 1 of 5."
+* "Item moved to position 3."
 
-### The Keyboard Alternative
+### Keyboard Alternative
 The trick is to allow movement via arrow keys after activating "move" mode with `Space` or `Enter`.
 
 ---
@@ -63,7 +70,7 @@ The trick is to allow movement via arrow keys after activating "move" mode with 
 
 ## 4. Tools for Next.js in 2026
 
-No need to reinvent the wheel. To guarantee accessibility without colossal effort, I rely on "headless" libraries that handle A11y logic while leaving me total control over CSS styling:
+No need to reinvent the wheel. To guarantee accessibility without colossal effort, I rely on "headless" libraries that manage A11y logic while leaving me total control over CSS style:
 
 ### Toolkit 2026: The Comparison
 
@@ -72,9 +79,9 @@ No need to reinvent the wheel. To guarantee accessibility without colossal effor
 | **Radix UI** | Primitives (Headless) | Building your own Design System | 🟡 Medium |
 | **Shadcn UI** | Components (Copy/Paste) | Rapid Prototyping & SaaS Apps | 🟢 Low |
 | **React Aria** | Hooks & Components | Very complex apps (Drag&Drop, Grids) | 🔴 High |
-| **Headless UI** | Simple Primitives | Pure Tailwind Projects | 🟢 Low |
+| **Headless UI** | Simple Primitives | Pure Tailwind projects | 🟢 Low |
 
-### Before / After: The Code Impact
+### Before / After: The impact of code
 
 A concrete example is worth a thousand words. Here is how to make a simple "X" button accessible.
 
@@ -102,29 +109,31 @@ The reader will read "Close modal".
 
 ---
 
-## 5. Beyond Divs: Semantic HTML
+---
 
-The first accessibility tool is not ARIA, it's HTML.
+## 4. Beyond Divs: Semantic HTML
+
+The first tool of accessibility is not ARIA, it is HTML.
 A `<div>` says nothing. A `<nav>` says everything.
 
 ### Landmarks
 Screen readers allow jumping from one section to another.
-* `<main>`: Main content (unique per page).
+* `<main>`: The main content (unique per page).
 * `<nav>`: Major navigation links.
 * `<aside>`: Complementary content (sidebar, ads).
-* `<article>`: Content that stands alone (blog post, tweet).
+* `<article>`: Independent content (blog post, tweet).
 
-Replacing your divs with these tags instantly improves your page navigability by 50%.
+Replacing your divs with these tags instantly improves the navigability of your page by 50%.
 
 ---
 
-## 6. Focus Management in a SPA
+## 5. Focus Management in a SPA
 
 This is THE problem with React/Next.js applications.
-When you change page (route), the browser doesn't reload. Focus often gets "lost" on the `body` or on the last clicked button (which might have disappeared).
+When you change pages (route), the browser does not reload. Focus often remains "lost" on the `body` or on the last clicked button (which may have disappeared).
 
 ### The "Skip Link" and Reset Technique
-On every route change, you should ideally reset focus to the main title (`h1`) or a focusable `<main>` container.
+Ideally, on every route change, you should reset focus to the main title (`h1`) or a focusable `<main>` container.
 
 ```tsx
 // Simple example in a route useEffect
@@ -136,10 +145,10 @@ useEffect(() => {
 }, [pathname]); // Triggers when URL changes
 ```
 
-Without this, the keyboard user has to tab through everything from the start on every click.
+Without this, the keyboard user has to tab through everything from the beginning at every click.
 
 ---
 
 ## Conclusion
 
-Accessibility is the pinnacle of technical elegance. A component that works perfectly for everyone, regardless of navigation method, is a better-coded component. As front-end developers, our role is to prove that **inclusion is the engine of better design.**
+Accessibility is the pinnacle of technical elegance. A component that works perfectly for everyone, regardless of the navigation method, is a better-coded component. As front-end developers, our role is to prove that **inclusion is the driver of better design.**

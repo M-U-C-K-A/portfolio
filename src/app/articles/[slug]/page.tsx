@@ -14,6 +14,7 @@ import {
 	Line,
 	Tag,
 } from "@once-ui-system/core";
+import { ThemeImage } from "@/components/ThemeImage";
 import { baseURL, about, person, contentByLanguage } from "@/resources";
 import { formatDate } from "@/utils/formatDate";
 import { ScrollToHash, CustomMDX } from "@/components";
@@ -83,7 +84,7 @@ export default async function Article({
 	const readingTime = Math.ceil(wordCount / 200);
 
 	return (
-		<Column as="section" maxWidth="m" horizontal="center" gap="l">
+		<Column as="section" maxWidth="xl" horizontal="center" gap="l">
 			<Schema
 				as="blogPosting"
 				baseURL={baseURL}
@@ -101,7 +102,7 @@ export default async function Article({
 					image: `${baseURL}${localizedContent.person.avatar}`,
 				}}
 			/>
-			<Column maxWidth="s" gap="16" horizontal="center" align="center">
+			<Column maxWidth="m" gap="16" horizontal="center" align="center">
 				<SmartLink href="/articles">
 					<Text variant="label-strong-m">{articlesLabel}</Text>
 				</SmartLink>
@@ -132,10 +133,16 @@ export default async function Article({
 					</Text>
 				)}
 			</Column>
-			{post.metadata.images && post.metadata.images.length > 0 && (
-				<Media priority aspectRatio="16 / 9" radius="m" alt="image" src={post.metadata.images[0]} />
+			{post.metadata.image && (
+				<ThemeImage
+					src={post.metadata.image}
+					alt={post.metadata.title}
+					className="h-[480px] rounded-m overflow-hidden border border-neutral-alpha-medium"
+					priority
+					sizes="(max-width: 960px) 100vw, 960px"
+				/>
 			)}
-			<Column style={{ margin: "auto" }} as="article" maxWidth="xs">
+			<Column style={{ margin: "auto" }} as="article" maxWidth="xl">
 				<CustomMDX source={post.content} />
 			</Column>
 			<ScrollToHash />

@@ -4,6 +4,8 @@ import { Column, Flex, Heading, Text, Row, SmartLink, Tag, Media } from "@once-u
 import { useLanguage } from "@/components/i18n";
 import { useEffect, useState, useRef } from "react";
 import { formatDate } from "@/utils/formatDate";
+import { ThemeImage } from "@/components/ThemeImage";
+import Image from "next/image";
 
 interface ArticleData {
 	slug: string;
@@ -101,31 +103,33 @@ export function ArticlesClient({ range, exclude }: ArticlesClientProps) {
 	}
 
 	return (
-		<Column fillWidth gap="xl" marginBottom="40" paddingX="l">
-			{articles.map((article) => {
+		<Column fillWidth gap="xl" marginBottom="40" paddingX="l" horizontal="center">
+			{articles.map((article, index) => {
 				const coverImage = article.metadata.image || (article.metadata.images && article.metadata.images[0]);
 
 				return (
-					<SmartLink key={article.slug} href={`/articles/${article.slug}`} style={{ textDecoration: "none" }}>
+					<SmartLink key={article.slug} href={`/articles/${article.slug}`} style={{ textDecoration: "none", width: "100%", maxWidth: "48rem" }}>
 						<Column
 							fillWidth
-							gap="m"
-							padding="l"
 							background="surface"
 							border="neutral-alpha-weak"
 							radius="l"
-							style={{ transition: "all 0.2s ease" }}
+							style={{
+								transition: "all 0.25s ease",
+								overflow: "hidden"
+							}}
 						>
 							{coverImage && (
-								<Media
-									aspectRatio="16 / 9"
-									radius="m"
-									alt={article.metadata.title}
+								<Image
 									src={coverImage}
+									alt={article.metadata.title}
+									width={960}
+									height={540}
+									priority={index === 0}
 								/>
 							)}
-							<Column gap="8">
-								<Row gap="8" vertical="center">
+							<Column gap="s" padding="l">
+								<Row gap="8" vertical="center" wrap>
 									<Text variant="body-default-xs" onBackground="neutral-weak">
 										{formatDate(article.metadata.publishedAt)}
 									</Text>
@@ -151,7 +155,16 @@ export function ArticlesClient({ range, exclude }: ArticlesClientProps) {
 									{article.metadata.title}
 								</Heading>
 								{article.metadata.summary && (
-									<Text variant="body-default-s" onBackground="neutral-weak">
+									<Text
+										variant="body-default-s"
+										onBackground="neutral-weak"
+										style={{
+											display: "-webkit-box",
+											WebkitLineClamp: 3,
+											WebkitBoxOrient: "vertical",
+											overflow: "hidden"
+										}}
+									>
 										{article.metadata.summary}
 									</Text>
 								)}

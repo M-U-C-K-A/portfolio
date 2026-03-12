@@ -12,7 +12,7 @@ import F1 from "../pages/interests/F1";
 import TableTennis from "../pages/interests/TableTennis";
 import Gaming from "../pages/interests/Gaming";
 import Travel from "../pages/interests/Travel";
-import Presentation from "../pages/Presenation";
+import Presentation from "../pages/Presentation";
 import About from "../pages/About";
 import GameDetail from "../pages/interests/GameDetail";
 import ValorantPage from "../pages/interests/gaming/Valorant";
@@ -41,12 +41,8 @@ export const router = createBrowserRouter([
       {
         path: "interests/f1",
         element: <SectionThemeLayout themeClass="theme-f1" />,
-        children: [
-          { index: true, element: <F1 /> },
-        ],
+        children: [{ index: true, element: <F1 /> }],
       },
-      { path: "*", element: <NotFound /> },
-      { path: "interests/f1", element: <F1 /> },
       { path: "interests/table-tennis", element: <TableTennis /> },
       { path: "interests/gaming", element: <Gaming /> },
       { path: "interests/travel", element: <Travel /> },
@@ -65,19 +61,17 @@ export const router = createBrowserRouter([
         element: <SectionThemeLayout themeClass="theme-clash" />,
         children: [{ index: true, element: <ClashRoyale /> }],
       },
-      { path: "*", element: <NotFound /> },
-
       {
         path: "interests/gaming/dead-by-daylight",
         element: <SectionThemeLayout themeClass="theme-dbd" />,
         children: [{ index: true, element: <DeadByDaylightPage /> }],
       },
-
       {
         path: "interests/gaming/clash-of-clans",
         element: <SectionThemeLayout themeClass="theme-coc" />,
         children: [{ index: true, element: <ClashOfClansPage /> }],
       },
+      { path: "*", element: <NotFound /> },
     ],
   },
 ]);

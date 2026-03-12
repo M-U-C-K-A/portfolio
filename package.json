@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js",
+    "dev": "vite",
+    "dev:api": "cd api && npm run dev",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "node src/server.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.2.0",

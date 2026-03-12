@@ -9,8 +9,11 @@ export default function RootLayout() {
 
   return (
     <div className={styles.shell}>
+      <a href="#main-content" className="skip-link">
+        Aller au contenu principal
+      </a>
       <Navbar theme={theme} onToggleTheme={toggleTheme} />
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main}>
         <Outlet />
       </main>
       <Footer />

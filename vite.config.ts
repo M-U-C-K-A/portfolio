@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/api": "https://portfolio-675v.onrender.com/",
+      "/api": "http://localhost:4000",
     },
   },
 });

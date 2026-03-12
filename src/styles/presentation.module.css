@@ -1,63 +1,374 @@
-.wrapper {
+/* ══════════════════════════════════════════
+   PRESENTATION — Military Dossier Theme
+   ══════════════════════════════════════════ */
+
+.page {
   display: grid;
-  gap: 32px;
+  gap: 20px;
+  animation: fadeIn 0.5s ease both;
 }
 
-.hero {
+/* ─────── HEADER BAR ─────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
   border: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(45, 255, 122, 0.06), transparent);
-  padding: 20px;
-  border-radius: 16px;
-}
-
-.block {
-  border: 1px solid var(--border);
-  background: rgba(7, 17, 11, 0.45);
-  padding: 20px;
-  border-radius: 16px;
-}
-
-.block h2::before {
-  content: "> ";
-  color: var(--accent);
-}
-
-.grid {
-  display: grid;
-  gap: 18px;
-}
-
-@media (min-width: 900px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-ul {
+  border-radius: 8px;
+  background: var(--card-alpha);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--muted);
-  line-height: 1.8;
 }
 
-a {
+.headerCode {
+  font-weight: 700;
   color: var(--text);
-  text-decoration: none;
-  border-bottom: 1px dashed rgba(45, 255, 122, 0.55);
 }
 
-a:hover {
+.headerClassif {
   color: var(--accent);
-  border-bottom-color: var(--accent);
 }
 
+/* ─────── AGENT DOSSIER CARD ─────── */
+.dossier {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--accent-08), 0 16px 50px var(--shadow);
+  background: linear-gradient(175deg, var(--accent-06) 0%, var(--card) 35%);
+}
+
+.dossierTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card-alpha);
+}
+
+.stamp {
+  display: inline-block;
+  padding: 2px 10px;
+  border: 2px solid var(--accent);
+  border-radius: 4px;
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  font-family: var(--font-mono);
+  transform: rotate(-1deg);
+}
+
+.dossierRef {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.dossierBody {
+  display: flex;
+  gap: 28px;
+  padding: 24px 22px;
+  align-items: flex-start;
+}
+
+/* ─── Avatar ─── */
 .avatar {
   width: 140px;
   height: 140px;
-  border-radius: 50%;
+  border-radius: 10px;
   object-fit: cover;
+  border: 3px solid var(--border);
+  box-shadow: 0 0 0 3px var(--card), 0 0 18px var(--shadow);
+  filter: saturate(0.85) contrast(1.05);
+  flex-shrink: 0;
+}
 
-  display: block;
-  margin: 0 auto 20px auto;
+/* ─── Intel grid ─── */
+.intelGrid {
+  flex: 1;
+  display: grid;
+  gap: 0;
+}
 
-  border: 2px solid var(--border);
-  box-shadow: 0 0 25px var(--shadow);
+.intelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.intelRow:last-child {
+  border-bottom: none;
+}
+
+.intelLabel {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.intelValue {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+/* ─────── SECTIONS ─────── */
+.section {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px var(--shadow);
+  background: var(--card);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card-alpha);
+}
+
+.sectionCode {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border: 1px solid var(--accent-55);
+  border-radius: 4px;
+  background: var(--accent-10);
+  white-space: nowrap;
+}
+
+.sectionTitle {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sectionLine {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.sectionBody {
+  padding: 20px 22px;
+}
+
+.sectionBody p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0 0 10px 0;
+}
+
+.sectionBody p:last-child {
+  margin-bottom: 0;
+}
+
+.sectionHint {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+
+/* ─────── SKILLS GRID ─────── */
+.skillsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.skillCard {
+  padding: 18px 20px;
+  border-right: 1px solid var(--border);
+  transition: background 0.18s;
+}
+
+.skillCard:last-child {
+  border-right: none;
+}
+
+.skillCard:hover {
+  background: var(--accent-06);
+}
+
+.skillCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.skillCode {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border: 1px solid var(--accent-55);
+  border-radius: 3px;
+  background: var(--accent-10);
+}
+
+.skillTitle {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.skillList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.skillItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.skillBullet {
+  color: var(--accent);
+  font-size: 0.75rem;
+}
+
+/* ─────── INTEREST GRID ─────── */
+.interestGrid {
+  display: grid;
+  gap: 0;
+}
+
+.interestLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
+  transition: background 0.18s, padding-left 0.18s;
+}
+
+.interestLink:last-child {
+  border-bottom: none;
+}
+
+.interestLink:hover {
+  background: var(--accent-06);
+  padding-left: 26px;
+}
+
+.interestCode {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border: 1px solid var(--accent-55);
+  border-radius: 4px;
+  background: var(--accent-10);
+  white-space: nowrap;
+}
+
+.interestLabel {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.interestArrow {
+  color: var(--muted);
+  transition: transform 0.18s, color 0.18s;
+}
+
+.interestLink:hover .interestArrow {
+  transform: translateX(4px);
+  color: var(--accent);
+}
+
+/* ─────── PAGE FOOTER ─────── */
+.pageFooter {
+  text-align: center;
+  padding: 12px;
+  border-top: 1px dashed var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ─────── ANIMATIONS ─────── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─────── RESPONSIVE ─────── */
+@media (max-width: 768px) {
+  .dossierBody {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+    padding: 18px 14px;
+  }
+
+  .intelRow {
+    flex-direction: column;
+    gap: 2px;
+    text-align: center;
+  }
+
+  .skillsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .skillCard {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skillCard:last-child {
+    border-bottom: none;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
 }

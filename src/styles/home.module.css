@@ -1,0 +1,451 @@
+/* ══════════════════════════════════════════
+   HOME — Military / Tactical Dossier Theme
+   ══════════════════════════════════════════ */
+
+.page {
+  display: grid;
+  gap: 22px;
+  padding-top: 8px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.ready {
+  opacity: 1;
+}
+
+/* ─────── TOP STATUS BAR ─────── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-alpha);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  animation: slideDown 0.5s 0.2s ease both;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+.topBarRight {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ─────── DOSSIER CARD ─────── */
+.dossier {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px var(--accent-08),
+    0 20px 60px var(--shadow);
+  background: linear-gradient(
+    175deg,
+    var(--accent-06) 0%,
+    var(--card) 40%,
+    var(--card) 100%
+  );
+  animation: slideUp 0.6s 0.3s ease both;
+}
+
+.dossierHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card-alpha);
+}
+
+.stamp {
+  display: inline-block;
+  padding: 3px 12px;
+  border: 2px solid var(--danger);
+  border-radius: 4px;
+  color: var(--danger);
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  transform: rotate(-2deg);
+  user-select: none;
+}
+
+.dossierCode {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+/* ─── Dossier body ─── */
+.dossierBody {
+  display: flex;
+  gap: 32px;
+  padding: 28px 24px;
+  align-items: flex-start;
+}
+
+/* ─── Badge / avatar ─── */
+.badge {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 3px solid var(--border);
+  box-shadow:
+    0 0 0 4px var(--card),
+    0 0 20px var(--shadow);
+  filter: saturate(0.85) contrast(1.05);
+}
+
+.badgeLabel {
+  margin-top: 10px;
+  padding: 4px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent-10);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+/* ─── Intel grid ─── */
+.intelGrid {
+  flex: 1;
+  display: grid;
+  gap: 0;
+}
+
+.intelRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.intelRow:last-child {
+  border-bottom: none;
+}
+
+.intelLabel {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.intelValue {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+/* ─── Terminal line ─── */
+.termLine {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--card-alpha);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.termPrompt {
+  color: var(--accent);
+  margin-right: 8px;
+}
+
+.termText {
+  color: var(--text);
+}
+
+.cursor {
+  color: var(--accent);
+  animation: cursorBlink 1s step-end infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* ─────── STATS ROW ─────── */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  animation: slideUp 0.5s 0.5s ease both;
+}
+
+.statCard {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 12px;
+  text-align: center;
+  background: var(--accent-06);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+}
+
+.statCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.22s;
+}
+
+.statCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px var(--shadow);
+  border-color: var(--accent-55);
+}
+
+.statCard:hover::before {
+  opacity: 1;
+}
+
+.statIcon {
+  display: block;
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+
+.statValue {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--accent);
+  line-height: 1.2;
+}
+
+.statLabel {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+/* ─────── SECTOR TITLE ─────── */
+.sectorTitle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+  animation: slideUp 0.5s 0.6s ease both;
+}
+
+.sectorTitleLine {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─────── SECTOR GRID ─────── */
+.sectorGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  animation: slideUp 0.5s 0.7s ease both;
+}
+
+.sector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-alpha);
+  text-decoration: none;
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.sector::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--accent-06), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.sector:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--shadow);
+  border-color: var(--accent-55);
+  background: var(--accent-06);
+}
+
+.sector:hover::after {
+  opacity: 1;
+}
+
+.sectorCode {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border: 1px solid var(--accent-55);
+  border-radius: 4px;
+  background: var(--accent-10);
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.sectorName {
+  flex: 1;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  z-index: 1;
+}
+
+.sectorArrow {
+  color: var(--muted);
+  font-size: 1rem;
+  transition: transform 0.2s, color 0.2s;
+  z-index: 1;
+}
+
+.sector:hover .sectorArrow {
+  transform: translateX(4px);
+  color: var(--accent);
+}
+
+/* ─────── FOOTER LINE ─────── */
+.footerLine {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-top: 1px dashed var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  animation: slideUp 0.5s 0.8s ease both;
+}
+
+/* ─────── ANIMATIONS ─────── */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─────── RESPONSIVE ─────── */
+@media (max-width: 768px) {
+  .dossierBody {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    padding: 20px 16px;
+  }
+
+  .intelRow {
+    flex-direction: column;
+    gap: 2px;
+    text-align: center;
+  }
+
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sectorGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .topBar {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .footerLine {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stamp {
+    font-size: 0.65rem;
+  }
+}

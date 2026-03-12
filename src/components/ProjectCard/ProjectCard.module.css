@@ -1,16 +1,22 @@
 .card {
   border: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(45, 255, 122, 0.06), rgba(7, 17, 11, 0.0));
+  background: linear-gradient(180deg, var(--accent-06), transparent);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 12px 40px var(--shadow);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 50px var(--glow);
 }
 
 .card::before {
   content: "";
   display: block;
   height: 36px;
-  background: rgba(7, 17, 11, 0.75);
+  background: var(--card-alpha);
   border-bottom: 1px solid var(--border);
   position: relative;
 }
@@ -47,7 +53,7 @@
   height: 38px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: rgba(7, 17, 11, 0.7);
+  background: var(--card-alpha);
   object-fit: cover;
 }
 
@@ -63,7 +69,7 @@
 
 .titleLink:hover {
   text-decoration: underline;
-  text-decoration-color: rgba(45, 255, 122, 0.55);
+  text-decoration-color: var(--accent-55);
 }
 
 .period {
@@ -90,7 +96,7 @@
   padding: 4px 10px;
   font-size: 12px;
   color: var(--muted);
-  background: rgba(7, 17, 11, 0.55);
+  background: var(--card-alpha);
 }
 
 .bottom {
@@ -108,13 +114,13 @@
 
 .cta {
   text-decoration: none;
-  border: 1px solid rgba(45, 255, 122, 0.55);
+  border: 1px solid var(--accent-55);
   border-radius: 12px;
   padding: 8px 10px;
   color: var(--text);
-  background: rgba(45, 255, 122, 0.10);
+  background: var(--accent-10);
 }
 
 .cta:hover {
-  box-shadow: 0 0 0 3px rgba(45, 255, 122, 0.12);
+  box-shadow: 0 0 0 3px var(--accent-12);
 }

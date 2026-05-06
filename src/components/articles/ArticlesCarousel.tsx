@@ -83,27 +83,38 @@ export function ArticlesCarousel({ limit = 3 }: ArticlesCarouselProps) {
 				fillWidth
 				gap="m"
 				style={{
-					overflowX: "hidden",
+					overflowX: "auto",
+					scrollSnapType: "x mandatory",
+					WebkitOverflowScrolling: "touch",
 					paddingBottom: "8px",
+					msOverflowStyle: "none",
+					scrollbarWidth: "none",
 				}}
 			>
 				{articles.map((article, index) => {
 					const coverImage = article.metadata.image || (article.metadata.images && article.metadata.images[0]);
 
 					return (
-						<RevealFx key={article.slug} translateY="8" delay={0.1 * index}>
-							<SmartLink href={`/articles/${article.slug}`} style={{ textDecoration: "none" }}>
+						<RevealFx
+							key={article.slug}
+							translateY="8"
+							delay={0.1 * index}
+							style={{
+								width: "clamp(260px, 80vw, 320px)",
+								flexShrink: 0,
+								scrollSnapAlign: "start",
+							}}
+						>
+							<SmartLink href={`/articles/${article.slug}`} style={{ textDecoration: "none", display: "block" }}>
 								<Column
 									gap="m"
 									background="surface"
 									border="neutral-alpha-weak"
 									radius="l"
 									style={{
-										minWidth: "300px",
-										maxWidth: "320px",
-										scrollSnapAlign: "start",
+										width: "100%",
 										transition: "all 0.25s ease",
-										overflow: "hidden"
+										overflow: "hidden",
 									}}
 								>
 									{coverImage && (
@@ -111,7 +122,7 @@ export function ArticlesCarousel({ limit = 3 }: ArticlesCarouselProps) {
 											src={coverImage}
 											alt={article.metadata.title}
 											aspectRatio="16/9"
-											sizes="(max-width: 640px) 100vw, 320px"
+											sizes="(max-width: 640px) 80vw, 320px"
 											priority={index === 0}
 										/>
 									)}

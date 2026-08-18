@@ -1,0 +1,515 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-sans: var(--font-display);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-display);
+
+  /* Palette : une rampe de neutres et un seul rouge, qui n'apparaît qu'aux
+     moments déclenchés — explosions, puces, sélection, focus. */
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-rule: var(--rule);
+  --color-rule-faint: var(--rule-faint);
+  --color-px-slate: var(--px-slate);
+  --color-px-grey: var(--px-grey);
+  --color-px-mist: var(--px-mist);
+  --color-px-accent: var(--px-accent);
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+}
+
+:root {
+  --paper: #fafaf8;
+  --ink: #0f0f11;
+
+  /* Rampe de neutres du canvas. Doit rester synchronisée avec
+     PIXEL_PALETTE dans src/lib/pixel-engine.ts, qui en est la source. */
+  --px-slate: #3a3a40;
+  --px-steel: #6b6b73;
+  --px-grey: #9c9ca3;
+  --px-mist: #cdcdd2;
+  --px-accent: #1d3fff;
+
+  --rule: rgba(15, 15, 17, 0.14);
+  --rule-faint: rgba(15, 15, 17, 0.05);
+
+  /* Pas de mode sombre : la surface claire est un parti pris. */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--ink);
+  --popover-foreground: var(--paper);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: #f1f1ee;
+  --secondary-foreground: var(--ink);
+  --muted: #f1f1ee;
+  --muted-foreground: #6e6e72;
+  --accent: #f1f1ee;
+  --accent-foreground: var(--ink);
+  --destructive: var(--px-accent);
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: var(--px-accent);
+  --radius: 0rem;
+
+  --grid-cell: 40px;
+  --gutter: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 2rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--px-accent);
+    color: var(--paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--px-accent);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* --- Grille de fond, hairlines --- */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, var(--rule-faint) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--rule-faint) 1px, transparent 1px);
+    background-size: var(--grid-cell) var(--grid-cell);
+  }
+
+  /* --- Typographie --- */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    /* 0.85 conviendrait à un texte anglais ; en français les capitales
+       accentuées (É, À) montent plus haut et percutent la ligne précédente. */
+    line-height: 0.94;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .display-xl {
+    font-size: clamp(2.6rem, 8vw, 8rem);
+  }
+
+  .display-l {
+    font-size: clamp(1.85rem, 4.4vw, 3.5rem);
+  }
+
+  .display-m {
+    font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 768px) {
+    .label {
+      font-size: 0.6875rem;
+    }
+  }
+
+  .body-text {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    letter-spacing: -0.005em;
+  }
+
+  .body-text-l {
+    font-size: clamp(1.0625rem, 1.6vw, 1.375rem);
+    line-height: 1.5;
+    letter-spacing: -0.015em;
+  }
+
+  /* Libellés répartis sur la largeur, comme les blocs de la référence. */
+  .label-justified {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+  }
+
+  /* --- Layout --- */
+  .shell {
+    padding-inline: var(--gutter);
+  }
+
+  /* --- Bandeau défilant --- */
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-scroll 38s linear infinite;
+  }
+
+  .marquee-item {
+    padding-inline-end: 0.3em;
+    white-space: nowrap;
+  }
+}
+
+/* --- Lecture longue : rendu des articles markdown --- */
+@layer components {
+  .article {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    letter-spacing: -0.006em;
+    color: var(--ink);
+  }
+
+  .article > * + * {
+    margin-top: 1.35em;
+  }
+
+  /* La mesure est fixée par la largeur de la colonne dans la page, pas ici :
+     tout — prose, code, tableaux — s'aligne ainsi sur un seul bord droit. */
+
+  .article strong {
+    font-weight: 600;
+  }
+
+  .article a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color 0.15s;
+  }
+
+  .article a:hover {
+    text-decoration-color: var(--px-accent);
+  }
+
+  .article h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-top: 2.6em;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--rule);
+    scroll-margin-top: 4rem;
+  }
+
+  .article h3 {
+    font-size: 1.1875rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-top: 2.1em;
+    scroll-margin-top: 4rem;
+  }
+
+  .article h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-top: 1.8em;
+  }
+
+  .article ul,
+  .article ol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55em;
+    padding-left: 0;
+  }
+
+  .article li {
+    position: relative;
+    padding-left: 1.5rem;
+    list-style: none;
+  }
+
+  .article ul > li::before {
+    content: "";
+    position: absolute;
+    left: 0.15rem;
+    top: 0.72em;
+    width: 0.3rem;
+    height: 0.3rem;
+    background: var(--px-accent);
+  }
+
+  .article ol {
+    counter-reset: article-counter;
+  }
+
+  .article ol > li {
+    counter-increment: article-counter;
+  }
+
+  .article ol > li::before {
+    content: counter(article-counter) ".";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 2.2;
+    color: var(--px-accent);
+  }
+
+  .article li > ul,
+  .article li > ol {
+    margin-top: 0.55em;
+  }
+
+  .article blockquote {
+    border-left: 2px solid var(--px-accent);
+    padding: 0.15rem 0 0.15rem 1.15rem;
+    color: var(--muted-foreground);
+  }
+
+  .article hr {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    margin-block: 2.6em;
+  }
+
+  /* Code en ligne */
+  .article :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--secondary);
+    border: 1px solid var(--rule);
+    padding: 0.1em 0.34em;
+    /* Jamais `nowrap` : un identifiant long déborderait de la colonne sur
+       mobile, et le débordement se produirait hors de toute boîte scrollable. */
+    overflow-wrap: anywhere;
+  }
+
+  /* Blocs de code produits par rehype-pretty-code */
+  .article figure[data-rehype-pretty-code-figure] {
+    margin-top: 1.6em;
+  }
+
+  .article [data-rehype-pretty-code-title] {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    border: 1px solid var(--rule);
+    border-bottom: 0;
+    padding: 0.5rem 0.85rem;
+    background: var(--secondary);
+  }
+
+  .article pre {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    border: 1px solid var(--rule);
+    background: var(--secondary);
+    padding-block: 0.95rem;
+    overflow-x: auto;
+    tab-size: 2;
+  }
+
+  .article pre code {
+    display: grid;
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+
+  .article pre code [data-line] {
+    padding-inline: 0.95rem;
+    border-left: 2px solid transparent;
+  }
+
+  .article pre code [data-highlighted-line] {
+    background: color-mix(in srgb, var(--px-accent) 8%, transparent);
+    border-left-color: var(--px-accent);
+  }
+
+  .article mark[data-highlighted-chars] {
+    background: color-mix(in srgb, var(--px-accent) 16%, transparent);
+    color: inherit;
+    padding: 0.1em 0.2em;
+  }
+
+  /* Tableaux */
+  .article .table-scroll {
+    overflow-x: auto;
+  }
+
+  .article table {
+    width: 100%;
+    /* Sous cette largeur les cellules se replient en colonnes illisibles :
+       mieux vaut faire défiler le tableau dans sa boîte. */
+    min-width: 30rem;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    text-align: left;
+  }
+
+  .article th {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    border-bottom: 1px solid var(--ink);
+    padding: 0.6rem 0.9rem 0.6rem 0;
+    vertical-align: bottom;
+  }
+
+  .article td {
+    border-bottom: 1px solid var(--rule);
+    padding: 0.7rem 0.9rem 0.7rem 0;
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .article th:last-child,
+  .article td:last-child {
+    padding-right: 0;
+  }
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* --- Impression : le CV doit sortir propre en A4 --- */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 14mm 12mm;
+  }
+
+  :root {
+    --paper: #ffffff;
+    --rule: rgba(0, 0, 0, 0.22);
+    --muted-foreground: #333333;
+  }
+
+  html,
+  body {
+    background: #ffffff;
+  }
+
+  body {
+    /* Le corps d'écran est trop grand pour une page A4 : on resserre. */
+    font-size: 10.5pt;
+  }
+
+  .shell {
+    padding-inline: 0;
+  }
+
+  .display-l {
+    font-size: 26pt;
+  }
+
+  .display-m {
+    font-size: 13pt;
+  }
+
+  .body-text {
+    font-size: 9.5pt;
+    line-height: 1.45;
+  }
+
+  .label {
+    font-size: 7pt;
+  }
+
+  /* Les liens deviennent du texte : l'adresse est déjà dans le bloc contact. */
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+
+  canvas {
+    display: none !important;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

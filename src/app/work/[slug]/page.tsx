@@ -1,149 +1,175 @@
+import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPosts, getLanguageFromCookies, Language } from "@/utils/utils";
+import { PixelThumb } from "@/components/pixel-thumb";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { WorkCard } from "@/components/work-card";
+import { Badge } from "@/components/ui/badge";
 import {
-  Meta,
-  Schema,
-  AvatarGroup,
-  Button,
-  Column,
-  Flex,
-  Heading,
-  Media,
-  Text,
-  SmartLink,
-  Row,
-  Avatar,
-  Line,
-} from "@once-ui-system/core";
-import { baseURL, about, person, work, contentByLanguage } from "@/resources";
-import { formatDate } from "@/utils/formatDate";
-import { ScrollToHash, CustomMDX } from "@/components";
-import { Metadata } from "next";
-import { Projects } from "@/components/work/Projects";
+  projectBySlug,
+  projects,
+  site,
+  type CaseBlock,
+  type CaseSection,
+} from "@/lib/content";
 
-export async function generateStaticParams(): Promise<{ slug: string }[]> {
-  // Generate params for all unique base slugs
-  const posts = getPosts(["src", "app", "work", "projects"], "fr");
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+export function generateStaticParams() {
+  return projects.map((project) => ({ slug: project.slug }));
 }
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ slug: string | string[] }>;
-}): Promise<Metadata> {
-  const routeParams = await params;
-  const slugPath = Array.isArray(routeParams.slug)
-    ? routeParams.slug.join("/")
-    : routeParams.slug || "";
+}: PageProps<"/work/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const project = projectBySlug.get(slug);
+  if (!project) return {};
 
-  const language = await getLanguageFromCookies();
-  const posts = getPosts(["src", "app", "work", "projects"], language);
-  let post = posts.find((post) => post.slug === slugPath);
-
-  if (!post) return {};
-
-  const localizedWork = contentByLanguage[language].work;
-
-  return Meta.generate({
-    title: post.metadata.title,
-    description: post.metadata.summary,
-    baseURL: baseURL,
-    image: post.metadata.image || `/api/og/generate?title=${post.metadata.title}`,
-    path: `${localizedWork.path}/${post.slug}`,
-  });
+  const title = `${project.title} — ${project.tagline}`;
+  return {
+    title,
+    description: project.summary,
+    openGraph: {
+      title: `${title} — ${site.name}`,
+      description: project.summary,
+      type: "article",
+      url: `${site.url}/work/${project.slug}`,
+    },
+  };
 }
 
-export default async function Project({
-  params,
-}: {
-  params: Promise<{ slug: string | string[] }>;
-}) {
-  const routeParams = await params;
-  const slugPath = Array.isArray(routeParams.slug)
-    ? routeParams.slug.join("/")
-    : routeParams.slug || "";
-
-  const language = await getLanguageFromCookies();
-  const localizedContent = contentByLanguage[language];
-
-  let post = getPosts(["src", "app", "work", "projects"], language).find(
-    (post) => post.slug === slugPath
-  );
-
-  if (!post) {
-    notFound();
+function Block({ block }: { block: CaseBlock }) {
+  if (block.type === "list") {
+    return (
+      <ul className="flex flex-col gap-2.5">
+        {block.items.map((item) => (
+          <li key={item} className="body-text flex gap-3 text-muted-foreground">
+            <span aria-hidden className="mt-2 size-1 shrink-0 bg-px-accent" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    );
   }
 
-  const avatars =
-    post.metadata.team?.map((person) => ({
-      src: person.avatar,
-    })) || [];
+  if (block.type === "note") {
+    return (
+      <p className="body-text border-l-2 border-px-accent bg-secondary/60 px-4 py-3">
+        {block.text}
+      </p>
+    );
+  }
 
-  const relatedLabel = language === "fr" ? "Projets similaires" : "Related projects";
-  const projectsLabel = language === "fr" ? "Projets" : "Projects";
+  return <p className="body-text text-muted-foreground">{block.text}</p>;
+}
+
+function CaseSectionView({ section }: { section: CaseSection }) {
+  return (
+    <div className="grid gap-4 border-t border-rule py-8 md:grid-cols-12 md:gap-10">
+      <h2 className="label text-muted-foreground md:col-span-3 md:pt-1">
+        {section.title}
+      </h2>
+      <div className="flex max-w-2xl flex-col gap-4 md:col-span-9">
+        {section.blocks.map((block, index) => (
+          <Block key={index} block={block} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default async function ProjectPage({ params }: PageProps<"/work/[slug]">) {
+  const { slug } = await params;
+  const project = projectBySlug.get(slug);
+  if (!project) notFound();
+
+  const others = projects.filter((item) => item.slug !== project.slug);
 
   return (
-    <Column as="section" maxWidth="m" horizontal="center" gap="l">
-      <Schema
-        as="blogPosting"
-        baseURL={baseURL}
-        path={`${localizedContent.work.path}/${post.slug}`}
-        title={post.metadata.title}
-        description={post.metadata.summary}
-        datePublished={post.metadata.publishedAt}
-        dateModified={post.metadata.publishedAt}
-        image={
-          post.metadata.image || `/api/og/generate?title=${encodeURIComponent(post.metadata.title)}`
-        }
-        author={{
-          name: localizedContent.person.name,
-          url: `${baseURL}${localizedContent.about.path}`,
-          image: `${baseURL}${localizedContent.person.avatar}`,
-        }}
-      />
-      <Column maxWidth="s" gap="16" horizontal="center" align="center">
-        <SmartLink href="/work">
-          <Text variant="label-strong-m">{projectsLabel}</Text>
-        </SmartLink>
-        <Text variant="body-default-xs" onBackground="neutral-weak" marginBottom="12">
-          {post.metadata.publishedAt && formatDate(post.metadata.publishedAt)}
-        </Text>
-        <Heading variant="display-strong-m">{post.metadata.title}</Heading>
-      </Column>
-      <Row marginBottom="32" horizontal="center">
-        <Row gap="16" vertical="center">
-          {post.metadata.team && <AvatarGroup reverse avatars={avatars} size="s" />}
-          <Text variant="label-default-m" onBackground="brand-weak">
-            {post.metadata.team?.map((member, idx) => (
-              <span key={idx}>
-                {idx > 0 && (
-                  <Text as="span" onBackground="neutral-weak">
-                    ,{" "}
-                  </Text>
-                )}
-                <SmartLink href={member.linkedIn}>{member.name}</SmartLink>
-              </span>
+    <>
+      <SiteHeader />
+
+      <main id="contenu">
+        <div className="shell pb-10 pt-10 md:pt-14">
+          <Link
+            href="/#projets"
+            className="label inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-ink"
+          >
+            <span aria-hidden>←</span> Tous les projets
+          </Link>
+
+          <div className="mt-10 grid gap-8 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-7">
+              <h1 className="display display-l">{project.title}</h1>
+              <p className="display display-m mt-2 text-muted-foreground">
+                {project.tagline}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-5 lg:col-span-5 lg:border-l lg:border-rule lg:pl-8">
+              <p className="body-text max-w-md text-muted-foreground">
+                {project.summary}
+              </p>
+              <dl className="grid grid-cols-2 gap-4 border-t border-rule pt-4">
+                <div>
+                  <dt className="label text-muted-foreground">Rôle</dt>
+                  <dd className="body-text mt-1">{project.role}</dd>
+                </div>
+                <div>
+                  <dt className="label text-muted-foreground">Période</dt>
+                  <dd className="body-text mt-1">{project.year}</dd>
+                </div>
+              </dl>
+              <ul className="flex flex-wrap gap-1.5">
+                {project.stack.map((tech) => (
+                  <li key={tech}>
+                    <Badge
+                      variant="outline"
+                      className="label h-auto border-rule px-2 py-1 text-muted-foreground"
+                    >
+                      {tech}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-grid border-y border-rule">
+          <PixelThumb
+            seed={project.seed}
+            cell={7}
+            className="h-[34vh] min-h-[200px] md:h-[46vh]"
+          />
+        </div>
+
+        {project.status ? (
+          <div className="shell pt-10">
+            <p className="body-text max-w-2xl border-l-2 border-px-accent bg-secondary/60 px-4 py-3">
+              <span className="label mr-2 text-px-accent">Statut</span>
+              {project.status}
+            </p>
+          </div>
+        ) : null}
+
+        <div className="shell py-10 md:py-14">
+          {project.sections.map((section) => (
+            <CaseSectionView key={section.title} section={section} />
+          ))}
+        </div>
+
+        <section className="shell border-t border-rule py-16 md:py-20">
+          <p className="label mb-10 text-muted-foreground">Autres projets</p>
+          <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
+            {others.map((item) => (
+              <WorkCard key={item.slug} project={item} />
             ))}
-          </Text>
-        </Row>
-      </Row>
-      {post.metadata.images.length > 0 && (
-        <Media priority aspectRatio="16 / 9" radius="m" alt="image" src={post.metadata.images[0]} />
-      )}
-      <Column style={{ margin: "auto" }} as="article" maxWidth="xs">
-        <CustomMDX source={post.content} />
-      </Column>
-      <Column fillWidth gap="40" horizontal="center" marginTop="40">
-        <Line maxWidth="40" />
-        <Heading as="h2" variant="heading-strong-xl" marginBottom="24">
-          {relatedLabel}
-        </Heading>
-        <Projects exclude={[post.slug]} range={[2]} />
-      </Column>
-      <ScrollToHash />
-    </Column>
+          </div>
+        </section>
+      </main>
+
+      <SiteFooter />
+    </>
   );
 }

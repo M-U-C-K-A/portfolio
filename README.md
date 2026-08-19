@@ -141,15 +141,32 @@ Le reste :
 projets : chaque projet a une composition dérivée de sa graine, cuite une fois
 et seulement seuillée à chaque image.
 
-`src/app/opengraph-image.tsx` en donne une troisième lecture, statique : le
-ruban de `flow` figé en une grille de `<div>`, puisque Satori ne connaît ni le
-canvas ni `display: grid`. Le tirage est semé, sinon la vignette changerait à
-chaque déploiement. Satori n'a pas non plus accès aux polices du site : les
-deux graisses d'Inter Tight sont dans `assets/fonts/`, sous-ensemble latin et
-accents français — 44 ko chacune, contre 300 pour la fonte complète, et le
-bundle d'une image est plafonné à 500 ko. Changer un caractère hors de ce
-sous-ensemble le ferait rendre en tofu ; le jeu couvre l'ASCII imprimable et
-les accents, ce qui suffit largement au nom, au rôle et au domaine.
+`src/lib/og-wave.ts` en donne une troisième lecture, statique : le ruban de
+`flow` figé et tiré à pleine page derrière l'image de partage. Le tirage est
+semé, sinon la vignette changerait à chaque déploiement.
+
+Trois choses valent d'être sues avant d'y toucher.
+
+**Le champ passe par un SVG, pas par des `<div>`.** Satori décale les enfants
+en position absolue — mesuré à 20 px en horizontal et 30 en vertical, soit plus
+d'une cellule. Assez pour qu'une crête sombre calculée au-dessus de la ligne de
+pied vienne se poser dessus. Dans un SVG, le `viewBox` est le cadre et un
+`rect` est là où on l'écrit.
+
+**Les textes sont protégés par des rectangles codés en dur** (`KEEP_OUT`) :
+Satori ne mesure rien pour nous. La courbe est déjà choisie pour que son cœur
+passe à deux rangées du titre — les harmoniques viennent d'un balayage sous
+contrainte, la disposition « nom à gauche » n'ayant elle aucune solution à
+cette taille de titre — et le fondu n'éteint que la frange. Si un bloc de texte
+change de taille ou de place, il faut reporter son rectangle ;
+`tests/og-wave.test.ts` échoue si l'un d'eux laisse passer trop de gris.
+
+**Satori n'a pas accès aux polices du site.** Les deux graisses d'Inter Tight
+sont dans `assets/fonts/`, sous-ensemble latin et accents français — 44 ko
+chacune, contre 300 pour la fonte complète, et le bundle d'une image est
+plafonné à 500 ko. Un caractère hors de ce sous-ensemble rendrait en tofu ; le
+jeu couvre l'ASCII imprimable et les accents, ce qui suffit largement au nom,
+au rôle et au domaine.
 
 ## Contenu
 

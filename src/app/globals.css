@@ -524,6 +524,13 @@
   */
   .cv {
     max-width: none !important;
+    /* Le CV occupe toute la page, ce qui permet de pousser le rappel de
+       pixels tout en bas plutôt que juste sous le dernier bloc. 270mm au lieu
+       des 275mm disponibles : quelques millimètres de jeu évitent qu'un
+       arrondi ne fasse déborder sur une deuxième page. */
+    display: flex !important;
+    flex-direction: column;
+    min-height: 270mm;
   }
 
   .cv-body {
@@ -538,24 +545,56 @@
     gap: 4mm !important;
   }
 
+  /*
+    À l'écran, l'en-tête tient sur une ligne : identité à gauche, contact à
+    droite. Sur le papier on desserre — le nom respire en haut de page, le
+    résumé se cale sous lui sur la colonne de gauche, et le bloc contact
+    descend à la hauteur du résumé. Les colonnes reprennent celles du corps,
+    si bien que le contact s'aligne sur la colonne « Projets ».
+  */
   .cv-head {
-    padding-bottom: 4mm !important;
+    display: grid !important;
+    grid-template-columns: 1.32fr 1fr !important;
+    column-gap: 7mm !important;
+    row-gap: 0 !important;
+    padding-top: 9mm !important;
+    padding-bottom: 5mm !important;
   }
 
   .cv-identity {
-    display: grid !important;
-    grid-template-columns: 1.15fr 1fr !important;
-    align-items: end;
-    gap: 5mm !important;
-  }
-
-  .cv-facts {
-    gap: 1.5mm 5mm !important;
+    grid-column: 1;
+    grid-row: 1;
   }
 
   .cv-summary {
-    margin-top: 3.5mm !important;
+    grid-column: 1;
+    grid-row: 2;
+    margin-top: 4mm !important;
     max-width: none !important;
+  }
+
+  .cv-facts {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
+    /* L'adresse e-mail fait une fois et demie la largeur des autres champs :
+       sans cet élargissement elle passerait à la ligne. */
+    grid-template-columns: 1.2fr 1fr !important;
+    gap: 1.5mm 4mm !important;
+  }
+
+  /* La colonne de droite porte déjà compétences et stack : on n'y garde que
+     les deux premiers projets, sinon elle déborde sur la colonne de gauche. */
+  .cv-work > li:nth-child(n + 3) {
+    display: none;
+  }
+
+  /* Rappel du champ de pixels, poussé en pied de page. La trame de fond est
+     réglée à 5 % pour l'écran : une imprimante ne la rendrait pas. */
+  .cv-strip {
+    --rule-faint: rgba(0, 0, 0, 0.1);
+    margin-top: auto !important;
+    padding-top: 8mm;
   }
 
   .cv-block {

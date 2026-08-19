@@ -286,16 +286,7 @@ export class PixelEngine {
   }
 
   private decay(dt: number) {
-    const { energy, opts } = this;
-    const { grain } = this.fields;
-    const base = dt / opts.life;
-    for (let i = 0; i < energy.length; i++) {
-      const e = energy[i];
-      if (e <= 0) continue;
-      // Le grain module la vitesse : les cellules ne s'éteignent pas en bloc.
-      const next = e - base * (0.75 + grain[i] * 1.05);
-      energy[i] = next > 0 ? next : 0;
-    }
+    decayField(this.energy, this.fields.grain, dt, this.opts.life);
   }
 
   private applyMotif(dt: number) {
@@ -399,44 +390,19 @@ export class PixelEngine {
     }
   }
 
-  /**
-   * Pluie. Chaque colonne tire sa vitesse et sa cadence du bruit : les
-   * traînées ne tombent jamais en rang, et une colonne sur trois reste vide.
-   */
   private motifRain(dt: number) {
-    const { cols, rows, energy, color } = this;
-    const { mask, grain } = this.fields;
-    const t = this.clock;
-
-    for (let x = 0; x < cols; x++) {
-      // `grain` de la première ligne : une valeur stable propre à la colonne.
-      const g = grain[x];
-      // Deux colonnes sur trois restent vides, sinon la pluie fait un mur.
-      if (g < 0.62) continue;
-
-      // Lente : la traînée doit rester lisible, pas clignoter.
-      const speed = 0.006 + g * 0.009; // cellules par milliseconde
-      const period = rows * (2.2 + g * 2.6); // intervalle entre deux gouttes
-      const offset = g * period;
-      const now = (t * speed + offset) % period;
-      const before = ((t - dt) * speed + offset) % period;
-      if (now >= rows) continue;
-
-      // La goutte avance de plus d'une cellule par image : on remplit
-      // l'intervalle, sinon la traînée serait pointillée.
-      const from = before < now ? Math.ceil(before) : 0;
-      for (let y = from; y <= now && y < rows; y++) {
-        if (y < 0) continue;
-        const i = y * cols + x;
-        const head = 1 - (now - y) / Math.max(1, now - from + 1);
-        // Traînée courte : l'énergie reste juste au-dessus du seuil local, la
-        // cellule s'éteint donc peu après le passage de la goutte.
-        const amp = mask[i] + 0.06 + head * 0.16;
-        if (amp <= energy[i]) continue;
-        energy[i] = amp;
-        color[i] = head > 0.8 ? (g > 0.85 ? INK : SLATE) : neutral(1 - head);
-      }
-    }
+    rainStep(
+      {
+        cols: this.cols,
+        rows: this.rows,
+        energy: this.energy,
+        color: this.color,
+        mask: this.fields.mask,
+        grain: this.fields.grain,
+      },
+      this.clock,
+      dt,
+    );
   }
 
   /**
@@ -669,4 +635,73 @@ function pickBlastColor(clump: number, grain: number, edge: number) {
   if (grain > 0.62) return neutral((1 - edge / 0.58) * 0.8 + clump * 0.2);
 
   return ACCENT;
+}
+
+/**
+ * Un champ de pixels, réduit à ce dont un motif a besoin. Sortir cette forme
+ * de la classe permet de rejouer un motif hors du navigateur — c'est ce dont
+ * se sert le rappel imprimé du CV, qui doit produire du SVG côté serveur.
+ */
+export interface PixelFrame {
+  cols: number;
+  rows: number;
+  energy: Float32Array;
+  color: Uint8Array;
+  mask: Float32Array;
+  grain: Float32Array;
+}
+
+/** Décroissance d'un champ, en place. */
+export function decayField(
+  energy: Float32Array,
+  grain: Float32Array,
+  dt: number,
+  life: number,
+) {
+  const base = dt / life;
+  for (let i = 0; i < energy.length; i++) {
+    const e = energy[i];
+    if (e <= 0) continue;
+    // Le grain module la vitesse : les cellules ne s'éteignent pas en bloc.
+    const next = e - base * (0.75 + grain[i] * 1.05);
+    energy[i] = next > 0 ? next : 0;
+  }
+}
+
+/**
+ * Pluie. Chaque colonne tire sa vitesse et sa cadence du bruit : les traînées
+ * ne tombent jamais en rang, et une colonne sur trois reste vide.
+ */
+export function rainStep(frame: PixelFrame, clock: number, dt: number) {
+  const { cols, rows, energy, color, mask, grain } = frame;
+
+  for (let x = 0; x < cols; x++) {
+    // `grain` de la première ligne : une valeur stable propre à la colonne.
+    const g = grain[x];
+    // Deux colonnes sur trois restent vides, sinon la pluie fait un mur.
+    if (g < 0.62) continue;
+
+    // Lente : la traînée doit rester lisible, pas clignoter.
+    const speed = 0.006 + g * 0.009; // cellules par milliseconde
+    const period = rows * (2.2 + g * 2.6); // intervalle entre deux gouttes
+    const offset = g * period;
+    const now = (clock * speed + offset) % period;
+    const before = ((clock - dt) * speed + offset) % period;
+    if (now >= rows) continue;
+
+    // La goutte avance de plus d'une cellule par image : on remplit
+    // l'intervalle, sinon la traînée serait pointillée.
+    const from = before < now ? Math.ceil(before) : 0;
+    for (let y = from; y <= now && y < rows; y++) {
+      if (y < 0) continue;
+      const i = y * cols + x;
+      const head = 1 - (now - y) / Math.max(1, now - from + 1);
+      // Traînée courte : l'énergie reste juste au-dessus du seuil local, la
+      // cellule s'éteint donc peu après le passage de la goutte.
+      const amp = mask[i] + 0.06 + head * 0.16;
+      if (amp <= energy[i]) continue;
+      energy[i] = amp;
+      color[i] = head > 0.8 ? (g > 0.85 ? INK : SLATE) : neutral(1 - head);
+    }
+  }
 }

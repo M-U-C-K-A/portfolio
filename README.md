@@ -160,6 +160,39 @@ Le vide à droite est assumé : c'est ce qui garde le texte lisible et à gauche
 plutôt qu'échoué au milieu de la page. Le sommaire suit la lecture via un
 `IntersectionObserver` (`src/components/article-toc.tsx`).
 
+## L'impression du CV
+
+Le CV doit sortir sur **une seule page A4**. Le piège principal : les points de
+rupture Tailwind ne s'appliquent pas au papier — la zone imprimable d'une A4
+fait environ 690 px CSS, donc `lg:` ne se déclenche jamais et les colonnes
+s'empilent. `@media print` rétablit donc les grilles explicitement.
+
+La mise en page y est **recomposée**, pas seulement resserrée :
+
+- l'en-tête passe d'une ligne (identité à gauche, contact à droite) à deux
+  colonnes calées sur celles du corps : le nom respire en haut de page, le
+  résumé se pose sous lui, le bloc contact descend à sa hauteur ;
+- la ligne de spécialités disparaît, le corps du CV la redit déjà ;
+- la colonne de droite ne garde que les deux premiers projets, sinon elle
+  dépasse la colonne de gauche.
+
+`.cv` devient une colonne flex de `270mm` de haut — les 275mm disponibles moins
+un peu de jeu — ce qui permet de pousser le rappel de pixels tout en bas de la
+page plutôt que juste sous le dernier bloc.
+
+Ce rappel est un **SVG**, pas un canvas : l'impression masque les canvas, et un
+canvas monté pour le seul papier resterait de taille nulle à l'écran, donc
+jamais peint. `src/lib/pixel-strip.ts` rejoue donc la pluie côté serveur — mêmes
+fonctions et même graine que le moteur — et sort des rectangles.
+
+L'instant de capture n'est pas libre : les colonnes tirent vitesse et période du
+même bruit, si bien que leurs phases se rejoignent autour de `t ≈ 289 × rows` et
+que le champ s'y vide entièrement. Un test garde la densité du rappel, sinon
+l'image sortirait blanche sans que rien ne le signale.
+
+Reste hors de portée du CSS : l'en-tête et le pied de page du navigateur (date,
+URL, numéro de page). Ils se décochent dans le dialogue d'impression.
+
 ## Un piège à ne pas réintroduire
 
 Le `body` porte `overflow-x: clip`, **pas** `hidden`. `hidden` force le calcul

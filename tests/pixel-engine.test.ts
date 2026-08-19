@@ -11,6 +11,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { PixelEngine, type PixelMotif } from "../src/lib/pixel-engine.ts";
+import { buildRainStrip } from "../src/lib/pixel-strip.ts";
 
 interface Rect {
   x: number;
@@ -246,6 +247,33 @@ describe("PixelEngine", () => {
       span < 900 * 0.6,
       `traînée trop longue : ${Math.round(span)} px sur 900`,
     );
+  });
+
+  it("capture un rappel imprimé rempli et stable", () => {
+    // Les colonnes tirent vitesse et période du même bruit : leurs phases se
+    // rejoignent autour de t ≈ 289 × rows, où le champ se vide entièrement.
+    // Le rappel du CV est une image fixe — s'il tombe sur ce nœud, il sort
+    // blanc à l'impression sans que rien ne le signale.
+    const cols = 117;
+    const rows = 18;
+    const cells = (runs: { w: number }[]) =>
+      runs.reduce((sum, run) => sum + run.w, 0);
+
+    const strip = buildRainStrip({ cols, rows, seed: 95, duration: 2320 });
+    const density = cells(strip) / (cols * rows);
+    assert.ok(
+      density > 0.03,
+      `rappel imprimé trop creux : ${(density * 100).toFixed(1)} %`,
+    );
+
+    assert.deepEqual(
+      strip,
+      buildRainStrip({ cols, rows, seed: 95, duration: 2320 }),
+      "le rappel imprimé doit être identique d'un rendu à l'autre",
+    );
+
+    // Le nœud de phase, pour mémoire : c'est bien lui qu'on évite.
+    assert.equal(cells(buildRainStrip({ cols, rows, duration: 289 * rows })), 0);
   });
 
   it("est déterministe à graine égale", () => {

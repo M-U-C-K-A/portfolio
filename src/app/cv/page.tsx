@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PixelPrintStrip } from "@/components/pixel-print-strip";
 import { PrintButton } from "@/components/print-button";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -68,43 +69,41 @@ export default function CvPage() {
 
       <main id="contenu" className="shell grow pb-20 pt-10 md:pt-14">
         <div className="cv mx-auto max-w-[64rem]">
-          {/* En-tête */}
-          <header className="cv-head border-b border-rule pb-8">
-            <div className="cv-identity grid gap-6 md:grid-cols-12 md:items-end">
-              <div className="md:col-span-7">
-                <p className="label text-muted-foreground">
-                  {cv.specialities.join(" · ")}
-                </p>
-                <h1 className="display display-l mt-3">{site.name}</h1>
-                <p className="display display-m mt-1 text-muted-foreground">
-                  {cv.role}
-                </p>
-              </div>
-
-              <dl className="cv-facts grid grid-cols-2 gap-x-6 gap-y-3 md:col-span-5">
-                {cv.facts.map((fact) => (
-                  <div key={fact.label}>
-                    <dt className="label text-muted-foreground">
-                      {fact.label}
-                    </dt>
-                    <dd className="body-text mt-0.5 break-words">
-                      {fact.href ? (
-                        <a
-                          href={fact.href}
-                          className="underline decoration-rule underline-offset-4 transition-colors hover:decoration-ink"
-                        >
-                          {fact.value}
-                        </a>
-                      ) : (
-                        fact.value
-                      )}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+          {/* En-tête. Sur le papier, la grille se recompose : le nom seul en
+              haut, le résumé sous lui et le bloc contact descendu à sa hauteur
+              (voir `.cv-head` dans globals.css). */}
+          <header className="cv-head grid gap-6 border-b border-rule pb-8 md:grid-cols-12 md:items-end">
+            <div className="cv-identity md:col-span-7">
+              <p className="label text-muted-foreground print:hidden">
+                {cv.specialities.join(" · ")}
+              </p>
+              <h1 className="display display-l mt-3 print:mt-0">{site.name}</h1>
+              <p className="display display-m mt-1 text-muted-foreground">
+                {cv.role}
+              </p>
             </div>
 
-            <p className="cv-summary body-text mt-8 max-w-3xl text-muted-foreground">
+            <dl className="cv-facts grid grid-cols-2 gap-x-6 gap-y-3 md:col-span-5">
+              {cv.facts.map((fact) => (
+                <div key={fact.label}>
+                  <dt className="label text-muted-foreground">{fact.label}</dt>
+                  <dd className="body-text mt-0.5 break-words">
+                    {fact.href ? (
+                      <a
+                        href={fact.href}
+                        className="underline decoration-rule underline-offset-4 transition-colors hover:decoration-ink"
+                      >
+                        {fact.value}
+                      </a>
+                    ) : (
+                      fact.value
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <p className="cv-summary body-text mt-2 max-w-3xl text-muted-foreground md:col-span-12">
               {cv.summary}
             </p>
           </header>
@@ -123,7 +122,7 @@ export default function CvPage() {
 
             <div className="cv-col flex flex-col gap-10 lg:col-span-5">
               <Block title="Projets">
-                <ul className="flex flex-col gap-4">
+                <ul className="cv-work flex flex-col gap-4">
                   {cv.selectedWork.map((item) => (
                     <li key={item.slug}>
                       <Link
@@ -169,6 +168,8 @@ export default function CvPage() {
               </Block>
             </div>
           </div>
+
+          <PixelPrintStrip />
 
           <div className="mt-12 flex flex-wrap gap-3 print:hidden">
             <PrintButton label="Imprimer / enregistrer en PDF" />

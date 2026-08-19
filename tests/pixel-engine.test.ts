@@ -11,7 +11,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { PixelEngine, type PixelMotif } from "../src/lib/pixel-engine.ts";
-import { buildRainStrip } from "../src/lib/pixel-strip.ts";
+import { buildBlastMark } from "../src/lib/pixel-strip.ts";
 
 interface Rect {
   x: number;
@@ -249,31 +249,31 @@ describe("PixelEngine", () => {
     );
   });
 
-  it("capture un rappel imprimé rempli et stable", () => {
-    // Les colonnes tirent vitesse et période du même bruit : leurs phases se
-    // rejoignent autour de t ≈ 289 × rows, où le champ se vide entièrement.
-    // Le rappel du CV est une image fixe — s'il tombe sur ce nœud, il sort
-    // blanc à l'impression sans que rien ne le signale.
-    const cols = 117;
-    const rows = 18;
-    const cells = (runs: { w: number }[]) =>
-      runs.reduce((sum, run) => sum + run.w, 0);
+  it("compose une marque imprimée pleine et stable", () => {
+    // La marque du CV est calculée sur le serveur et rendue en SVG : rien ne
+    // la regarde avant qu'elle sorte de l'imprimante. Deux choses la ruinent
+    // en silence — un disque creux, et un rendu qui changerait d'un build à
+    // l'autre alors que le CV est censé être toujours le même document.
+    const side = 28;
+    const options = {
+      cols: side,
+      rows: side,
+      seed: 95,
+      clumpScale: 5,
+      cx: side / 2,
+      cy: side / 2,
+      radius: side / 2 - 1,
+    };
 
-    const strip = buildRainStrip({ cols, rows, seed: 95, duration: 2320 });
-    const density = cells(strip) / (cols * rows);
+    const mark = buildBlastMark(options);
+    const cells = mark.reduce((sum, run) => sum + run.w, 0);
+    const disc = Math.PI * (side / 2 - 1) ** 2;
     assert.ok(
-      density > 0.03,
-      `rappel imprimé trop creux : ${(density * 100).toFixed(1)} %`,
+      cells > disc * 0.6,
+      `marque trop creuse : ${cells} cellules pour un disque de ${Math.round(disc)}`,
     );
 
-    assert.deepEqual(
-      strip,
-      buildRainStrip({ cols, rows, seed: 95, duration: 2320 }),
-      "le rappel imprimé doit être identique d'un rendu à l'autre",
-    );
-
-    // Le nœud de phase, pour mémoire : c'est bien lui qu'on évite.
-    assert.equal(cells(buildRainStrip({ cols, rows, duration: 289 * rows })), 0);
+    assert.deepEqual(mark, buildBlastMark(options));
   });
 
   it("est déterministe à graine égale", () => {

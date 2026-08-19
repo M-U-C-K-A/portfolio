@@ -286,7 +286,16 @@ export class PixelEngine {
   }
 
   private decay(dt: number) {
-    decayField(this.energy, this.fields.grain, dt, this.opts.life);
+    const { energy, opts } = this;
+    const { grain } = this.fields;
+    const base = dt / opts.life;
+    for (let i = 0; i < energy.length; i++) {
+      const e = energy[i];
+      if (e <= 0) continue;
+      // Le grain module la vitesse : les cellules ne s'éteignent pas en bloc.
+      const next = e - base * (0.75 + grain[i] * 1.05);
+      energy[i] = next > 0 ? next : 0;
+    }
   }
 
   private applyMotif(dt: number) {
@@ -390,19 +399,44 @@ export class PixelEngine {
     }
   }
 
+  /**
+   * Pluie. Chaque colonne tire sa vitesse et sa cadence du bruit : les
+   * traînées ne tombent jamais en rang, et une colonne sur trois reste vide.
+   */
   private motifRain(dt: number) {
-    rainStep(
-      {
-        cols: this.cols,
-        rows: this.rows,
-        energy: this.energy,
-        color: this.color,
-        mask: this.fields.mask,
-        grain: this.fields.grain,
-      },
-      this.clock,
-      dt,
-    );
+    const { cols, rows, energy, color } = this;
+    const { mask, grain } = this.fields;
+    const t = this.clock;
+
+    for (let x = 0; x < cols; x++) {
+      // `grain` de la première ligne : une valeur stable propre à la colonne.
+      const g = grain[x];
+      // Deux colonnes sur trois restent vides, sinon la pluie fait un mur.
+      if (g < 0.62) continue;
+
+      // Lente : la traînée doit rester lisible, pas clignoter.
+      const speed = 0.006 + g * 0.009; // cellules par milliseconde
+      const period = rows * (2.2 + g * 2.6); // intervalle entre deux gouttes
+      const offset = g * period;
+      const now = (t * speed + offset) % period;
+      const before = ((t - dt) * speed + offset) % period;
+      if (now >= rows) continue;
+
+      // La goutte avance de plus d'une cellule par image : on remplit
+      // l'intervalle, sinon la traînée serait pointillée.
+      const from = before < now ? Math.ceil(before) : 0;
+      for (let y = from; y <= now && y < rows; y++) {
+        if (y < 0) continue;
+        const i = y * cols + x;
+        const head = 1 - (now - y) / Math.max(1, now - from + 1);
+        // Traînée courte : l'énergie reste juste au-dessus du seuil local, la
+        // cellule s'éteint donc peu après le passage de la goutte.
+        const amp = mask[i] + 0.06 + head * 0.16;
+        if (amp <= energy[i]) continue;
+        energy[i] = amp;
+        color[i] = head > 0.8 ? (g > 0.85 ? INK : SLATE) : neutral(1 - head);
+      }
+    }
   }
 
   /**
@@ -487,47 +521,19 @@ export class PixelEngine {
 
   private applyBlasts(dt: number) {
     if (!this.blasts.length) return;
-    const { cols, rows, energy, color } = this;
-    const { clump, grain } = this.fields;
+    const frame: PixelFrame = {
+      cols: this.cols,
+      rows: this.rows,
+      energy: this.energy,
+      color: this.color,
+      fields: this.fields,
+    };
 
     for (let b = this.blasts.length - 1; b >= 0; b--) {
       const blast = this.blasts[b];
       blast.t += dt;
       const p = clamp01(blast.t / blast.duration);
-      const r = blast.maxR * easeOutCubic(p);
-
-      const x0 = Math.max(0, Math.floor(blast.cx - r));
-      const x1 = Math.min(cols - 1, Math.ceil(blast.cx + r));
-      const y0 = Math.max(0, Math.floor(blast.cy - r));
-      const y1 = Math.min(rows - 1, Math.ceil(blast.cy + r));
-      const r2 = r * r;
-
-      for (let y = y0; y <= y1; y++) {
-        const dy = y + 0.5 - blast.cy;
-        const dy2 = dy * dy;
-        for (let x = x0; x <= x1; x++) {
-          const dx = x + 0.5 - blast.cx;
-          const d2 = dx * dx + dy2;
-          if (d2 > r2) continue;
-          const i = y * cols + x;
-          const edge = 1 - Math.sqrt(d2) / r;
-
-          // Plateau franc sur le cœur du disque, chute sur le pourtour.
-          const core = clamp01(edge * 2.2);
-          // L'érosion par l'amas ne mord qu'en périphérie : appliquée partout,
-          // elle laissait des trous de fond au milieu de la masse. Au cœur,
-          // `rim` vaut 0 et l'énergie dépasse tous les seuils — le disque est
-          // plein ; au bord elle vaut 1 et l'amas déchiquette franchement.
-          const rim = 1 - clamp01(edge * 1.6);
-          let amp = core * (1.5 - rim * 0.95 * clump[i]);
-          amp *= 1 - p * 0.12;
-
-          if (amp <= energy[i]) continue;
-          energy[i] = amp;
-          color[i] = pickBlastColor(clump[i], grain[i], edge);
-        }
-      }
-
+      stampBlast(frame, blast.cx, blast.cy, blast.maxR * easeOutCubic(p), p);
       if (p >= 1) this.blasts.splice(b, 1);
     }
   }
@@ -638,70 +644,61 @@ function pickBlastColor(clump: number, grain: number, edge: number) {
 }
 
 /**
- * Un champ de pixels, réduit à ce dont un motif a besoin. Sortir cette forme
- * de la classe permet de rejouer un motif hors du navigateur — c'est ce dont
- * se sert le rappel imprimé du CV, qui doit produire du SVG côté serveur.
+ * Un champ de pixels, réduit à ce qu'il faut pour y tamponner une explosion.
+ * L'extraire de la classe permet de composer un disque hors du navigateur —
+ * c'est ce dont se sert la marque imprimée du CV, calculée en SVG.
  */
 export interface PixelFrame {
   cols: number;
   rows: number;
   energy: Float32Array;
   color: Uint8Array;
-  mask: Float32Array;
-  grain: Float32Array;
-}
-
-/** Décroissance d'un champ, en place. */
-export function decayField(
-  energy: Float32Array,
-  grain: Float32Array,
-  dt: number,
-  life: number,
-) {
-  const base = dt / life;
-  for (let i = 0; i < energy.length; i++) {
-    const e = energy[i];
-    if (e <= 0) continue;
-    // Le grain module la vitesse : les cellules ne s'éteignent pas en bloc.
-    const next = e - base * (0.75 + grain[i] * 1.05);
-    energy[i] = next > 0 ? next : 0;
-  }
+  fields: PixelFields;
 }
 
 /**
- * Pluie. Chaque colonne tire sa vitesse et sa cadence du bruit : les traînées
- * ne tombent jamais en rang, et une colonne sur trois reste vide.
+ * Tamponne une explosion sur un champ. `radius` est déjà amorti, `progress`
+ * (0 → 1) ne sert qu'à faire retomber l'amplitude en fin de course.
  */
-export function rainStep(frame: PixelFrame, clock: number, dt: number) {
-  const { cols, rows, energy, color, mask, grain } = frame;
+export function stampBlast(
+  frame: PixelFrame,
+  cx: number,
+  cy: number,
+  radius: number,
+  progress: number,
+) {
+  const { cols, rows, energy, color } = frame;
+  const { clump, grain } = frame.fields;
 
-  for (let x = 0; x < cols; x++) {
-    // `grain` de la première ligne : une valeur stable propre à la colonne.
-    const g = grain[x];
-    // Deux colonnes sur trois restent vides, sinon la pluie fait un mur.
-    if (g < 0.62) continue;
+  const x0 = Math.max(0, Math.floor(cx - radius));
+  const x1 = Math.min(cols - 1, Math.ceil(cx + radius));
+  const y0 = Math.max(0, Math.floor(cy - radius));
+  const y1 = Math.min(rows - 1, Math.ceil(cy + radius));
+  const r2 = radius * radius;
 
-    // Lente : la traînée doit rester lisible, pas clignoter.
-    const speed = 0.006 + g * 0.009; // cellules par milliseconde
-    const period = rows * (2.2 + g * 2.6); // intervalle entre deux gouttes
-    const offset = g * period;
-    const now = (clock * speed + offset) % period;
-    const before = ((clock - dt) * speed + offset) % period;
-    if (now >= rows) continue;
-
-    // La goutte avance de plus d'une cellule par image : on remplit
-    // l'intervalle, sinon la traînée serait pointillée.
-    const from = before < now ? Math.ceil(before) : 0;
-    for (let y = from; y <= now && y < rows; y++) {
-      if (y < 0) continue;
+  for (let y = y0; y <= y1; y++) {
+    const dy = y + 0.5 - cy;
+    const dy2 = dy * dy;
+    for (let x = x0; x <= x1; x++) {
+      const dx = x + 0.5 - cx;
+      const d2 = dx * dx + dy2;
+      if (d2 > r2) continue;
       const i = y * cols + x;
-      const head = 1 - (now - y) / Math.max(1, now - from + 1);
-      // Traînée courte : l'énergie reste juste au-dessus du seuil local, la
-      // cellule s'éteint donc peu après le passage de la goutte.
-      const amp = mask[i] + 0.06 + head * 0.16;
+      const edge = 1 - Math.sqrt(d2) / radius;
+
+      // Plateau franc sur le cœur du disque, chute sur le pourtour.
+      const core = clamp01(edge * 2.2);
+      // L'érosion par l'amas ne mord qu'en périphérie : appliquée partout,
+      // elle laissait des trous de fond au milieu de la masse. Au cœur,
+      // `rim` vaut 0 et l'énergie dépasse tous les seuils — le disque est
+      // plein ; au bord elle vaut 1 et l'amas déchiquette franchement.
+      const rim = 1 - clamp01(edge * 1.6);
+      let amp = core * (1.5 - rim * 0.95 * clump[i]);
+      amp *= 1 - progress * 0.12;
+
       if (amp <= energy[i]) continue;
       energy[i] = amp;
-      color[i] = head > 0.8 ? (g > 0.85 ? INK : SLATE) : neutral(1 - head);
+      color[i] = pickBlastColor(clump[i], grain[i], edge);
     }
   }
 }

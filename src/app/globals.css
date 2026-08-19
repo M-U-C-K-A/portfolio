@@ -463,9 +463,15 @@
 
 /* --- Impression : le CV doit sortir propre en A4 --- */
 @media print {
+  /*
+    Marge nulle, et la marge visuelle reportée sur `.cv`. Chrome et Edge
+    dessinent leur en-tête et leur pied de page (date, URL, « 1/1 ») dans la
+    marge de `@page` : sans marge, ils n'ont plus où s'écrire. La case du
+    dialogue d'impression reste le réglage qui fait foi.
+  */
   @page {
     size: A4;
-    margin: 12mm 12mm 10mm;
+    margin: 0;
   }
 
   :root {
@@ -498,21 +504,31 @@
   }
 
   .display-l {
-    font-size: 21pt;
+    font-size: 23pt;
   }
 
   .display-m {
-    font-size: 11pt;
+    font-size: 12.5pt;
   }
 
   .body-text {
-    font-size: 8.4pt;
-    line-height: 1.34;
+    font-size: 9.2pt;
+    line-height: 1.4;
   }
 
   .label {
-    font-size: 6.4pt;
+    font-size: 7.2pt;
     letter-spacing: 0.12em;
+  }
+
+  /* Nom d'un poste, d'un projet ou d'une compétence. `text-base` vaut 1rem,
+     donc 12pt : à l'échelle du papier il se distingue mal du corps de texte. */
+  .cv-title {
+    font-size: 13pt;
+  }
+
+  .cv-block > h2 {
+    font-size: 8pt;
   }
 
   /* --- Le CV tient sur une page ---------------------------------------- */
@@ -520,29 +536,19 @@
   /*
     Le point de rupture `lg` ne s'applique pas à l'impression : la zone
     imprimable d'une A4 fait ~690 px CSS, donc les colonnes s'empilaient et le
-    CV sortait sur trois pages. On rétablit la grille explicitement.
+    CV sortait sur trois pages. On rétablit les grilles explicitement.
   */
   .cv {
     max-width: none !important;
-    /* Le CV occupe toute la page, ce qui permet de pousser le rappel de
-       pixels tout en bas plutôt que juste sous le dernier bloc. 270mm au lieu
-       des 275mm disponibles : quelques millimètres de jeu évitent qu'un
+    /* La marge de page, `@page` étant à zéro. */
+    padding: 15mm 13mm 13mm;
+    /* Le CV occupe toute la page, ce qui permet d'ancrer la marque en bas.
+       292mm au lieu des 297 : quelques millimètres de jeu évitent qu'un
        arrondi ne fasse déborder sur une deuxième page. */
+    position: relative;
     display: flex !important;
     flex-direction: column;
-    min-height: 270mm;
-  }
-
-  .cv-body {
-    display: grid !important;
-    grid-template-columns: 1.32fr 1fr !important;
-    column-gap: 7mm !important;
-    row-gap: 0 !important;
-    margin-top: 4mm !important;
-  }
-
-  .cv-col {
-    gap: 4mm !important;
+    min-height: 292mm;
   }
 
   /*
@@ -557,8 +563,13 @@
     grid-template-columns: 1.32fr 1fr !important;
     column-gap: 7mm !important;
     row-gap: 0 !important;
-    padding-top: 9mm !important;
-    padding-bottom: 5mm !important;
+    /* `md:items-end` s'applique aussi au papier — la largeur d'une A4 dépasse
+       le point de rupture. Le nom doit rester calé en haut de page. */
+    align-items: start !important;
+    padding-bottom: 7mm !important;
+    /* Le blanc suffit à séparer l'en-tête du corps : le filet doublait celui
+       que porte déjà le premier bloc de chaque colonne. */
+    border-bottom: 0 !important;
   }
 
   .cv-identity {
@@ -569,18 +580,69 @@
   .cv-summary {
     grid-column: 1;
     grid-row: 2;
-    margin-top: 4mm !important;
+    margin-top: 5mm !important;
     max-width: none !important;
   }
 
   .cv-facts {
     grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-row: 2;
     align-self: end;
     /* L'adresse e-mail fait une fois et demie la largeur des autres champs :
        sans cet élargissement elle passerait à la ligne. */
     grid-template-columns: 1.2fr 1fr !important;
-    gap: 1.5mm 4mm !important;
+    gap: 2mm 4mm !important;
+  }
+
+  .cv-facts .body-text {
+    font-size: 8.4pt;
+  }
+
+  .cv-body {
+    display: grid !important;
+    grid-template-columns: 1.32fr 1fr !important;
+    column-gap: 7mm !important;
+    row-gap: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .cv-col {
+    gap: 5mm !important;
+  }
+
+  .cv-block {
+    padding-top: 3.5mm !important;
+    break-inside: avoid;
+  }
+
+  /* Pas de filet en haut de colonne : il ferait double emploi avec le blanc
+     qui suit l'en-tête. */
+  .cv-col > .cv-block:first-child {
+    padding-top: 0 !important;
+    border-top: 0 !important;
+  }
+
+  .cv-block > h2 {
+    margin-bottom: 3.5mm !important;
+  }
+
+  .cv-entry {
+    padding-block: 2.2mm !important;
+    break-inside: avoid;
+  }
+
+  .cv-entry > p {
+    margin-top: 1.5mm !important;
+  }
+
+  .cv-entry ul {
+    margin-top: 2mm !important;
+    gap: 1.2mm !important;
+  }
+
+  .cv-block ul,
+  .cv-block dl {
+    gap: 3mm !important;
   }
 
   /* La colonne de droite porte déjà compétences et stack : on n'y garde que
@@ -589,40 +651,20 @@
     display: none;
   }
 
-  /* Rappel du champ de pixels, poussé en pied de page. La trame de fond est
-     réglée à 5 % pour l'écran : une imprimante ne la rendrait pas. */
-  .cv-strip {
-    --rule-faint: rgba(0, 0, 0, 0.1);
-    margin-top: auto !important;
-    padding-top: 8mm;
-  }
-
-  .cv-block {
-    padding-top: 3mm !important;
-    break-inside: avoid;
-  }
-
-  .cv-block > h2 {
-    margin-bottom: 2mm !important;
-  }
-
-  .cv-entry {
-    padding-block: 2mm !important;
-    break-inside: avoid;
-  }
-
-  .cv-entry > p {
-    margin-top: 1mm !important;
-  }
-
-  .cv-entry ul {
-    margin-top: 1.5mm !important;
-    gap: 0.8mm !important;
-  }
-
-  .cv-block ul,
-  .cv-block dl {
-    gap: 2.2mm !important;
+  /*
+    La marque se loge dans la case laissée vide par l'en-tête : le bloc
+    contact étant descendu à hauteur du résumé, le coin haut droit ne sert à
+    rien. Elle ne coûte donc presque rien à une page déjà pleine.
+  */
+  .cv-mark {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: start;
+    width: 15mm;
+    height: 15mm;
+    /* Sinon elle vient toucher le libellé « Téléphone » juste dessous. */
+    margin-bottom: 3mm;
   }
 
   /* Les liens deviennent du texte : l'adresse est déjà dans le bloc contact. */

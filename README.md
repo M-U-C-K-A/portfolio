@@ -170,28 +170,40 @@ s'empilent. `@media print` rétablit donc les grilles explicitement.
 La mise en page y est **recomposée**, pas seulement resserrée :
 
 - l'en-tête passe d'une ligne (identité à gauche, contact à droite) à deux
-  colonnes calées sur celles du corps : le nom respire en haut de page, le
-  résumé se pose sous lui, le bloc contact descend à sa hauteur ;
+  colonnes calées sur celles du corps : le nom seul en haut de page, le résumé
+  sous lui, le bloc contact descendu à sa hauteur ;
 - la ligne de spécialités disparaît, le corps du CV la redit déjà ;
+- aucun filet entre l'en-tête et le corps — le blanc suffit, et le filet
+  doublait celui que porte déjà le premier bloc de chaque colonne ;
 - la colonne de droite ne garde que les deux premiers projets, sinon elle
-  dépasse la colonne de gauche.
+  dépasse la colonne de gauche ;
+- toute la typographie monte d'un cran par rapport à un simple `zoom out` :
+  le papier n'a pas besoin d'être aussi dense qu'un écran défilant.
 
-`.cv` devient une colonne flex de `270mm` de haut — les 275mm disponibles moins
-un peu de jeu — ce qui permet de pousser le rappel de pixels tout en bas de la
-page plutôt que juste sous le dernier bloc.
+`@page` a une **marge nulle**, la marge visuelle étant reportée sur `.cv`.
+Chrome et Edge dessinent leur en-tête et leur pied de page — date, URL, « 1/1 »
+— dans la marge de `@page` : sans marge, ils n'ont plus où s'écrire. La case du
+dialogue d'impression reste le réglage qui fait foi.
 
-Ce rappel est un **SVG**, pas un canvas : l'impression masque les canvas, et un
-canvas monté pour le seul papier resterait de taille nulle à l'écran, donc
-jamais peint. `src/lib/pixel-strip.ts` rejoue donc la pluie côté serveur — mêmes
-fonctions et même graine que le moteur — et sort des rectangles.
+### La marque
 
-L'instant de capture n'est pas libre : les colonnes tirent vitesse et période du
-même bruit, si bien que leurs phases se rejoignent autour de `t ≈ 289 × rows` et
-que le champ s'y vide entièrement. Un test garde la densité du rappel, sinon
-l'image sortirait blanche sans que rien ne le signale.
+Une image fixe ne peut pas rejouer un motif animé : figée, la pluie du pied de
+page ne donne que des traits épars, elle a besoin du mouvement pour se lire. On
+imprime donc ce qui est déjà une *composition* — l'explosion, le geste qui donne
+son sujet au site. Elle se loge dans la case que l'en-tête laisse vide en haut à
+droite, au-dessus du bloc contact, et ne coûte donc presque rien à une page
+déjà pleine.
 
-Reste hors de portée du CSS : l'en-tête et le pied de page du navigateur (date,
-URL, numéro de page). Ils se décochent dans le dialogue d'impression.
+C'est un **SVG**, pas un canvas : l'impression masque les canvas, et un canvas
+monté pour le seul papier resterait de taille nulle à l'écran, donc jamais
+peint. `src/lib/pixel-strip.ts` tamponne le disque côté serveur avec la fonction
+du moteur (`stampBlast`, sortie de la classe pour cet usage) et sort des
+rectangles. Sa résolution est volontairement basse — vingt cellules de côté sur
+15 mm — pour qu'un pixel reste visible sur le papier au lieu de se refermer en
+aplat gris.
+
+Rien ne regarde cette image avant qu'elle sorte de l'imprimante : un test garde
+donc son remplissage et son déterminisme.
 
 ## Un piège à ne pas réintroduire
 

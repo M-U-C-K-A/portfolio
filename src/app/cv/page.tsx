@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PixelPrintStrip } from "@/components/pixel-print-strip";
+import { PixelPrintMark } from "@/components/pixel-print-mark";
 import { PrintButton } from "@/components/print-button";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -20,7 +20,7 @@ function Entries({ entries }: { entries: readonly CvEntry[] }) {
           className="cv-entry border-t border-rule py-5 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
-            <h3 className="text-base font-medium tracking-tight">
+            <h3 className="cv-title text-base font-medium tracking-tight">
               {entry.organisation}
             </h3>
             <p className="label shrink-0 text-muted-foreground">
@@ -83,6 +83,8 @@ export default function CvPage() {
               </p>
             </div>
 
+            <PixelPrintMark />
+
             <dl className="cv-facts grid grid-cols-2 gap-x-6 gap-y-3 md:col-span-5">
               {cv.facts.map((fact) => (
                 <div key={fact.label}>
@@ -127,7 +129,7 @@ export default function CvPage() {
                     <li key={item.slug}>
                       <Link
                         href={`/work/${item.slug}`}
-                        className="text-base font-medium tracking-tight underline decoration-rule underline-offset-4 transition-colors hover:decoration-px-accent"
+                        className="cv-title text-base font-medium tracking-tight underline decoration-rule underline-offset-4 transition-colors hover:decoration-px-accent"
                       >
                         {item.name}
                       </Link>
@@ -143,7 +145,7 @@ export default function CvPage() {
                 <ul className="flex flex-col gap-4">
                   {cv.competencies.map((item) => (
                     <li key={item.title}>
-                      <p className="text-base font-medium tracking-tight">
+                      <p className="cv-title text-base font-medium tracking-tight">
                         {item.title}
                       </p>
                       <p className="body-text mt-1 text-muted-foreground">
@@ -168,8 +170,6 @@ export default function CvPage() {
               </Block>
             </div>
           </div>
-
-          <PixelPrintStrip />
 
           <div className="mt-12 flex flex-wrap gap-3 print:hidden">
             <PrintButton label="Imprimer / enregistrer en PDF" />

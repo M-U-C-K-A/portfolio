@@ -141,6 +141,16 @@ Le reste :
 projets : chaque projet a une composition dérivée de sa graine, cuite une fois
 et seulement seuillée à chaque image.
 
+`src/app/opengraph-image.tsx` en donne une troisième lecture, statique : le
+ruban de `flow` figé en une grille de `<div>`, puisque Satori ne connaît ni le
+canvas ni `display: grid`. Le tirage est semé, sinon la vignette changerait à
+chaque déploiement. Satori n'a pas non plus accès aux polices du site : les
+deux graisses d'Inter Tight sont dans `assets/fonts/`, sous-ensemble latin et
+accents français — 44 ko chacune, contre 300 pour la fonte complète, et le
+bundle d'une image est plafonné à 500 ko. Changer un caractère hors de ce
+sous-ensemble le ferait rendre en tofu ; le jeu couvre l'ASCII imprimable et
+les accents, ce qui suffit largement au nom, au rôle et au domaine.
+
 ## Contenu
 
 - **Le texte du site** est dans `src/lib/content.ts`. Les composants n'en

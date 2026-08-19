@@ -516,9 +516,17 @@
     line-height: 1.4;
   }
 
+  /*
+    Interlettrage remis à zéro sur le papier. Les extracteurs de texte des PDF
+    reconstituent les mots en comparant l'écart entre deux glyphes à la largeur
+    d'une espace : à 0,12em, l'écart la dépasse et « FONDATEUR & DÉVELOPPEUR
+    FRONT-END » ressortait « F O N D A T E U R & D É V E L O P P E U R ». Un
+    ATS n'y reconnaît plus rien — or ce sont justement les intitulés de poste
+    et les titres de rubrique qu'il cherche.
+  */
   .label {
     font-size: 7.2pt;
-    letter-spacing: 0.12em;
+    letter-spacing: normal;
   }
 
   /* Nom d'un poste, d'un projet ou d'une compétence. `text-base` vaut 1rem,
@@ -555,12 +563,12 @@
     À l'écran, l'en-tête tient sur une ligne : identité à gauche, contact à
     droite. Sur le papier on desserre — le nom respire en haut de page, le
     résumé se cale sous lui sur la colonne de gauche, et le bloc contact
-    descend à la hauteur du résumé. Les colonnes reprennent celles du corps,
-    si bien que le contact s'aligne sur la colonne « Projets ».
+    descend à la hauteur du résumé. Sa colonne est un peu plus large que celle
+    du corps : les adresses GitHub et LinkedIn tiennent alors sur une ligne.
   */
   .cv-head {
     display: grid !important;
-    grid-template-columns: 1.32fr 1fr !important;
+    grid-template-columns: 1.2fr 1fr !important;
     column-gap: 7mm !important;
     row-gap: 0 !important;
     /* `md:items-end` s'applique aussi au papier — la largeur d'une A4 dépasse
@@ -649,22 +657,6 @@
      les deux premiers projets, sinon elle déborde sur la colonne de gauche. */
   .cv-work > li:nth-child(n + 3) {
     display: none;
-  }
-
-  /*
-    La marque se loge dans la case laissée vide par l'en-tête : le bloc
-    contact étant descendu à hauteur du résumé, le coin haut droit ne sert à
-    rien. Elle ne coûte donc presque rien à une page déjà pleine.
-  */
-  .cv-mark {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: end;
-    align-self: start;
-    width: 15mm;
-    height: 15mm;
-    /* Sinon elle vient toucher le libellé « Téléphone » juste dessous. */
-    margin-bottom: 3mm;
   }
 
   /* Les liens deviennent du texte : l'adresse est déjà dans le bloc contact. */

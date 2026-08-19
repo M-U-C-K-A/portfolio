@@ -783,8 +783,14 @@ export const cv = {
     { label: "E-mail", value: site.email, href: `mailto:${site.email}` },
     { label: "Téléphone", value: "+33 6 52 68 28 62", href: "tel:+33652682862" },
     { label: "Site", value: "hugodelacour.com", href: site.url },
-    { label: "GitHub", value: "M-U-C-K-A", href: site.links.github },
-    { label: "LinkedIn", value: "hugo-delacour", href: site.links.linkedin },
+    // Adresses complètes plutôt que pseudonymes : à l'impression le lien
+    // disparaît, et un ATS comme un lecteur n'ont plus que ce texte.
+    { label: "GitHub", value: "github.com/M-U-C-K-A", href: site.links.github },
+    {
+      label: "LinkedIn",
+      value: "linkedin.com/in/hugo-delacour",
+      href: site.links.linkedin,
+    },
     { label: "Basé à", value: `${site.location} — permis B`, href: null },
   ],
 

@@ -162,48 +162,57 @@ plutôt qu'échoué au milieu de la page. Le sommaire suit la lecture via un
 
 ## L'impression du CV
 
-Le CV doit sortir sur **une seule page A4**. Le piège principal : les points de
-rupture Tailwind ne s'appliquent pas au papier — la zone imprimable d'une A4
-fait environ 690 px CSS, donc `lg:` ne se déclenche jamais et les colonnes
-s'empilent. `@media print` rétablit donc les grilles explicitement.
+Le CV doit sortir sur **une seule page A4**, et surtout **se laisser lire par un
+ATS** : c'est un robot qui le dépouille avant qu'un humain le voie.
 
-La mise en page y est **recomposée**, pas seulement resserrée :
+Le piège de mise en page : les points de rupture Tailwind ne s'appliquent pas au
+papier — la zone imprimable d'une A4 fait environ 690 px CSS, donc `lg:` ne se
+déclenche jamais et les colonnes s'empilent. `@media print` rétablit donc les
+grilles explicitement, et recompose la page plutôt que de simplement la
+resserrer :
 
 - l'en-tête passe d'une ligne (identité à gauche, contact à droite) à deux
-  colonnes calées sur celles du corps : le nom seul en haut de page, le résumé
-  sous lui, le bloc contact descendu à sa hauteur ;
+  colonnes : le nom seul en haut de page, le résumé sous lui, le bloc contact
+  descendu à sa hauteur ;
 - la ligne de spécialités disparaît, le corps du CV la redit déjà ;
 - aucun filet entre l'en-tête et le corps — le blanc suffit, et le filet
-  doublait celui que porte déjà le premier bloc de chaque colonne ;
+  doublait celui que porte le premier bloc de chaque colonne ;
 - la colonne de droite ne garde que les deux premiers projets, sinon elle
   dépasse la colonne de gauche ;
-- toute la typographie monte d'un cran par rapport à un simple `zoom out` :
-  le papier n'a pas besoin d'être aussi dense qu'un écran défilant.
+- toute la typographie monte d'un cran : le papier n'a pas besoin d'être aussi
+  dense qu'un écran défilant.
 
 `@page` a une **marge nulle**, la marge visuelle étant reportée sur `.cv`.
 Chrome et Edge dessinent leur en-tête et leur pied de page — date, URL, « 1/1 »
 — dans la marge de `@page` : sans marge, ils n'ont plus où s'écrire. La case du
 dialogue d'impression reste le réglage qui fait foi.
 
-### La marque
+### Ce qu'un ATS y voit
 
-Une image fixe ne peut pas rejouer un motif animé : figée, la pluie du pied de
-page ne donne que des traits épars, elle a besoin du mouvement pour se lire. On
-imprime donc ce qui est déjà une *composition* — l'explosion, le geste qui donne
-son sujet au site. Elle se loge dans la case que l'en-tête laisse vide en haut à
-droite, au-dessus du bloc contact, et ne coûte donc presque rien à une page
-déjà pleine.
+Deux réglages purement esthétiques cassaient l'extraction du texte :
 
-C'est un **SVG**, pas un canvas : l'impression masque les canvas, et un canvas
-monté pour le seul papier resterait de taille nulle à l'écran, donc jamais
-peint. `src/lib/pixel-strip.ts` tamponne le disque côté serveur avec la fonction
-du moteur (`stampBlast`, sortie de la classe pour cet usage) et sort des
-rectangles. Sa résolution est volontairement basse — vingt cellules de côté sur
-15 mm — pour qu'un pixel reste visible sur le papier au lieu de se refermer en
-aplat gris.
+- **L'interlettrage.** Les extracteurs de PDF reconstituent les mots en
+  comparant l'écart entre deux glyphes à la largeur d'une espace. À `0.12em`,
+  l'écart la dépasse : « FONDATEUR & DÉVELOPPEUR FRONT-END » ressortait
+  « F O N D A T E U R & D É V E L O P P E U R ». Un ATS n'y reconnaît plus rien,
+  et ce sont justement les intitulés de poste et les titres de rubrique qu'il
+  cherche. `.label` passe donc en `letter-spacing: normal` à l'impression.
+- **Les pseudonymes.** À l'impression le lien disparaît, ne reste que son
+  texte : « M-U-C-K-A » ne mène nulle part. Les champs GitHub et LinkedIn
+  portent maintenant l'adresse complète.
 
-Rien ne regarde cette image avant qu'elle sorte de l'imprimante : un test garde
-donc son remplissage et son déterminisme.
+Le reste tenait déjà : la double colonne ne perturbe pas l'ordre de lecture — le
+flux du PDF suit le DOM, soit identité, contact, résumé, expérience, formation,
+projets, compétences, stack — et rien n'est en image.
+
+La vérification n'est pas une lecture à l'œil : `chrome --headless
+--print-to-pdf` produit le PDF, `pdfjs-dist` en ré-extrait le texte, et on
+contrôle e-mail, téléphone, intitulés, périodes, compétences et ordre des
+rubriques. À refaire après toute retouche de `@media print`.
+
+Reste une bizarrerie sans conséquence : Inter Tight fait ressortir l'apostrophe
+typographique en `U+02BC` au lieu de `U+2019`. Les deux se valent pour un
+tokeniseur, qui coupe sur l'une comme sur l'autre.
 
 ## Un piège à ne pas réintroduire
 

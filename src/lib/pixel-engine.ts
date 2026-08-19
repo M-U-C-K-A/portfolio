@@ -521,19 +521,47 @@ export class PixelEngine {
 
   private applyBlasts(dt: number) {
     if (!this.blasts.length) return;
-    const frame: PixelFrame = {
-      cols: this.cols,
-      rows: this.rows,
-      energy: this.energy,
-      color: this.color,
-      fields: this.fields,
-    };
+    const { cols, rows, energy, color } = this;
+    const { clump, grain } = this.fields;
 
     for (let b = this.blasts.length - 1; b >= 0; b--) {
       const blast = this.blasts[b];
       blast.t += dt;
       const p = clamp01(blast.t / blast.duration);
-      stampBlast(frame, blast.cx, blast.cy, blast.maxR * easeOutCubic(p), p);
+      const r = blast.maxR * easeOutCubic(p);
+
+      const x0 = Math.max(0, Math.floor(blast.cx - r));
+      const x1 = Math.min(cols - 1, Math.ceil(blast.cx + r));
+      const y0 = Math.max(0, Math.floor(blast.cy - r));
+      const y1 = Math.min(rows - 1, Math.ceil(blast.cy + r));
+      const r2 = r * r;
+
+      for (let y = y0; y <= y1; y++) {
+        const dy = y + 0.5 - blast.cy;
+        const dy2 = dy * dy;
+        for (let x = x0; x <= x1; x++) {
+          const dx = x + 0.5 - blast.cx;
+          const d2 = dx * dx + dy2;
+          if (d2 > r2) continue;
+          const i = y * cols + x;
+          const edge = 1 - Math.sqrt(d2) / r;
+
+          // Plateau franc sur le cœur du disque, chute sur le pourtour.
+          const core = clamp01(edge * 2.2);
+          // L'érosion par l'amas ne mord qu'en périphérie : appliquée partout,
+          // elle laissait des trous de fond au milieu de la masse. Au cœur,
+          // `rim` vaut 0 et l'énergie dépasse tous les seuils — le disque est
+          // plein ; au bord elle vaut 1 et l'amas déchiquette franchement.
+          const rim = 1 - clamp01(edge * 1.6);
+          let amp = core * (1.5 - rim * 0.95 * clump[i]);
+          amp *= 1 - p * 0.12;
+
+          if (amp <= energy[i]) continue;
+          energy[i] = amp;
+          color[i] = pickBlastColor(clump[i], grain[i], edge);
+        }
+      }
+
       if (p >= 1) this.blasts.splice(b, 1);
     }
   }
@@ -643,62 +671,3 @@ function pickBlastColor(clump: number, grain: number, edge: number) {
   return ACCENT;
 }
 
-/**
- * Un champ de pixels, réduit à ce qu'il faut pour y tamponner une explosion.
- * L'extraire de la classe permet de composer un disque hors du navigateur —
- * c'est ce dont se sert la marque imprimée du CV, calculée en SVG.
- */
-export interface PixelFrame {
-  cols: number;
-  rows: number;
-  energy: Float32Array;
-  color: Uint8Array;
-  fields: PixelFields;
-}
-
-/**
- * Tamponne une explosion sur un champ. `radius` est déjà amorti, `progress`
- * (0 → 1) ne sert qu'à faire retomber l'amplitude en fin de course.
- */
-export function stampBlast(
-  frame: PixelFrame,
-  cx: number,
-  cy: number,
-  radius: number,
-  progress: number,
-) {
-  const { cols, rows, energy, color } = frame;
-  const { clump, grain } = frame.fields;
-
-  const x0 = Math.max(0, Math.floor(cx - radius));
-  const x1 = Math.min(cols - 1, Math.ceil(cx + radius));
-  const y0 = Math.max(0, Math.floor(cy - radius));
-  const y1 = Math.min(rows - 1, Math.ceil(cy + radius));
-  const r2 = radius * radius;
-
-  for (let y = y0; y <= y1; y++) {
-    const dy = y + 0.5 - cy;
-    const dy2 = dy * dy;
-    for (let x = x0; x <= x1; x++) {
-      const dx = x + 0.5 - cx;
-      const d2 = dx * dx + dy2;
-      if (d2 > r2) continue;
-      const i = y * cols + x;
-      const edge = 1 - Math.sqrt(d2) / radius;
-
-      // Plateau franc sur le cœur du disque, chute sur le pourtour.
-      const core = clamp01(edge * 2.2);
-      // L'érosion par l'amas ne mord qu'en périphérie : appliquée partout,
-      // elle laissait des trous de fond au milieu de la masse. Au cœur,
-      // `rim` vaut 0 et l'énergie dépasse tous les seuils — le disque est
-      // plein ; au bord elle vaut 1 et l'amas déchiquette franchement.
-      const rim = 1 - clamp01(edge * 1.6);
-      let amp = core * (1.5 - rim * 0.95 * clump[i]);
-      amp *= 1 - progress * 0.12;
-
-      if (amp <= energy[i]) continue;
-      energy[i] = amp;
-      color[i] = pickBlastColor(clump[i], grain[i], edge);
-    }
-  }
-}

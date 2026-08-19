@@ -11,7 +11,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { PixelEngine, type PixelMotif } from "../src/lib/pixel-engine.ts";
-import { buildBlastMark } from "../src/lib/pixel-strip.ts";
 
 interface Rect {
   x: number;
@@ -247,33 +246,6 @@ describe("PixelEngine", () => {
       span < 900 * 0.6,
       `traînée trop longue : ${Math.round(span)} px sur 900`,
     );
-  });
-
-  it("compose une marque imprimée pleine et stable", () => {
-    // La marque du CV est calculée sur le serveur et rendue en SVG : rien ne
-    // la regarde avant qu'elle sorte de l'imprimante. Deux choses la ruinent
-    // en silence — un disque creux, et un rendu qui changerait d'un build à
-    // l'autre alors que le CV est censé être toujours le même document.
-    const side = 28;
-    const options = {
-      cols: side,
-      rows: side,
-      seed: 95,
-      clumpScale: 5,
-      cx: side / 2,
-      cy: side / 2,
-      radius: side / 2 - 1,
-    };
-
-    const mark = buildBlastMark(options);
-    const cells = mark.reduce((sum, run) => sum + run.w, 0);
-    const disc = Math.PI * (side / 2 - 1) ** 2;
-    assert.ok(
-      cells > disc * 0.6,
-      `marque trop creuse : ${cells} cellules pour un disque de ${Math.round(disc)}`,
-    );
-
-    assert.deepEqual(mark, buildBlastMark(options));
   });
 
   it("est déterministe à graine égale", () => {

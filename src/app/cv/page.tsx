@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PixelPrintMark } from "@/components/pixel-print-mark";
 import { PrintButton } from "@/components/print-button";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -82,8 +81,6 @@ export default function CvPage() {
                 {cv.role}
               </p>
             </div>
-
-            <PixelPrintMark />
 
             <dl className="cv-facts grid grid-cols-2 gap-x-6 gap-y-3 md:col-span-5">
               {cv.facts.map((fact) => (

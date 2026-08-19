@@ -797,7 +797,6 @@ export const cv = {
         "SaaS de génération automatique de rapports financiers, en beta fermée.",
         "Architecture front en atomic design : séparation nette entre composants, logique et données.",
         "Jusqu’à 70 % de temps gagné sur la préparation des rapports chez les utilisateurs pilotes.",
-        "Environnement reproductible sous Docker, déploiement continu via GitHub Actions.",
       ],
     },
     {
@@ -819,8 +818,7 @@ export const cv = {
       organisation: "École 42",
       role: "Développement logiciel",
       points: [
-        "Pédagogie par projets, sans cours ni professeurs : shell écrit de zéro, serveur IRC, algorithmique bas niveau en C et C++.",
-        "Compréhension approfondie des systèmes, autonomie et correction entre pairs.",
+        "Pédagogie par projets, sans cours ni professeurs : shell écrit de zéro, serveur IRC, algorithmique bas niveau en C et C++. Correction entre pairs.",
       ],
     },
     {
@@ -828,8 +826,7 @@ export const cv = {
       organisation: "BUT MMI",
       role: "Métiers du multimédia et de l’internet",
       points: [
-        "Développement web et communication digitale, avec un accent sur l’accessibilité numérique et l’expérience utilisateur.",
-        "Stratégies de diffusion et conception de supports sur l’ensemble des canaux numériques.",
+        "Développement web et communication digitale, avec un accent sur l’accessibilité numérique, l’expérience utilisateur et les stratégies de diffusion.",
       ],
     },
   ] satisfies CvEntry[],

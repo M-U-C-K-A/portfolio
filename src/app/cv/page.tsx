@@ -16,7 +16,7 @@ function Entries({ entries }: { entries: readonly CvEntry[] }) {
       {entries.map((entry) => (
         <article
           key={entry.organisation}
-          className="break-inside-avoid border-t border-rule py-5 first:border-t-0 first:pt-0"
+          className="cv-entry border-t border-rule py-5 first:border-t-0 first:pt-0"
         >
           <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
             <h3 className="text-base font-medium tracking-tight">
@@ -52,7 +52,7 @@ function Block({
   children: React.ReactNode;
 }) {
   return (
-    <section className="break-inside-avoid border-t border-rule pt-5">
+    <section className="cv-block border-t border-rule pt-5">
       <h2 className="label mb-4 text-muted-foreground">{title}</h2>
       {children}
     </section>
@@ -67,10 +67,10 @@ export default function CvPage() {
       </div>
 
       <main id="contenu" className="shell grow pb-20 pt-10 md:pt-14">
-        <div className="mx-auto max-w-[64rem]">
+        <div className="cv mx-auto max-w-[64rem]">
           {/* En-tête */}
-          <header className="border-b border-rule pb-8">
-            <div className="grid gap-6 md:grid-cols-12 md:items-end">
+          <header className="cv-head border-b border-rule pb-8">
+            <div className="cv-identity grid gap-6 md:grid-cols-12 md:items-end">
               <div className="md:col-span-7">
                 <p className="label text-muted-foreground">
                   {cv.specialities.join(" · ")}
@@ -81,7 +81,7 @@ export default function CvPage() {
                 </p>
               </div>
 
-              <dl className="grid grid-cols-2 gap-x-6 gap-y-3 md:col-span-5">
+              <dl className="cv-facts grid grid-cols-2 gap-x-6 gap-y-3 md:col-span-5">
                 {cv.facts.map((fact) => (
                   <div key={fact.label}>
                     <dt className="label text-muted-foreground">
@@ -104,14 +104,14 @@ export default function CvPage() {
               </dl>
             </div>
 
-            <p className="body-text mt-8 max-w-3xl text-muted-foreground">
+            <p className="cv-summary body-text mt-8 max-w-3xl text-muted-foreground">
               {cv.summary}
             </p>
           </header>
 
           {/* Corps : parcours à gauche, compétences à droite */}
-          <div className="mt-10 grid gap-x-12 gap-y-10 lg:grid-cols-12">
-            <div className="flex flex-col gap-10 lg:col-span-7">
+          <div className="cv-body mt-10 grid gap-x-12 gap-y-10 lg:grid-cols-12">
+            <div className="cv-col flex flex-col gap-10 lg:col-span-7">
               <Block title="Expérience">
                 <Entries entries={cv.experience} />
               </Block>
@@ -119,11 +119,13 @@ export default function CvPage() {
               <Block title="Formation">
                 <Entries entries={cv.education} />
               </Block>
+            </div>
 
+            <div className="cv-col flex flex-col gap-10 lg:col-span-5">
               <Block title="Projets">
                 <ul className="flex flex-col gap-4">
                   {cv.selectedWork.map((item) => (
-                    <li key={item.slug} className="break-inside-avoid">
+                    <li key={item.slug}>
                       <Link
                         href={`/work/${item.slug}`}
                         className="text-base font-medium tracking-tight underline decoration-rule underline-offset-4 transition-colors hover:decoration-px-accent"
@@ -137,13 +139,11 @@ export default function CvPage() {
                   ))}
                 </ul>
               </Block>
-            </div>
 
-            <div className="flex flex-col gap-10 lg:col-span-5">
               <Block title="Compétences">
                 <ul className="flex flex-col gap-4">
                   {cv.competencies.map((item) => (
-                    <li key={item.title} className="break-inside-avoid">
+                    <li key={item.title}>
                       <p className="text-base font-medium tracking-tight">
                         {item.title}
                       </p>
@@ -158,7 +158,7 @@ export default function CvPage() {
               <Block title="Stack technique">
                 <dl className="flex flex-col gap-4">
                   {cv.stack.map((group) => (
-                    <div key={group.title} className="break-inside-avoid">
+                    <div key={group.title}>
                       <dt className="label text-ink">{group.title}</dt>
                       <dd className="body-text mt-1 text-muted-foreground">
                         {group.items.join(" · ")}

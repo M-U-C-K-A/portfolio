@@ -465,7 +465,7 @@
 @media print {
   @page {
     size: A4;
-    margin: 14mm 14mm 12mm;
+    margin: 12mm 12mm 10mm;
   }
 
   :root {
@@ -486,28 +486,104 @@
 
   body {
     /* Le corps d'écran est trop grand pour une page A4 : on resserre. */
-    font-size: 10.5pt;
+    font-size: 9pt;
   }
 
   .shell {
     padding-inline: 0;
   }
 
+  main {
+    padding: 0 !important;
+  }
+
   .display-l {
-    font-size: 26pt;
+    font-size: 21pt;
   }
 
   .display-m {
-    font-size: 13pt;
+    font-size: 11pt;
   }
 
   .body-text {
-    font-size: 9.5pt;
-    line-height: 1.45;
+    font-size: 8.4pt;
+    line-height: 1.34;
   }
 
   .label {
-    font-size: 7pt;
+    font-size: 6.4pt;
+    letter-spacing: 0.12em;
+  }
+
+  /* --- Le CV tient sur une page ---------------------------------------- */
+
+  /*
+    Le point de rupture `lg` ne s'applique pas à l'impression : la zone
+    imprimable d'une A4 fait ~690 px CSS, donc les colonnes s'empilaient et le
+    CV sortait sur trois pages. On rétablit la grille explicitement.
+  */
+  .cv {
+    max-width: none !important;
+  }
+
+  .cv-body {
+    display: grid !important;
+    grid-template-columns: 1.32fr 1fr !important;
+    column-gap: 7mm !important;
+    row-gap: 0 !important;
+    margin-top: 4mm !important;
+  }
+
+  .cv-col {
+    gap: 4mm !important;
+  }
+
+  .cv-head {
+    padding-bottom: 4mm !important;
+  }
+
+  .cv-identity {
+    display: grid !important;
+    grid-template-columns: 1.15fr 1fr !important;
+    align-items: end;
+    gap: 5mm !important;
+  }
+
+  .cv-facts {
+    gap: 1.5mm 5mm !important;
+  }
+
+  .cv-summary {
+    margin-top: 3.5mm !important;
+    max-width: none !important;
+  }
+
+  .cv-block {
+    padding-top: 3mm !important;
+    break-inside: avoid;
+  }
+
+  .cv-block > h2 {
+    margin-bottom: 2mm !important;
+  }
+
+  .cv-entry {
+    padding-block: 2mm !important;
+    break-inside: avoid;
+  }
+
+  .cv-entry > p {
+    margin-top: 1mm !important;
+  }
+
+  .cv-entry ul {
+    margin-top: 1.5mm !important;
+    gap: 0.8mm !important;
+  }
+
+  .cv-block ul,
+  .cv-block dl {
+    gap: 2.2mm !important;
   }
 
   /* Les liens deviennent du texte : l'adresse est déjà dans le bloc contact. */

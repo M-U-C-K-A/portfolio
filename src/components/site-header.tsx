@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PixelMark } from "@/components/pixel-mark";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { site } from "@/lib/content";
 
 const nav = [
@@ -33,6 +34,7 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
+          <ThemeToggle />
           <Link
             href="/#contact"
             className="label border border-ink px-2 py-1 text-ink transition-colors hover:bg-ink hover:text-paper"

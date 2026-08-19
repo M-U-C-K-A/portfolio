@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
-import { PixelEngine, type PixelEngineOptions } from "@/lib/pixel-engine";
+import { useTheme } from "@/hooks/use-theme";
+import {
+  PIXEL_PALETTE,
+  PIXEL_PALETTE_DARK,
+  PixelEngine,
+  type PixelEngineOptions,
+} from "@/lib/pixel-engine";
 import { cn } from "@/lib/utils";
 
 interface PixelFieldProps extends PixelEngineOptions {
@@ -30,6 +36,7 @@ export function PixelField({
   const [engineConfig] = useState(() => engineOptions);
 
   const reducedMotion = usePrefersReducedMotion();
+  const { theme } = useTheme();
   const [motionOptIn, setMotionOptIn] = useState(false);
 
   const animate = !reducedMotion || motionOptIn;
@@ -40,6 +47,14 @@ export function PixelField({
     if (!host || !canvas) return;
 
     const engine = new PixelEngine(canvas, engineConfig);
+    // Lu sur le DOM plutôt que sur l'état React : cet effet ne doit pas
+    // dépendre du thème, sinon une bascule recréerait le moteur et
+    // réinitialiserait le champ.
+    engine.setPalette(
+      document.documentElement.dataset.theme === "dark"
+        ? PIXEL_PALETTE_DARK
+        : PIXEL_PALETTE,
+    );
     engineRef.current = engine;
 
     let visible = true;
@@ -103,6 +118,13 @@ export function PixelField({
       engineRef.current = null;
     };
   }, [animate, engineConfig, introBlast]);
+
+  // Bascule de thème : on repeint avec l'autre rampe, sans recréer le moteur.
+  useEffect(() => {
+    engineRef.current?.setPalette(
+      theme === "dark" ? PIXEL_PALETTE_DARK : PIXEL_PALETTE,
+    );
+  }, [theme]);
 
   const localPoint = useCallback((clientX: number, clientY: number) => {
     const rect = canvasRef.current?.getBoundingClientRect();

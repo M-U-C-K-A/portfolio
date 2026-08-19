@@ -165,8 +165,10 @@ export async function getArticle(slug: string): Promise<Article | null> {
     .use(collectHeadings(headings))
     .use(wrapTables)
     .use(rehypePrettyCode, {
-      // Thème volontairement sobre : le rouge de la page reste le seul accent.
-      theme: "min-light",
+      // Deux thèmes émis d'un coup : les couleurs partent dans des variables
+      // CSS et globals.css choisit laquelle appliquer. Aucun recalcul au
+      // changement de thème, et aucun bloc de code clair sur page sombre.
+      theme: { light: "min-light", dark: "min-dark" },
       // On garde le fond défini dans globals.css plutôt que celui du thème.
       keepBackground: false,
     })

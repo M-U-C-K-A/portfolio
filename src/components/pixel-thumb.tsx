@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
-import { PIXEL_PALETTE } from "@/lib/pixel-engine";
+import { useTheme } from "@/hooks/use-theme";
+import { PIXEL_PALETTE, PIXEL_PALETTE_DARK } from "@/lib/pixel-engine";
 import { createPlate, paintPlate, type Plate } from "@/lib/pixel-plate";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ export function PixelThumb({
   const targetRef = useRef(0);
   const rafRef = useRef(0);
   const reducedMotion = usePrefersReducedMotion();
+  const { theme } = useTheme();
 
   useEffect(() => {
     targetRef.current = active ? 1 : 0;
@@ -54,7 +56,7 @@ export function PixelThumb({
         height: rect.height,
         cell,
         seed,
-        palette: PIXEL_PALETTE,
+        palette: theme === "dark" ? PIXEL_PALETTE_DARK : PIXEL_PALETTE,
       });
       draw();
     };
@@ -86,7 +88,7 @@ export function PixelThumb({
       cancelAnimationFrame(rafRef.current);
       plateRef.current = null;
     };
-  }, [cell, reducedMotion, seed]);
+  }, [cell, reducedMotion, seed, theme]);
 
   return (
     <canvas

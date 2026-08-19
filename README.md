@@ -37,9 +37,26 @@ Geist Mono pour les libellés — chargées via `next/font`.
 
 Aucune bibliothèque d'animation : tout le mouvement vient du moteur maison.
 
-## Palette
+## Thèmes et palette
 
-Une rampe de cinq neutres et un seul rouge, qui n'apparaît qu'aux moments
+Le site suit le mode système et se laisse forcer par le bouton soleil / lune de
+l'en-tête. Le choix explicite est mémorisé dans `localStorage`.
+
+L'implémentation suit ce que décrit l'article `content/articles/dark-theme.md` :
+
+- **`color-scheme: light dark`** sur `:root`, pour que le navigateur peigne déjà
+  la bonne couleur de fond avant la feuille de style.
+- **`light-dark()`** sur chaque jeton : une seule déclaration par couleur, pas de
+  bloc dupliqué à maintenir en double.
+- **Un script bloquant** de quelques centaines d'octets dans le `<head>` pose
+  `data-theme` avant la première peinture — sans lui, un visiteur en mode sombre
+  verrait un flash blanc le temps de l'hydratation.
+- **L'impression force `color-scheme: light`**, sinon le CV sortirait sur fond
+  noir depuis le mode sombre.
+- **La coloration du code émet les deux thèmes** (`min-light` / `min-dark`) dans
+  des variables CSS ; la bascule ne recalcule rien.
+
+Une rampe de cinq neutres et un seul accent, qui n'apparaît qu'aux moments
 déclenchés — explosions, puces, sélection, focus.
 
 | Nom    | Valeur    | Rôle                                       |
@@ -52,9 +69,17 @@ déclenchés — explosions, puces, sélection, focus.
 | mist   | `#cdcdd2` | Rampe du canvas, le ton le plus clair      |
 | accent | `#1d3fff` | Explosions, puces, liens actifs, sélection |
 
-La **source** des couleurs du canvas est `PIXEL_PALETTE` dans
-`src/lib/pixel-engine.ts`. `src/app/globals.css` les redéclare en jetons CSS
+En mode sombre la rampe s'inverse — sur papier clair les pixels sont sombres,
+sur papier sombre ils sont clairs — et l'accent s'éclaircit (`#6b86ff`), le bleu
+de jour ne tenant que 2,9:1 sur fond sombre contre 5,9:1 pour sa version claire.
+
+La **source** des couleurs du canvas est `PIXEL_PALETTE` / `PIXEL_PALETTE_DARK`
+dans `src/lib/pixel-engine.ts`. `src/app/globals.css` les redéclare en jetons CSS
 pour ce qui relève du DOM ; les deux doivent rester synchronisées.
+
+Les cellules stockent un index, pas une couleur : changer de thème est un simple
+`setPalette()` suivi d'un repaint, et le champ ne se réinitialise pas sous les
+yeux de l'utilisateur.
 
 Au repos, la nuance d'une étincelle suit le bruit d'amas : les pixels voisins
 partagent un ton, ce qui donne de la profondeur au champ. Comme ce bruit est

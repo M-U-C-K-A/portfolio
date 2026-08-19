@@ -41,6 +41,13 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Pose `data-theme` avant la première peinture. C'est le seul script du site
+ * qu'on veut bloquant : sans lui, un utilisateur en mode sombre verrait un
+ * flash blanc le temps que React s'hydrate.
+ */
+const themeScript = `(function(){try{var s=localStorage.getItem("theme");var t=s==="light"||s==="dark"?s:(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=t}catch(e){}})()`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -48,6 +55,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${display.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       {/*
         `overflow-x-clip` et non `hidden` : `hidden` force le calcul de
         `overflow-y` à `auto`, ce qui transforme le body en conteneur de

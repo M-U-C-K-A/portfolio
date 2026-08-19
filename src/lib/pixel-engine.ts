@@ -30,6 +30,20 @@ export const PIXEL_PALETTE = [
   "#1d3fff", // accent
 ] as const;
 
+/**
+ * Rampe inversée pour le mode sombre : l'index 0 reste le ton le plus
+ * contrasté avec le fond, donc le plus clair ici. Les valeurs doublent celles
+ * de `light-dark()` dans globals.css et doivent rester synchronisées.
+ */
+export const PIXEL_PALETTE_DARK = [
+  "#f2f2f0", // craie
+  "#c2c2c9",
+  "#94949d",
+  "#6a6a74",
+  "#45454d",
+  "#6b86ff", // accent, éclairci pour tenir le contraste sur fond sombre
+] as const;
+
 export type PixelPalette = readonly string[];
 
 /** Index dans la palette, pour éviter les nombres magiques. */
@@ -221,6 +235,17 @@ export class PixelEngine {
   /** Faux tant qu'aucun `resize` utile n'a eu lieu (hôte encore à taille nulle). */
   get hasSize() {
     return this.cols > 0 && this.rows > 0;
+  }
+
+  /**
+   * Remplace la palette sans toucher à la simulation. Les cellules stockent un
+   * index, pas une couleur : une bascule de thème est donc un simple repaint,
+   * et le champ ne se réinitialise pas sous les yeux de l'utilisateur.
+   */
+  setPalette(palette: PixelPalette) {
+    if (palette === this.opts.palette) return;
+    this.opts.palette = palette;
+    if (this.hasSize) this.paint();
   }
 
   // --- Interactions ---------------------------------------------------------

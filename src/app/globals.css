@@ -2,8 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
-
+/* Le thème vit sur `data-theme` posé sur <html>, pas sur une classe. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -51,21 +51,28 @@
 }
 
 :root {
-  --paper: #fafaf8;
-  --ink: #0f0f11;
+  /* Une seule déclaration par couleur : `light-dark()` lit `color-scheme` et
+     choisit la valeur. Pas de bloc dupliqué à maintenir en double. */
+  color-scheme: light dark;
 
-  /* Rampe de neutres du canvas. Doit rester synchronisée avec
-     PIXEL_PALETTE dans src/lib/pixel-engine.ts, qui en est la source. */
-  --px-slate: #3a3a40;
-  --px-steel: #6b6b73;
-  --px-grey: #9c9ca3;
-  --px-mist: #cdcdd2;
-  --px-accent: #1d3fff;
+  --paper: light-dark(#fafaf8, #0d0d10);
+  --ink: light-dark(#0f0f11, #f2f2f0);
 
-  --rule: rgba(15, 15, 17, 0.14);
-  --rule-faint: rgba(15, 15, 17, 0.05);
+  /* Rampe de neutres du canvas. Elle s'inverse : sur papier clair les pixels
+     sont sombres, sur papier sombre ils sont clairs. Doit rester synchronisée
+     avec PIXEL_PALETTE / PIXEL_PALETTE_DARK dans src/lib/pixel-engine.ts. */
+  --px-slate: light-dark(#3a3a40, #c2c2c9);
+  --px-steel: light-dark(#6b6b73, #94949d);
+  --px-grey: light-dark(#9c9ca3, #6a6a74);
+  --px-mist: light-dark(#cdcdd2, #45454d);
 
-  /* Pas de mode sombre : la surface claire est un parti pris. */
+  /* Le bleu de jour manque de contraste sur fond sombre : 2,9:1 contre 5,9:1
+     pour la version éclaircie. */
+  --px-accent: light-dark(#1d3fff, #6b86ff);
+
+  --rule: light-dark(rgba(15, 15, 17, 0.14), rgba(242, 242, 240, 0.16));
+  --rule-faint: light-dark(rgba(15, 15, 17, 0.05), rgba(242, 242, 240, 0.06));
+
   --background: var(--paper);
   --foreground: var(--ink);
   --card: var(--paper);
@@ -74,11 +81,11 @@
   --popover-foreground: var(--paper);
   --primary: var(--ink);
   --primary-foreground: var(--paper);
-  --secondary: #f1f1ee;
+  --secondary: light-dark(#f1f1ee, #1a1a1f);
   --secondary-foreground: var(--ink);
-  --muted: #f1f1ee;
-  --muted-foreground: #6e6e72;
-  --accent: #f1f1ee;
+  --muted: light-dark(#f1f1ee, #1a1a1f);
+  --muted-foreground: light-dark(#6e6e72, #9a9aa2);
+  --accent: light-dark(#f1f1ee, #1a1a1f);
   --accent-foreground: var(--ink);
   --destructive: var(--px-accent);
   --border: var(--rule);
@@ -90,10 +97,13 @@
   --gutter: 1.25rem;
 }
 
-@media (min-width: 768px) {
-  :root {
-    --gutter: 2rem;
-  }
+/* Un choix explicite de l'utilisateur fige le schéma, sinon on suit le système. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 @layer base {
@@ -381,6 +391,16 @@
     border-left: 2px solid transparent;
   }
 
+  /* rehype-pretty-code émet les deux thèmes en variables ; on bascule ici
+     plutôt que de recolorer au chargement. */
+  :root[data-theme="dark"] .article pre span {
+    color: var(--shiki-dark) !important;
+  }
+
+  :root[data-theme="dark"] .article :not(pre) > code span {
+    color: var(--shiki-dark) !important;
+  }
+
   .article pre code [data-highlighted-line] {
     background: color-mix(in srgb, var(--px-accent) 8%, transparent);
     border-left-color: var(--px-accent);
@@ -449,9 +469,14 @@
   }
 
   :root {
+    /* Sans cela, imprimer depuis le mode sombre sortirait une page noire :
+       `light-dark()` suit `color-scheme`, on le force donc en clair. */
+    color-scheme: light !important;
     --paper: #ffffff;
+    --ink: #0f0f11;
     --rule: rgba(0, 0, 0, 0.22);
     --muted-foreground: #333333;
+    --secondary: #f4f4f2;
   }
 
   html,

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ProjectCover } from "@/components/project-cover";
+import { ProjectShots } from "@/components/project-shots";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WorkCard } from "@/components/work-card";
@@ -12,9 +13,7 @@ import {
   site,
   type CaseBlock,
   type CaseSection,
-  type ProjectImage,
 } from "@/lib/content";
-import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -80,57 +79,6 @@ function CaseSectionView({ section }: { section: CaseSection }) {
   );
 }
 
-/**
- * La galerie du projet, posée avant le récit.
- *
- * Un cas d'étude fait ici dix sections : reléguer les captures en fin de page
- * revient à ce que personne ne les voie. On montre d'abord, on explique après.
- *
- * Les captures d'application mobile sont hautes et étroites, celles de site
- * larges — d'où deux grilles. À une image par ligne, un écran de téléphone
- * ferait un kilomètre de haut.
- */
-function ProjectShots({ shots }: { shots: ProjectImage[] }) {
-  if (shots.length === 0) return null;
-  const portrait = shots[0].height > shots[0].width;
-
-  return (
-    <section className="shell pt-10 md:pt-14">
-      <p className="label mb-6 text-muted-foreground">Aperçus</p>
-      <div
-        className={cn(
-          "grid gap-x-5 gap-y-8",
-          portrait ? "grid-cols-2 md:grid-cols-4" : "sm:grid-cols-2",
-        )}
-      >
-        {shots.map((image) => (
-          <figure key={image.src} className="flex flex-col gap-3">
-            <div
-              className="bg-grid relative w-full overflow-hidden border border-rule"
-              style={{ aspectRatio: `${image.width} / ${image.height}` }}
-            >
-              <Image
-                src={image.src}
-                alt=""
-                fill
-                sizes={
-                  portrait
-                    ? "(min-width: 768px) 22vw, 45vw"
-                    : "(min-width: 640px) 45vw, 92vw"
-                }
-                className="object-cover"
-              />
-            </div>
-            <figcaption className="body-text text-muted-foreground">
-              {image.caption}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export default async function ProjectPage({ params }: PageProps<"/work/[slug]">) {
   const { slug } = await params;
   const project = projectBySlug.get(slug);
@@ -189,34 +137,25 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
           </div>
         </div>
 
-        <figure>
-          <div className="bg-grid relative h-[34vh] min-h-[200px] border-y border-rule md:h-[46vh]">
-            {/* `alt=""` : la légende juste dessous dit déjà ce que l'image
-                montre, et le titre du projet la précède de trois lignes. */}
-            <Image
-              src={project.cover.src}
-              alt=""
-              fill
-              sizes="100vw"
-              preload
-              className="object-cover"
-            />
-          </div>
-          <figcaption className="shell label pt-3 text-muted-foreground">
-            {project.cover.caption}
-          </figcaption>
-        </figure>
-
-        {project.status ? (
-          <div className="shell pt-10">
-            <p className="body-text max-w-2xl border-l-2 border-px-accent bg-secondary/60 px-4 py-3">
-              <span className="label mr-2 text-px-accent">Statut</span>
-              {project.status}
-            </p>
-          </div>
-        ) : null}
-
+        <div className="bg-grid h-[26vh] min-h-[170px] border-y border-rule md:h-[34vh]">
+          <ProjectCover motif={project.motif} seed={project.seed} cols={72} rows={20} />
+        </div>
         <ProjectShots shots={project.shots} />
+
+        <div className="shell grid gap-4 pt-14 md:grid-cols-12 md:gap-10 md:pt-20">
+          <div className="flex max-w-2xl flex-col gap-4 md:col-span-9 md:col-start-4">
+            {project.intro.map((paragraph, index) => (
+              <p
+                key={index}
+                className={
+                  index === 0 ? "body-text-l" : "body-text text-muted-foreground"
+                }
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
 
         <div className="shell py-10 md:py-14">
           {project.sections.map((section) => (

@@ -206,6 +206,18 @@
     padding-inline: var(--gutter);
   }
 
+  /* La bande du carrousel : les flèches et le calage rendent la barre inutile,
+     et elle couperait la légende de la première vue. */
+  .shots-track {
+    scrollbar-width: none;
+    /* Sans cela le calage colle la vue au bord du cadre de défilement, donc à
+       l'intérieur de la gouttière : la première vue sortait de la colonne. */
+    scroll-padding-inline: var(--gutter);
+  }
+  .shots-track::-webkit-scrollbar {
+    display: none;
+  }
+
   /* --- Bandeau défilant --- */
   .marquee-track {
     display: flex;

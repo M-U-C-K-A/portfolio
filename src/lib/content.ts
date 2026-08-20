@@ -1,3 +1,5 @@
+import type { CoverMotif } from "./project-cover";
+
 /**
  * Source unique du contenu du site.
  *
@@ -49,7 +51,7 @@ export interface CaseSection {
 }
 
 /**
- * Visuel d'un projet.
+ * Un élément du carrousel d'un projet.
  *
  * `width` et `height` sont les dimensions intrinsèques : elles réservent la
  * place avant le chargement et donnent son rapport à la figure, ce qui évite
@@ -57,8 +59,13 @@ export interface CaseSection {
  * sens — les `<img>` sont posées en `alt=""` pour ne pas la répéter au lecteur
  * d'écran.
  */
-export interface ProjectImage {
+export interface ProjectMedia {
   src: string;
+  /**
+   * Une vidéo est jouée en boucle, sans son et sans commande — elle tient lieu
+   * de GIF, en dix fois plus léger. Absent vaut image.
+   */
+  kind?: "image" | "video";
   caption: string;
   width: number;
   height: number;
@@ -90,7 +97,7 @@ function shot(
   file: string,
   [width, height]: [number, number],
   caption: string,
-): ProjectImage {
+): ProjectMedia {
   return { src: `/work/${file}`, caption, width, height };
 }
 
@@ -104,12 +111,20 @@ export interface Project {
   status?: string;
   summary: string;
   stack: string[];
-  /** Graine du visuel génératif, en secours quand un projet n'a pas d'image. */
+  /** Graine de la couverture générative. Deux projets n'ont jamais la même. */
   seed: number;
-  /** Bandeau du cas d'étude, repris en vignette sur les cartes. */
-  cover: ProjectImage;
-  /** Ce que le projet donne à voir. Une galerie, après le récit. */
-  shots: ProjectImage[];
+  /** Sujet traité par la couverture — voir `project-cover.ts`. */
+  motif: CoverMotif;
+  /**
+   * Chapô du cas d'étude, après les aperçus et avant le récit détaillé.
+   *
+   * Le résumé de l'en-tête tient en deux lignes et sert de vignette ; il ne
+   * suffit pas à quelqu'un qui vient de regarder les captures et se demande ce
+   * qu'il vient de voir. Le premier paragraphe est composé plus grand.
+   */
+  intro: string[];
+  /** Ce que le projet donne à voir. Un carrousel, avant le récit. */
+  shots: ProjectMedia[];
   sections: CaseSection[];
 }
 
@@ -125,8 +140,14 @@ export const projects: Project[] = [
       "Une plateforme d’apprentissage systémique qui visualise les mathématiques comme un graphe de connaissances interconnectées, du CP à l’université.",
     stack: ["React Native", "Expo", "TypeScript", "SQLite", "Jest"],
     seed: 1187,
-    cover: shot("noxus-cover.jpg", BANNER, "Le graphe complet, du primaire au supérieur."),
+    motif: "graph",
+    intro: [
+      "Une application mobile d’apprentissage des mathématiques, du CP à la licence, construite autour d’une seule idée : une lacune n’est presque jamais un manque de travail, c’est une dépendance manquante.",
+      "Le contenu pédagogique ne manque pas — il en existe des montagnes. Ce qui manque, c’est la carte : ce qui vient avant quoi, et ce qui s’effondre quand une notion n’est pas acquise. Noxus rend cette structure visible sous forme de graphe, plus de quatre cents nœuds couvrant le curriculum français, et s’en sert pour remonter à la cause d’un échec plutôt que d’en constater l’effet.",
+      "Le reste découle de deux contraintes tenues jusqu’au bout. Aucune donnée personnelle, donc une base locale et un contenu livré avec l’application — qui fonctionne par conséquent hors ligne, intégralement. Et une seule interface pour tous les niveaux : c’est le contenu qui change de ton, jamais l’écran, ce qui évite d’infantiliser un lycéen parce qu’un enfant de sept ans a besoin d’images.",
+    ],
     shots: [
+      shot("noxus-cover.jpg", BANNER, "Le graphe complet, du primaire au supérieur."),
       shot("noxus-1.jpg", PHONE, "Le graphe filtré sur un cycle : chaque niveau a sa couleur."),
       shot("noxus-2.jpg", PHONE, "Un nœud ouvert — cours, formules rendues en LaTeX, exercices."),
       shot("noxus-3.jpg", PHONE, "Un chemin de remédiation, remonté depuis une notion non acquise."),
@@ -295,8 +316,14 @@ export const projects: Project[] = [
       "Une application mobile double-interface conçue pour l’autonomie des personnes ayant des troubles de la mémoire, sécurisée par un mode aidant.",
     stack: ["React Native", "Expo", "TypeScript", "Zustand", "Supabase"],
     seed: 5023,
-    cover: shot("plum-cover.jpg", BANNER, "L'écran d'accueil, en mode aidé."),
+    motif: "routine",
+    intro: [
+      "Un assistant mémoire mobile pour les personnes qui vivent avec des troubles cognitifs légers, et pour les proches qui les accompagnent. Le projet est né d’une situation familiale, pas d’une étude de marché.",
+      "Son point de départ est un refus : la plupart des applications du domaine traitent leur utilisateur comme un patient. Plum part de l’inverse — quelqu’un d’autonome, qui veut le rester, et qui a besoin d’une preuve plutôt que d’un rappel de plus. D’où la mécanique centrale : une photo qui atteste que la chose est faite, consultable plus tard, au moment où le doute revient.",
+      "Deux modes cohabitent dans la même application : l’usage seul, et un accès encadré ouvert à un aidant. Le passage de l’un à l’autre est réversible, parce que l’autonomie ne l’est pas moins. L’aidant voit ce qui a été convenu, pas tout. Et rien ne part en clair : le serveur ne détient aucune clé, donc ne peut rien lire de ce qu’il stocke.",
+    ],
     shots: [
+      shot("plum-cover.jpg", BANNER, "L'écran d'accueil, en mode aidé."),
       shot("plum-1.jpg", PHONE, "La preuve par l'image : la photo qui confirme que c'est fait."),
       shot("plum-2.jpg", PHONE, "Le mode aidant, côté famille."),
       shot("plum-3.jpg", PHONE, "Une routine du matin, étape par étape."),
@@ -485,8 +512,14 @@ export const projects: Project[] = [
       "Un SaaS qui transforme des données financières brutes en rapports lisibles, structurés et prêts à être partagés. Automatiser un processus long, répétitif et source d’erreurs.",
     stack: ["Next.js", "TypeScript", "Tailwind", "Docker", "GitHub Actions"],
     seed: 8801,
-    cover: shot("finalytics-cover.png", [1900, 990], "La page d'accueil, et l'aperçu d'un rapport."),
+    motif: "series",
+    intro: [
+      "Un SaaS qui produit des rapports d’analyse financière à partir de données de marché réelles : on choisit un actif — action, ETF ou indice — et un type d’analyse, et le rapport sort en PDF.",
+      "Ce que le produit remplace, c’est une journée de travail : extraire les données, appliquer les méthodes de valorisation, mettre en page, vérifier. Chacune de ces étapes est répétitive, et chacune est une occasion d’introduire une erreur que personne ne verra avant le client.",
+      "L’unité de facturation est le crédit, et son coût s’affiche avant de lancer la génération. L’historique garde ensuite chaque rapport avec son coût, son statut et ses horodatages : le travail reste reproductible, et surtout auditable.",
+    ],
     shots: [
+      shot("finalytics-cover.png", [1900, 990], "La page d'accueil, et l'aperçu d'un rapport."),
       shot("finalytics-1.png", [1900, 990], "L'historique : statut, coût en crédits, filtres par type d'actif et de rapport."),
       shot("finalytics-2.png", [1900, 990], "Le tableau de bord — crédits, plan en cours, rapports récents."),
       shot("finalytics-3.png", [3734, 2634], "Deux pages d'un rapport généré : résumé exécutif et valorisation."),
@@ -551,6 +584,41 @@ export const projects: Project[] = [
         ],
       },
       {
+        title: "Ce que contient un rapport",
+        blocks: [
+          {
+            type: "prose",
+            text: "Un rapport détaillé fait dix-huit pages et suit toujours la même ossature numérotée. C’est ce qui permet d’en comparer deux sans avoir à réapprendre la structure à chaque fois. Il ouvre sur un résumé exécutif — position, cours actuel, valeur centrale, potentiel — puis déroule les constats structurants avant d’entrer dans le détail des méthodes.",
+          },
+          {
+            type: "list",
+            items: [
+              "La valorisation par trois approches indépendantes : flux de trésorerie actualisés, comparables sectoriels, consensus d’analystes. Chacune donne une fourchette et une valeur centrale.",
+              "L’écart entre les trois est traité comme une information, pas comme un défaut : quand elles ne convergent pas, le rapport le dit et pointe l’hypothèse sur laquelle elles divergent.",
+              "Une grille de sensibilité — croissance projetée contre coût du capital — qui mesure la fragilité d’une valorisation au lieu d’afficher un chiffre unique et net.",
+              "Le positionnement face à l’indice de référence sur trois horizons, et les repères du titre : capitalisation, secteur, multiple de résultat.",
+            ],
+          },
+          {
+            type: "note",
+            text: "Cinq types de rapport, trois langues. La mise en page est calculée à partir des données plutôt que remplie à la main : deux rapports du même type sont strictement comparables, y compris entre deux analystes.",
+          },
+        ],
+      },
+      {
+        title: "Le crédit comme unité",
+        blocks: [
+          {
+            type: "prose",
+            text: "La facturation passe par des crédits, et le coût d’un rapport s’affiche avant de le lancer. C’est un détail d’interface qui règle un problème de confiance : sur un produit qui génère à la demande, ne pas savoir ce qu’on va payer suffit à ne pas cliquer.",
+          },
+          {
+            type: "prose",
+            text: "L’historique conserve tout — l’actif, le type d’analyse, le statut, le coût, l’heure de lancement et l’heure de fin — et se filtre par chacun de ces axes. Un rapport livré reste consultable et téléchargeable à l’identique : rien n’est régénéré à la volée, donc rien ne peut changer entre deux consultations.",
+          },
+        ],
+      },
+      {
         title: "Résultats",
         blocks: [
           {
@@ -591,8 +659,14 @@ export const projects: Project[] = [
       "Un annuaire de publications scientifiques sur le climat et les risques naturels : cent une études référencées avec leurs métadonnées d’origine, un glossaire de cinquante et un termes, et des parcours de lecture pour entrer dans la littérature sans s’y perdre.",
     stack: ["Next.js", "TypeScript", "Tailwind", "MDX"],
     seed: 3319,
-    cover: shot("corpus-delta-cover.jpg", CAPTURE, "La page d’accueil, et l’entrée dans l’annuaire."),
+    motif: "corpus",
+    intro: [
+      "Un annuaire de la recherche climatique : cent une publications scientifiques référencées avec leurs métadonnées d’origine, un glossaire de cinquante et un termes, dix dossiers thématiques et des parcours de lecture.",
+      "Le problème n’est pas le manque d’information, c’est son inaccessibilité. La littérature climatique est publique et largement en accès ouvert — quatre-vingt-neuf des cent une études référencées le sont — mais elle suppose un vocabulaire qu’on n’acquiert nulle part, et elle ne dit jamais par quoi commencer.",
+      "Le site ne réécrit donc pas la science : il l’indexe, la définit et l’ordonne. Chaque étude garde son résumé d’éditeur, son DOI et sa citation prête à copier ; chaque terme du glossaire est adossé à une source officielle ; chaque parcours propose six étapes ordonnées, du vocabulaire aux publications de référence.",
+    ],
     shots: [
+      shot("corpus-delta-cover.jpg", CAPTURE, "La page d’accueil, et l’entrée dans l’annuaire."),
       shot("corpus-delta-1.jpg", CAPTURE, "L’annuaire : cent une études, filtrées par thème et par accès."),
       shot("corpus-delta-2.jpg", CAPTURE, "Une fiche d’étude — métadonnées d’origine, DOI, citation prête à copier."),
       shot("corpus-delta-3.jpg", CAPTURE, "Un parcours en six étapes, du vocabulaire aux publications de référence."),
@@ -649,6 +723,50 @@ export const projects: Project[] = [
           {
             type: "prose",
             text: "L’intérêt est autant éditorial que technique : l’auteur écrit du texte, et n’insère un composant que lorsque le texte ne suffit pas. La contrainte pousse à expliquer d’abord, illustrer ensuite.",
+          },
+        ],
+      },
+      {
+        title: "Ce que le site référence",
+        blocks: [
+          {
+            type: "prose",
+            text: "Chaque étude garde ce que sa source publie : le résumé fourni par l’éditeur dans sa langue d’origine, les auteurs au complet, la revue, l’année, le type de publication et le DOI. Rien n’est reformulé. Un annuaire qui paraphrase ses sources devient une source de plus, avec ses propres approximations — et il faut alors le vérifier lui aussi.",
+          },
+          {
+            type: "list",
+            items: [
+              "Un lien direct vers la publication, et l’indication de son accès : quatre-vingt-neuf des cent une études sont en accès ouvert.",
+              "La citation prête à copier, en APA ou en BibTeX.",
+              "Le nombre de citations, relevé chez OpenAlex, avec la date du relevé.",
+              "Des thèmes — observation, modélisation, cycle du carbone, chaleur, cryosphère, océan, santé, agriculture, politiques, risques — qui servent de filtres et relient les études entre elles.",
+            ],
+          },
+        ],
+      },
+      {
+        title: "Le glossaire et les parcours",
+        blocks: [
+          {
+            type: "prose",
+            text: "Le glossaire définit cinquante et un termes, chacun adossé à une source officielle. Ce n’est pas un supplément : c’est ce qui rend la littérature lisible. « Anomalie de température », « forçage radiatif », « attribution » sont des mots dont le sens technique ne se devine pas, et qui arrêtent la lecture dès la première page d’un article.",
+          },
+          {
+            type: "prose",
+            text: "Les parcours règlent l’autre blocage : par où commencer. Chacun est une séquence de six étapes ordonnées, annoncée avec son temps de lecture, qui va du vocabulaire au mécanisme puis aux publications de référence. « Comprendre le réchauffement en une heure » ne suppose aucune connaissance préalable — les notions y arrivent dans l’ordre où elles s’appuient les unes sur les autres.",
+          },
+        ],
+      },
+      {
+        title: "Les indicateurs",
+        blocks: [
+          {
+            type: "prose",
+            text: "Une page tient les grandeurs de référence du système climatique : concentration de CO₂ à Mauna Loa, méthane, protoxyde d’azote, forçage radiatif, anomalie de température moyenne, contenu thermique de l’océan, niveau marin, étendue de la banquise arctique en septembre.",
+          },
+          {
+            type: "note",
+            text: "Ces séries ne sont pas recopiées : elles sont récupérées chez l’organisme qui les produit, avec leur date de relevé. Aucune valeur n’est arrondie ni retraitée. C’est la seule façon d’être une référence plutôt qu’une copie qui vieillit en silence.",
           },
         ],
       },

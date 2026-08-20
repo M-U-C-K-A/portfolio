@@ -13,14 +13,11 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
-import { projects, type ProjectImage } from "../src/lib/content.ts";
+import { projects, type ProjectMedia } from "../src/lib/content.ts";
 
 const WORK = new URL("../public/", import.meta.url);
 
-const allImages: ProjectImage[] = projects.flatMap((project) => [
-  project.cover,
-  ...project.shots,
-]);
+const allImages: ProjectMedia[] = projects.flatMap((project) => project.shots);
 
 /**
  * Dimensions d'une image, lues dans son en-tête.
@@ -62,11 +59,11 @@ function imageSize(bytes: Buffer) {
 }
 
 describe("visuels des projets", () => {
-  it("donne une image de couverture et des aperçus à chaque projet", () => {
+  it("donne un motif de couverture et des aperçus à chaque projet", () => {
     for (const project of projects) {
-      assert.ok(project.cover, `${project.slug} n'a pas de couverture`);
+      assert.ok(project.motif, `${project.slug} n'a pas de motif de couverture`);
       assert.ok(
-        project.shots.length >= 3,
+        project.shots.length >= 4,
         `${project.slug} n'a que ${project.shots.length} aperçus`,
       );
     }

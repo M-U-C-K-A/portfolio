@@ -138,9 +138,40 @@ Le reste :
   explicite proposée à l'utilisateur.
 
 `src/lib/pixel-plate.ts` réutilise le même masque pour composer une plaque
-dérivée d'une graine, cuite une fois et seulement seuillée à chaque image.
-Elle tenait lieu de vignette aux projets tant qu'ils n'avaient pas d'images ;
-depuis qu'ils en ont, elle et `PixelThumb` ne sont plus appelées nulle part.
+dérivée d'une graine, cuite une fois et seulement seuillée à chaque image. Elle
+tenait lieu de vignette aux projets ; elle et `PixelThumb` ne sont plus
+appelées nulle part depuis les couvertures.
+
+### Les couvertures de projet
+
+`src/lib/project-cover.ts` — quatre compositions, une par sujet. Une capture
+d'écran réduite à un bandeau de 3,5:1 ne montre rien : le texte disparaît,
+l'interface devient une texture grise, et les quatre projets se ressemblent.
+
+| Motif     | Ce qu'il dessine                                          | Projet       |
+| --------- | --------------------------------------------------------- | ------------ |
+| `graph`   | Des nœuds reliés à leurs trois plus proches voisins        | Noxus        |
+| `routine` | Une matrice jour × étape, remplie à mesure                 | Plum         |
+| `series`  | Des chandeliers, puis les lignes du rapport qu'ils donnent | Finalytics   |
+| `corpus`  | Des rangées de références, traversées d'une anomalie       | Corpus Delta |
+
+Trois choix méritent d'être connus avant d'y toucher.
+
+**C'est du SVG rendu sur le serveur.** Donc visible sans JavaScript, à
+l'impression, et dans un flux RSS — ce qu'un `<canvas>` ne permet pas.
+
+**Les tons sortent en `var(--px-…)`, pas en hexadécimal.** La bascule
+clair/sombre inverse déjà ces jetons : la couverture suit sans rien savoir du
+thème, et sans composant client pour l'écouter.
+
+**Les cellules voisines de même ton sont fusionnées** (`coverRuns`) avant d'être
+émises, exactement comme le canvas fusionne ses `fillRect`. Un rectangle par
+cellule ferait des dizaines de milliers de nœuds sur la page d'accueil, qui en
+porte quatre.
+
+Le `viewBox` est en cellules et le rendu est en `slice` : la même composition
+remplit un bandeau très large comme une vignette en 4:3, sans que le calcul
+change et sans que les pixels cessent d'être carrés.
 
 `src/lib/og-wave.ts` en donne une troisième lecture, statique : le ruban de
 `flow` figé et tiré à pleine page derrière l'image de partage. Le tirage est
@@ -173,7 +204,7 @@ au rôle et au domaine.
 
 - **Le texte du site** est dans `src/lib/content.ts`. Les composants n'en
   contiennent aucun, ce qui rend une future internationalisation mécanique.
-- **Les visuels des projets** sont dans `public/work/`, déclarés par `shot()`
+- **Les aperçus des projets** sont dans `public/work/`, déclarés par `shot()`
   dans `content.ts` : le premier argument est le nom du fichier, extension
   comprise. Finalytics a ses vraies captures, les autres projets portent encore
   des photos de remplacement dont les légendes décrivent déjà ce que l'image

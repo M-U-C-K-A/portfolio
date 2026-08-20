@@ -206,16 +206,31 @@
     padding-inline: var(--gutter);
   }
 
-  /* La bande du carrousel : les flèches et le calage rendent la barre inutile,
-     et elle couperait la légende de la première vue. */
+  /* La bande du carrousel.
+     Le calage est déclaré ici plutôt que par les classes utilitaires : il doit
+     être désactivé pendant le glissé, et une utilitaire Tailwind gagne sur une
+     règle de composant quelle que soit la spécificité — les couches passent
+     avant. Les deux états doivent donc vivre au même endroit. */
   .shots-track {
-    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
     /* Sans cela le calage colle la vue au bord du cadre de défilement, donc à
        l'intérieur de la gouttière : la première vue sortait de la colonne. */
     scroll-padding-inline: var(--gutter);
+    /* Les flèches et le calage rendent la barre inutile, et elle couperait la
+       légende de la première vue. Le curseur devient alors la seule chose qui
+       annonce qu'on peut prendre la bande à la souris. */
+    scrollbar-width: none;
+    cursor: grab;
   }
   .shots-track::-webkit-scrollbar {
     display: none;
+  }
+  .shots-track[data-dragging] {
+    cursor: grabbing;
+    /* Sans cela le navigateur recale la bande à chaque image et elle reste
+       collée à sa vue de départ ; et le texte des légendes se sélectionne. */
+    scroll-snap-type: none;
+    user-select: none;
   }
 
   /* --- Bandeau défilant --- */

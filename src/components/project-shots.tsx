@@ -21,6 +21,7 @@ import type { ProjectMedia } from "@/lib/content";
  */
 export function ProjectShots({ shots }: { shots: ProjectMedia[] }) {
   const trackRef = useRef<HTMLUListElement>(null);
+  const drag = useRef<{ x: number; scroll: number } | null>(null);
   const [index, setIndex] = useState(0);
   const [overflows, setOverflows] = useState(false);
   const reducedMotion = usePrefersReducedMotion();
@@ -83,6 +84,44 @@ export function ProjectShots({ shots }: { shots: ProjectMedia[] }) {
     });
   };
 
+  /**
+   * Glissé latéral, à la souris seulement.
+   *
+   * Le tactile fait déjà défiler la bande, avec son inertie et son rebond ; s'y
+   * superposer donnerait un défilement moins bon que celui du système. À la
+   * souris en revanche il n'y a rien — une bande qui déborde sans barre est
+   * muette, et l'utilisateur ne pense pas toujours à chercher les flèches.
+   */
+  const onPointerDown = (event: React.PointerEvent<HTMLUListElement>) => {
+    const track = trackRef.current;
+    if (!track || event.pointerType !== "mouse" || event.button !== 0) return;
+    drag.current = { x: event.clientX, scroll: track.scrollLeft };
+    // Posé sur le nœud plutôt que par un état React : le style doit tomber
+    // avant le premier `pointermove`, et un rendu de retard suffit pour que le
+    // navigateur recale la bande sous le curseur.
+    track.dataset.dragging = "true";
+    track.setPointerCapture(event.pointerId);
+  };
+
+  const onPointerMove = (event: React.PointerEvent<HTMLUListElement>) => {
+    const track = trackRef.current;
+    if (!drag.current || !track) return;
+    track.scrollLeft = drag.current.scroll - (event.clientX - drag.current.x);
+  };
+
+  const onPointerUp = (event: React.PointerEvent<HTMLUListElement>) => {
+    const track = trackRef.current;
+    if (!drag.current || !track) return;
+    drag.current = null;
+    if (track.hasPointerCapture(event.pointerId)) {
+      track.releasePointerCapture(event.pointerId);
+    }
+    // Rendre le calage suffit à recaler : le navigateur le réapplique dès que
+    // la propriété revient. Ajouter un défilement ici en faisait passer deux,
+    // et la bande sautait une vue de trop.
+    delete track.dataset.dragging;
+  };
+
   if (shots.length === 0) return null;
 
   return (
@@ -121,7 +160,11 @@ export function ProjectShots({ shots }: { shots: ProjectMedia[] }) {
       <ul
         ref={trackRef}
         onScroll={measure}
-        className="shots-track shell mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-1"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        className="shots-track shell mt-6 flex gap-5 overflow-x-auto pb-1"
       >
         {shots.map((shot) => (
           <li

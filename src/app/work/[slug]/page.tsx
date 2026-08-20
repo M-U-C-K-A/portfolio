@@ -142,19 +142,29 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
         </div>
         <ProjectShots shots={project.shots} />
 
-        <div className="shell grid gap-4 pt-14 md:grid-cols-12 md:gap-10 md:pt-20">
-          <div className="flex max-w-2xl flex-col gap-4 md:col-span-9 md:col-start-4">
-            {project.intro.map((paragraph, index) => (
-              <p
-                key={index}
-                className={
-                  index === 0 ? "body-text-l" : "body-text text-muted-foreground"
-                }
-              >
-                {paragraph}
-              </p>
-            ))}
-          </div>
+        {/* Le chapô prend toute la colonne, sans libellé à sa gauche : c'est ce
+            qui le sépare des sections, qui sont toutes en retrait. Le premier
+            paragraphe est composé grand et court sur la largeur, les suivants
+            se rangent en deux colonnes — la mesure reste lisible et le bloc ne
+            ressemble à rien d'autre sur la page. */}
+        <div className="shell pt-14 md:pt-20">
+          {/* La fonte d'affichage, mais en bas de casse : `.display` passe tout
+              en capitales, ce qui va à un titre de trois mots et pas à un
+              paragraphe de quarante. L'interlignage de 0,94 est également
+              desserré — il est calculé pour des capitales, qui n'ont pas de
+              jambages. */}
+          <p className="display display-m max-w-5xl normal-case leading-[1.12]">
+            {project.intro[0]}
+          </p>
+          {project.intro.length > 1 ? (
+            <div className="mt-8 grid gap-x-10 gap-y-4 md:mt-10 md:grid-cols-2">
+              {project.intro.slice(1).map((paragraph, index) => (
+                <p key={index} className="body-text text-muted-foreground">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <div className="shell py-10 md:py-14">

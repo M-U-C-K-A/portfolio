@@ -147,11 +147,11 @@ export const projects: Project[] = [
       "Le reste découle de deux contraintes tenues jusqu’au bout. Aucune donnée personnelle, donc une base locale et un contenu livré avec l’application — qui fonctionne par conséquent hors ligne, intégralement. Et une seule interface pour tous les niveaux : c’est le contenu qui change de ton, jamais l’écran, ce qui évite d’infantiliser un lycéen parce qu’un enfant de sept ans a besoin d’images.",
     ],
     shots: [
-      shot("noxus-cover.jpg", BANNER, "Le graphe complet, du primaire au supérieur."),
-      shot("noxus-1.jpg", PHONE, "Le graphe filtré sur un cycle : chaque niveau a sa couleur."),
-      shot("noxus-2.jpg", PHONE, "Un nœud ouvert — cours, formules rendues en LaTeX, exercices."),
-      shot("noxus-3.jpg", PHONE, "Un chemin de remédiation, remonté depuis une notion non acquise."),
-      shot("noxus-4.jpg", PHONE, "La progression, branche par branche du curriculum."),
+      shot("noxus-cover.jpg", BANNER, "Le graphe complet, du primaire au supérieur. Plus de quatre cents nœuds qu’on parcourt au zoom et au déplacement : c’est l’écran d’accueil autant que la carte."),
+      shot("noxus-1.jpg", PHONE, "Le graphe filtré sur un cycle. Chaque niveau porte sa couleur, ce qui permet de se situer sans lire une seule étiquette."),
+      shot("noxus-2.jpg", PHONE, "Un nœud ouvert. Cours, formules rendues nativement en LaTeX plutôt qu’en captures d’image, exemples commentés et exercices — le contenu vit dans le nœud, pas à côté."),
+      shot("noxus-3.jpg", PHONE, "Un chemin de remédiation. Depuis une notion non acquise, l’application remonte la chaîne des pré-requis et désigne celui qui manque réellement."),
+      shot("noxus-4.jpg", PHONE, "La progression, branche par branche du curriculum. Expérience, niveaux et objectifs, mais aucune série à ne pas briser : la motivation vient de voir le graphe se remplir."),
     ],
     sections: [
       {
@@ -323,11 +323,11 @@ export const projects: Project[] = [
       "Deux modes cohabitent dans la même application : l’usage seul, et un accès encadré ouvert à un aidant. Le passage de l’un à l’autre est réversible, parce que l’autonomie ne l’est pas moins. L’aidant voit ce qui a été convenu, pas tout. Et rien ne part en clair : le serveur ne détient aucune clé, donc ne peut rien lire de ce qu’il stocke.",
     ],
     shots: [
-      shot("plum-cover.jpg", BANNER, "L'écran d'accueil, en mode aidé."),
-      shot("plum-1.jpg", PHONE, "La preuve par l'image : la photo qui confirme que c'est fait."),
-      shot("plum-2.jpg", PHONE, "Le mode aidant, côté famille."),
-      shot("plum-3.jpg", PHONE, "Une routine du matin, étape par étape."),
-      shot("plum-4.jpg", PHONE, "Les réglages d'accessibilité — corps du texte et contraste."),
+      shot("plum-cover.jpg", BANNER, "L’écran d’accueil, en mode aidé. Les tâches du jour en gros et dans l’ordre — rien d’autre à l’écran que ce qui reste à faire."),
+      shot("plum-1.jpg", PHONE, "La preuve par l’image. Une photo atteste que la chose est faite, et se reconsulte plus tard — au moment précis où le doute revient."),
+      shot("plum-2.jpg", PHONE, "Le mode aidant, côté famille. L’aidant voit ce qui a été convenu — les preuves, les alertes, l’historique — et rien de plus que cela."),
+      shot("plum-3.jpg", PHONE, "Une routine du matin, étape par étape. Les routines se composent librement et se suspendent sans que la progression se perde."),
+      shot("plum-4.jpg", PHONE, "Les réglages d’accessibilité. Corps du texte, contraste et taille des cibles tactiles, tenus au niveau AAA plutôt qu’au minimum réglementaire."),
     ],
     sections: [
       {
@@ -519,10 +519,10 @@ export const projects: Project[] = [
       "L’unité de facturation est le crédit, et son coût s’affiche avant de lancer la génération. L’historique garde ensuite chaque rapport avec son coût, son statut et ses horodatages : le travail reste reproductible, et surtout auditable.",
     ],
     shots: [
-      shot("finalytics-cover.png", [1900, 990], "La page d'accueil, et l'aperçu d'un rapport."),
-      shot("finalytics-1.png", [1900, 990], "L'historique : statut, coût en crédits, filtres par type d'actif et de rapport."),
-      shot("finalytics-2.png", [1900, 990], "Le tableau de bord — crédits, plan en cours, rapports récents."),
-      shot("finalytics-3.png", [3734, 2634], "Deux pages d'un rapport généré : résumé exécutif et valorisation."),
+      shot("finalytics-cover.png", [1900, 990], "La page d’accueil, et l’aperçu d’un rapport. Le produit montre son livrable avant de le décrire : position, valeur centrale, potentiel, et les trois méthodes qui y mènent."),
+      shot("finalytics-1.png", [1900, 990], "L’historique des rapports. Statut, coût en crédits, heure de lancement et de fin, filtres par type d’actif et de rapport — un livrable reste consultable à l’identique, sans être régénéré."),
+      shot("finalytics-2.png", [1900, 990], "Le tableau de bord. Solde de crédits, plan en cours, rapports récents et actions rapides : ce qui se décide en un coup d’œil avant de lancer une analyse."),
+      shot("finalytics-3.png", [3734, 2634], "Deux pages d’un rapport généré. Résumé exécutif à gauche, valorisation à droite : trois approches indépendantes, l’écart entre elles assumé, et la grille de sensibilité aux hypothèses."),
     ],
     sections: [
       {
@@ -666,11 +666,11 @@ export const projects: Project[] = [
       "Le site ne réécrit donc pas la science : il l’indexe, la définit et l’ordonne. Chaque étude garde son résumé d’éditeur, son DOI et sa citation prête à copier ; chaque terme du glossaire est adossé à une source officielle ; chaque parcours propose six étapes ordonnées, du vocabulaire aux publications de référence.",
     ],
     shots: [
-      shot("corpus-delta-cover.jpg", CAPTURE, "La page d’accueil, et l’entrée dans l’annuaire."),
-      shot("corpus-delta-1.jpg", CAPTURE, "L’annuaire : cent une études, filtrées par thème et par accès."),
-      shot("corpus-delta-2.jpg", CAPTURE, "Une fiche d’étude — métadonnées d’origine, DOI, citation prête à copier."),
-      shot("corpus-delta-3.jpg", CAPTURE, "Un parcours en six étapes, du vocabulaire aux publications de référence."),
-      shot("corpus-delta-4.jpg", CAPTURE, "Les indicateurs, relevés chez l’organisme qui les publie."),
+      shot("corpus-delta-cover.jpg", CAPTURE, "La page d’accueil, et l’entrée dans l’annuaire. La recherche vient en premier, puis les quatre chiffres qui disent l’étendue du corpus."),
+      shot("corpus-delta-1.jpg", CAPTURE, "L’annuaire : cent une études, filtrées par thème et par accès. Chaque entrée garde le résumé de son éditeur, sa revue et son année de publication."),
+      shot("corpus-delta-2.jpg", CAPTURE, "Une fiche d’étude. Métadonnées d’origine, DOI, nombre de citations relevé chez OpenAlex avec sa date, et la citation prête à copier en APA ou en BibTeX."),
+      shot("corpus-delta-3.jpg", CAPTURE, "Un parcours en six étapes. Du vocabulaire au mécanisme puis aux publications de référence, avec le temps de lecture annoncé d’avance."),
+      shot("corpus-delta-4.jpg", CAPTURE, "Les indicateurs. Relevés chez l’organisme qui les publie, avec leur date : aucune valeur n’est arrondie ni retraitée."),
     ],
     sections: [
       {

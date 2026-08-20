@@ -72,22 +72,25 @@ const BANNER: [number, number] = [1600, 900];
 /**
  * Visuel d'un projet, servi depuis `public/work/`.
  *
- * Le premier argument est le nom du fichier : `shot("plum-2", …)` lit
- * `public/work/plum-2.jpg`. Ceux qui s'y trouvent aujourd'hui sont des photos
- * de remplacement — pour passer aux vraies captures, il suffit d'écraser le
- * fichier, sans toucher à ce tableau. Les légendes plus bas décrivent déjà ce
- * que chacune doit montrer.
+ * Le premier argument est le nom du fichier, **extension comprise** : les
+ * captures livrées sont en PNG, les photos de remplacement en JPEG, et rien
+ * n'oblige les prochaines à choisir l'un ou l'autre. Les projets qui n'ont pas
+ * encore leurs captures portent une photo quelconque, mais leur légende décrit
+ * déjà ce que l'image devra montrer.
  *
- * Seule contrainte : garder les dimensions. Elles réservent la place avant le
- * chargement et donnent son rapport à la figure — un fichier d'un autre format
- * serait recadré. `tests/project-images.test.ts` le vérifie.
+ * Les dimensions sont celles du fichier, pas un format imposé : elles
+ * réservent la place avant le chargement et donnent son rapport à la figure,
+ * qui épouse donc l'image au lieu de la recadrer. Déposer une capture d'un
+ * autre format ne casse rien — il faut seulement reporter ses dimensions ici,
+ * sans quoi elle serait rognée. `tests/project-images.test.ts` compare les deux
+ * et échoue si elles divergent.
  */
 function shot(
-  name: string,
+  file: string,
   [width, height]: [number, number],
   caption: string,
 ): ProjectImage {
-  return { src: `/work/${name}.jpg`, caption, width, height };
+  return { src: `/work/${file}`, caption, width, height };
 }
 
 export interface Project {
@@ -121,12 +124,12 @@ export const projects: Project[] = [
       "Une plateforme d’apprentissage systémique qui visualise les mathématiques comme un graphe de connaissances interconnectées, du CP à l’université.",
     stack: ["React Native", "Expo", "TypeScript", "SQLite", "Jest"],
     seed: 1187,
-    cover: shot("noxus-cover", BANNER, "Le graphe complet, du primaire au supérieur."),
+    cover: shot("noxus-cover.jpg", BANNER, "Le graphe complet, du primaire au supérieur."),
     shots: [
-      shot("noxus-1", PHONE, "Le graphe filtré sur un cycle : chaque niveau a sa couleur."),
-      shot("noxus-2", PHONE, "Un nœud ouvert — cours, formules rendues en LaTeX, exercices."),
-      shot("noxus-3", PHONE, "Un chemin de remédiation, remonté depuis une notion non acquise."),
-      shot("noxus-4", PHONE, "La progression, branche par branche du curriculum."),
+      shot("noxus-1.jpg", PHONE, "Le graphe filtré sur un cycle : chaque niveau a sa couleur."),
+      shot("noxus-2.jpg", PHONE, "Un nœud ouvert — cours, formules rendues en LaTeX, exercices."),
+      shot("noxus-3.jpg", PHONE, "Un chemin de remédiation, remonté depuis une notion non acquise."),
+      shot("noxus-4.jpg", PHONE, "La progression, branche par branche du curriculum."),
     ],
     sections: [
       {
@@ -291,12 +294,12 @@ export const projects: Project[] = [
       "Une application mobile double-interface conçue pour l’autonomie des personnes ayant des troubles de la mémoire, sécurisée par un mode aidant.",
     stack: ["React Native", "Expo", "TypeScript", "Zustand", "Supabase"],
     seed: 5023,
-    cover: shot("plum-cover", BANNER, "L'écran d'accueil, en mode aidé."),
+    cover: shot("plum-cover.jpg", BANNER, "L'écran d'accueil, en mode aidé."),
     shots: [
-      shot("plum-1", PHONE, "La preuve par l'image : la photo qui confirme que c'est fait."),
-      shot("plum-2", PHONE, "Le mode aidant, côté famille."),
-      shot("plum-3", PHONE, "Une routine du matin, étape par étape."),
-      shot("plum-4", PHONE, "Les réglages d'accessibilité — corps du texte et contraste."),
+      shot("plum-1.jpg", PHONE, "La preuve par l'image : la photo qui confirme que c'est fait."),
+      shot("plum-2.jpg", PHONE, "Le mode aidant, côté famille."),
+      shot("plum-3.jpg", PHONE, "Une routine du matin, étape par étape."),
+      shot("plum-4.jpg", PHONE, "Les réglages d'accessibilité — corps du texte et contraste."),
     ],
     sections: [
       {
@@ -481,11 +484,11 @@ export const projects: Project[] = [
       "Un SaaS qui transforme des données financières brutes en rapports lisibles, structurés et prêts à être partagés. Automatiser un processus long, répétitif et source d’erreurs.",
     stack: ["Next.js", "TypeScript", "Tailwind", "Docker", "GitHub Actions"],
     seed: 8801,
-    cover: shot("finalytics-cover", BANNER, "Le tableau de bord, à l'ouverture d'un dossier."),
+    cover: shot("finalytics-cover.png", [1900, 990], "La page d'accueil, et l'aperçu d'un rapport."),
     shots: [
-      shot("finalytics-1", SCREEN, "L'éditeur de rapport et son aperçu, côte à côte."),
-      shot("finalytics-2", SCREEN, "Un rapport généré, prêt à l'export."),
-      shot("finalytics-3", SCREEN, "Le pipeline de génération, suivi d'exécution."),
+      shot("finalytics-1.png", [1900, 990], "L'historique : statut, coût en crédits, filtres par type d'actif et de rapport."),
+      shot("finalytics-2.png", [1900, 990], "Le tableau de bord — crédits, plan en cours, rapports récents."),
+      shot("finalytics-3.png", [3734, 2634], "Deux pages d'un rapport généré : résumé exécutif et valorisation."),
     ],
     sections: [
       {
@@ -587,11 +590,11 @@ export const projects: Project[] = [
       "Un site éditorial dédié à la vulgarisation des enjeux environnementaux : une information claire et fiable, dans un design respectueux de l’attention du lecteur.",
     stack: ["Next.js", "TypeScript", "Tailwind", "MDX"],
     seed: 3319,
-    cover: shot("climat-cover", BANNER, "La page d'accueil éditoriale."),
+    cover: shot("climat-cover.jpg", BANNER, "La page d'accueil éditoriale."),
     shots: [
-      shot("climat-1", SCREEN, "Un article en lecture longue, sommaire à gauche."),
-      shot("climat-2", SCREEN, "Les visualisations de données, posées dans le texte."),
-      shot("climat-3", SCREEN, "L'édition en MDX : le contenu et ses composants mêlés."),
+      shot("climat-1.jpg", SCREEN, "Un article en lecture longue, sommaire à gauche."),
+      shot("climat-2.jpg", SCREEN, "Les visualisations de données, posées dans le texte."),
+      shot("climat-3.jpg", SCREEN, "L'édition en MDX : le contenu et ses composants mêlés."),
     ],
     sections: [
       {

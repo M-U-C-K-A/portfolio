@@ -1,13 +1,20 @@
 # Visuels des projets
 
-Les fichiers ici sont des **photos de remplacement**. Pour mettre les vraies
-captures : écraser le fichier, garder le nom et les dimensions. Rien d'autre à
-toucher.
+Un fichier par image, déclaré dans `src/lib/content.ts` par `shot()`. Le premier
+argument est le nom du fichier, **extension comprise** : `shot("plum-2.jpg", …)`
+lit `plum-2.jpg`. C'est là aussi que se trouve la légende de chaque image, qui
+dit ce qu'elle doit montrer.
 
-- Le nom du fichier est l'argument passé à `shot()` dans `src/lib/content.ts` :
-  `shot("plum-2", …)` lit `plum-2.jpg`. C'est là aussi que se trouve la légende
-  de chaque image, qui dit ce qu'elle doit montrer.
-- Les dimensions comptent : elles réservent la place avant le chargement et
-  donnent son rapport à la figure. Un fichier d'un autre format serait recadré.
-  Applications mobiles 900×1600, sites 1600×1000, bandeaux 1600×900.
-- `npm test` échoue si un fichier manque ou n'a pas les dimensions déclarées.
+Finalytics a ses vraies captures. Les autres projets portent encore des photos
+de remplacement, en attendant les leurs.
+
+## Déposer une capture
+
+Le format est libre — PNG ou JPEG, n'importe quelles dimensions. Il faut
+seulement **reporter ses dimensions dans `content.ts`** : elles réservent la
+place avant le chargement et donnent son rapport à la figure, qui épouse donc
+l'image au lieu de la recadrer. Des dimensions fausses la feraient rogner.
+
+Deux pannes que rien d'autre ne signale — un fichier absent donne un 404
+silencieux, des dimensions fausses un recadrage silencieux. `npm test` échoue
+dans les deux cas.

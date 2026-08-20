@@ -23,14 +23,22 @@ const allImages: ProjectImage[] = projects.flatMap((project) => [
 ]);
 
 /**
- * Dimensions d'un JPEG, lues dans son en-tête.
+ * Dimensions d'une image, lues dans son en-tête.
  *
- * Le fichier est une suite de segments `FF <marqueur> <longueur>` ; celui qui
- * porte la taille est un « start of frame ». Une vingtaine de lignes évite ici
- * une dépendance de plus pour une seule lecture.
+ * Deux formats cohabitent : les captures livrées sont en PNG, les photos de
+ * remplacement en JPEG. Une trentaine de lignes évite une dépendance de plus
+ * pour une seule lecture.
+ *
+ * Le PNG annonce sa taille tout de suite, dans le premier bloc. Le JPEG est
+ * une suite de segments `FF <marqueur> <longueur>` qu'il faut parcourir
+ * jusqu'au « start of frame », le seul qui la porte.
  */
-function jpegSize(bytes: Buffer) {
-  assert.equal(bytes.readUInt16BE(0), 0xffd8, "en-tête JPEG attendu");
+function imageSize(bytes: Buffer) {
+  if (bytes.readUInt32BE(0) === 0x89504e47) {
+    return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+  }
+
+  assert.equal(bytes.readUInt16BE(0), 0xffd8, "en-tête PNG ou JPEG attendu");
   let offset = 2;
   while (offset + 9 < bytes.length) {
     assert.equal(bytes[offset], 0xff, `marqueur attendu à l'octet ${offset}`);
@@ -68,7 +76,7 @@ describe("visuels des projets", () => {
     for (const image of allImages) {
       assert.match(
         image.src,
-        /^\/work\/[a-z0-9-]+\.jpg$/,
+        /^\/work\/[a-z0-9-]+\.(jpg|png)$/,
         `chemin inattendu : ${image.src}`,
       );
     }
@@ -83,7 +91,7 @@ describe("visuels des projets", () => {
       } catch {
         throw new Error(`fichier absent : public${image.src}`);
       }
-      const size = jpegSize(bytes);
+      const size = imageSize(bytes);
       assert.deepEqual(
         size,
         { width: image.width, height: image.height },

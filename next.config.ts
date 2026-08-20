@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
       { source: "/about", destination: "/cv", permanent: true },
       { source: "/work", destination: "/#projets", permanent: true },
       { source: "/gallery", destination: "/", permanent: true },
+      // Project Climat a été renommé Corpus Delta.
+      {
+        source: "/work/project-climat",
+        destination: "/work/corpus-delta",
+        permanent: true,
+      },
     ];
   },
 };

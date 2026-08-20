@@ -66,8 +66,9 @@ export interface ProjectImage {
 
 /** Capture d'écran d'application mobile, et capture de site. */
 const PHONE: [number, number] = [900, 1600];
-const SCREEN: [number, number] = [1600, 1000];
 const BANNER: [number, number] = [1600, 900];
+/** Capture de navigateur en 1440×800, prise au double du rapport de pixels. */
+const CAPTURE: [number, number] = [1920, 1067];
 
 /**
  * Visuel d'un projet, servi depuis `public/work/`.
@@ -580,21 +581,22 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "project-climat",
-    title: "Project Climat",
-    tagline: "Informer, vulgariser et rendre visible",
+    slug: "corpus-delta",
+    title: "Corpus Delta",
+    tagline: "L’annuaire de la recherche climatique",
     date: "Juin 2024",
     year: "2024",
     role: "Conception éditoriale & développement",
     summary:
-      "Un site éditorial dédié à la vulgarisation des enjeux environnementaux : une information claire et fiable, dans un design respectueux de l’attention du lecteur.",
+      "Un annuaire de publications scientifiques sur le climat et les risques naturels : cent une études référencées avec leurs métadonnées d’origine, un glossaire de cinquante et un termes, et des parcours de lecture pour entrer dans la littérature sans s’y perdre.",
     stack: ["Next.js", "TypeScript", "Tailwind", "MDX"],
     seed: 3319,
-    cover: shot("climat-cover.jpg", BANNER, "La page d'accueil éditoriale."),
+    cover: shot("corpus-delta-cover.jpg", CAPTURE, "La page d’accueil, et l’entrée dans l’annuaire."),
     shots: [
-      shot("climat-1.jpg", SCREEN, "Un article en lecture longue, sommaire à gauche."),
-      shot("climat-2.jpg", SCREEN, "Les visualisations de données, posées dans le texte."),
-      shot("climat-3.jpg", SCREEN, "L'édition en MDX : le contenu et ses composants mêlés."),
+      shot("corpus-delta-1.jpg", CAPTURE, "L’annuaire : cent une études, filtrées par thème et par accès."),
+      shot("corpus-delta-2.jpg", CAPTURE, "Une fiche d’étude — métadonnées d’origine, DOI, citation prête à copier."),
+      shot("corpus-delta-3.jpg", CAPTURE, "Un parcours en six étapes, du vocabulaire aux publications de référence."),
+      shot("corpus-delta-4.jpg", CAPTURE, "Les indicateurs, relevés chez l’organisme qui les publie."),
     ],
     sections: [
       {
@@ -602,7 +604,7 @@ export const projects: Project[] = [
         blocks: [
           {
             type: "prose",
-            text: "Project Climat est né de l’envie de rendre les enjeux climatiques compréhensibles, sans sensationnalisme ni surcharge d’informations. Le sujet souffre d’un paradoxe : l’information existe en abondance, mais elle est soit trop technique pour être lue, soit trop alarmiste pour être supportée.",
+            text: "Corpus Delta est né de l’envie de rendre les enjeux climatiques compréhensibles, sans sensationnalisme ni surcharge d’informations. Le sujet souffre d’un paradoxe : l’information existe en abondance, mais elle est soit trop technique pour être lue, soit trop alarmiste pour être supportée.",
           },
           {
             type: "prose",
@@ -925,9 +927,9 @@ export const cv = {
       slug: "plum",
     },
     {
-      name: "Project Climat",
-      text: "Média éditorial pensé pour la lecture longue. Next.js et MDX, typographie et navigation volontairement silencieuses.",
-      slug: "project-climat",
+      name: "Corpus Delta",
+      text: "Annuaire de la recherche climatique : cent une études référencées, un glossaire et des parcours de lecture. Next.js et MDX.",
+      slug: "corpus-delta",
     },
   ],
 

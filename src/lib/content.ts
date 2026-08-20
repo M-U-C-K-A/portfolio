@@ -70,25 +70,24 @@ const SCREEN: [number, number] = [1600, 1000];
 const BANNER: [number, number] = [1600, 900];
 
 /**
- * Visuel de remplacement, en attendant les vraies captures.
+ * Visuel d'un projet, servi depuis `public/work/`.
  *
- * La graine rend l'image stable : sans elle Picsum en sert une au hasard à
- * chaque requête, et le visuel d'un projet changerait d'un chargement à
- * l'autre. Pour passer aux vraies captures, seul `src` bouge — poser les
- * fichiers dans `public/work/` et remplacer l'appel par le chemin. Les
- * légendes, elles, décrivent déjà ce que chaque image montrera.
+ * Le premier argument est le nom du fichier : `shot("plum-2", …)` lit
+ * `public/work/plum-2.jpg`. Ceux qui s'y trouvent aujourd'hui sont des photos
+ * de remplacement — pour passer aux vraies captures, il suffit d'écraser le
+ * fichier, sans toucher à ce tableau. Les légendes plus bas décrivent déjà ce
+ * que chacune doit montrer.
+ *
+ * Seule contrainte : garder les dimensions. Elles réservent la place avant le
+ * chargement et donnent son rapport à la figure — un fichier d'un autre format
+ * serait recadré. `tests/project-images.test.ts` le vérifie.
  */
 function shot(
-  seed: string,
+  name: string,
   [width, height]: [number, number],
   caption: string,
 ): ProjectImage {
-  return {
-    src: `https://picsum.photos/seed/${seed}/${width}/${height}`,
-    caption,
-    width,
-    height,
-  };
+  return { src: `/work/${name}.jpg`, caption, width, height };
 }
 
 export interface Project {

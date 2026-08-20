@@ -173,13 +173,14 @@ au rôle et au domaine.
 
 - **Le texte du site** est dans `src/lib/content.ts`. Les composants n'en
   contiennent aucun, ce qui rend une future internationalisation mécanique.
-- **Les visuels des projets** sont pour l'instant des placeholders Lorem
-  Picsum, posés par `shot()` dans `content.ts`. La graine de l'URL les rend
-  stables : sans elle Picsum en sert une au hasard à chaque requête. Pour
-  passer aux vraies captures, poser les fichiers dans `public/work/` et
-  remplacer l'appel par le chemin — seul `src` bouge, les légendes décrivent
-  déjà ce que chaque image doit montrer. Il faudra aussi retirer l'entrée
-  `images.remotePatterns` de `next.config.ts`.
+- **Les visuels des projets** sont dans `public/work/`, déclarés par `shot()`
+  dans `content.ts` : `shot("plum-2", …)` lit `public/work/plum-2.jpg`. Ceux
+  qui s'y trouvent sont des photos de remplacement — pour passer aux vraies
+  captures, écraser le fichier en gardant son nom et ses dimensions, sans
+  toucher au code. Les légendes disent déjà ce que chacune doit montrer.
+  `tests/project-images.test.ts` échoue si un fichier manque ou change de
+  format, deux pannes que rien d'autre ne signale : Next sert un 404 silencieux
+  dans un cas, un recadrage silencieux dans l'autre.
 - **Les articles** sont des fichiers markdown dans `content/articles/`, avec
   frontmatter (`title`, `description`, `date`, `tags`). Ajouter un fichier
   suffit : la route, le sommaire, le temps de lecture et l'index sont dérivés.

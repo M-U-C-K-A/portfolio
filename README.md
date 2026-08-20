@@ -137,9 +137,10 @@ Le reste :
   (`visibilitychange`) ; `prefers-reduced-motion` respecté, avec activation
   explicite proposée à l'utilisateur.
 
-`src/lib/pixel-plate.ts` réutilise le même masque pour les vignettes des
-projets : chaque projet a une composition dérivée de sa graine, cuite une fois
-et seulement seuillée à chaque image.
+`src/lib/pixel-plate.ts` réutilise le même masque pour composer une plaque
+dérivée d'une graine, cuite une fois et seulement seuillée à chaque image.
+Elle tenait lieu de vignette aux projets tant qu'ils n'avaient pas d'images ;
+depuis qu'ils en ont, elle et `PixelThumb` ne sont plus appelées nulle part.
 
 `src/lib/og-wave.ts` en donne une troisième lecture, statique : le ruban de
 `flow` figé et tiré à pleine page derrière l'image de partage. Le tirage est
@@ -172,6 +173,13 @@ au rôle et au domaine.
 
 - **Le texte du site** est dans `src/lib/content.ts`. Les composants n'en
   contiennent aucun, ce qui rend une future internationalisation mécanique.
+- **Les visuels des projets** sont pour l'instant des placeholders Lorem
+  Picsum, posés par `shot()` dans `content.ts`. La graine de l'URL les rend
+  stables : sans elle Picsum en sert une au hasard à chaque requête. Pour
+  passer aux vraies captures, poser les fichiers dans `public/work/` et
+  remplacer l'appel par le chemin — seul `src` bouge, les légendes décrivent
+  déjà ce que chaque image doit montrer. Il faudra aussi retirer l'entrée
+  `images.remotePatterns` de `next.config.ts`.
 - **Les articles** sont des fichiers markdown dans `content/articles/`, avec
   frontmatter (`title`, `description`, `date`, `tags`). Ajouter un fichier
   suffit : la route, le sommaire, le temps de lecture et l'index sont dérivés.

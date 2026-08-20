@@ -1,24 +1,23 @@
-"use client";
-
+import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { PixelThumb } from "@/components/pixel-thumb";
 import type { Project } from "@/lib/content";
 
 export function WorkCard({ project }: { project: Project }) {
-  const [active, setActive] = useState(false);
-
   return (
     <Link
       href={`/work/${project.slug}`}
       className="group flex flex-col gap-4 outline-none"
-      onPointerEnter={() => setActive(true)}
-      onPointerLeave={() => setActive(false)}
-      onFocus={() => setActive(true)}
-      onBlur={() => setActive(false)}
     >
       <div className="bg-grid relative aspect-[4/3] w-full overflow-hidden border border-rule transition-colors group-hover:border-ink group-focus-visible:border-ink">
-        <PixelThumb seed={project.seed} active={active} cell={5} />
+        {/* `alt=""` : le titre et le résumé suivent immédiatement, la vignette
+            n'ajoute rien qu'un lecteur d'écran doive entendre deux fois. */}
+        <Image
+          src={project.cover.src}
+          alt=""
+          fill
+          sizes="(min-width: 1280px) 30vw, (min-width: 640px) 45vw, 92vw"
+          className="object-cover"
+        />
       </div>
 
       <div className="flex flex-col gap-2">

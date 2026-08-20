@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PixelThumb } from "@/components/pixel-thumb";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WorkCard } from "@/components/work-card";
@@ -12,7 +12,9 @@ import {
   site,
   type CaseBlock,
   type CaseSection,
+  type ProjectImage,
 } from "@/lib/content";
+import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -78,6 +80,57 @@ function CaseSectionView({ section }: { section: CaseSection }) {
   );
 }
 
+/**
+ * La galerie du projet, posée avant le récit.
+ *
+ * Un cas d'étude fait ici dix sections : reléguer les captures en fin de page
+ * revient à ce que personne ne les voie. On montre d'abord, on explique après.
+ *
+ * Les captures d'application mobile sont hautes et étroites, celles de site
+ * larges — d'où deux grilles. À une image par ligne, un écran de téléphone
+ * ferait un kilomètre de haut.
+ */
+function ProjectShots({ shots }: { shots: ProjectImage[] }) {
+  if (shots.length === 0) return null;
+  const portrait = shots[0].height > shots[0].width;
+
+  return (
+    <section className="shell pt-10 md:pt-14">
+      <p className="label mb-6 text-muted-foreground">Aperçus</p>
+      <div
+        className={cn(
+          "grid gap-x-5 gap-y-8",
+          portrait ? "grid-cols-2 md:grid-cols-4" : "sm:grid-cols-2",
+        )}
+      >
+        {shots.map((image) => (
+          <figure key={image.src} className="flex flex-col gap-3">
+            <div
+              className="bg-grid relative w-full overflow-hidden border border-rule"
+              style={{ aspectRatio: `${image.width} / ${image.height}` }}
+            >
+              <Image
+                src={image.src}
+                alt=""
+                fill
+                sizes={
+                  portrait
+                    ? "(min-width: 768px) 22vw, 45vw"
+                    : "(min-width: 640px) 45vw, 92vw"
+                }
+                className="object-cover"
+              />
+            </div>
+            <figcaption className="body-text text-muted-foreground">
+              {image.caption}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default async function ProjectPage({ params }: PageProps<"/work/[slug]">) {
   const { slug } = await params;
   const project = projectBySlug.get(slug);
@@ -136,13 +189,23 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
           </div>
         </div>
 
-        <div className="bg-grid border-y border-rule">
-          <PixelThumb
-            seed={project.seed}
-            cell={7}
-            className="h-[34vh] min-h-[200px] md:h-[46vh]"
-          />
-        </div>
+        <figure>
+          <div className="bg-grid relative h-[34vh] min-h-[200px] border-y border-rule md:h-[46vh]">
+            {/* `alt=""` : la légende juste dessous dit déjà ce que l'image
+                montre, et le titre du projet la précède de trois lignes. */}
+            <Image
+              src={project.cover.src}
+              alt=""
+              fill
+              sizes="100vw"
+              preload
+              className="object-cover"
+            />
+          </div>
+          <figcaption className="shell label pt-3 text-muted-foreground">
+            {project.cover.caption}
+          </figcaption>
+        </figure>
 
         {project.status ? (
           <div className="shell pt-10">
@@ -152,6 +215,8 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
             </p>
           </div>
         ) : null}
+
+        <ProjectShots shots={project.shots} />
 
         <div className="shell py-10 md:py-14">
           {project.sections.map((section) => (

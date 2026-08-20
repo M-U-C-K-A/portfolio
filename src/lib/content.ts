@@ -48,6 +48,49 @@ export interface CaseSection {
   blocks: CaseBlock[];
 }
 
+/**
+ * Visuel d'un projet.
+ *
+ * `width` et `height` sont les dimensions intrinsèques : elles réservent la
+ * place avant le chargement et donnent son rapport à la figure, ce qui évite
+ * le saut de mise en page. La légende est visible, et c'est elle qui porte le
+ * sens — les `<img>` sont posées en `alt=""` pour ne pas la répéter au lecteur
+ * d'écran.
+ */
+export interface ProjectImage {
+  src: string;
+  caption: string;
+  width: number;
+  height: number;
+}
+
+/** Capture d'écran d'application mobile, et capture de site. */
+const PHONE: [number, number] = [900, 1600];
+const SCREEN: [number, number] = [1600, 1000];
+const BANNER: [number, number] = [1600, 900];
+
+/**
+ * Visuel de remplacement, en attendant les vraies captures.
+ *
+ * La graine rend l'image stable : sans elle Picsum en sert une au hasard à
+ * chaque requête, et le visuel d'un projet changerait d'un chargement à
+ * l'autre. Pour passer aux vraies captures, seul `src` bouge — poser les
+ * fichiers dans `public/work/` et remplacer l'appel par le chemin. Les
+ * légendes, elles, décrivent déjà ce que chaque image montrera.
+ */
+function shot(
+  seed: string,
+  [width, height]: [number, number],
+  caption: string,
+): ProjectImage {
+  return {
+    src: `https://picsum.photos/seed/${seed}/${width}/${height}`,
+    caption,
+    width,
+    height,
+  };
+}
+
 export interface Project {
   slug: string;
   title: string;
@@ -58,8 +101,12 @@ export interface Project {
   status?: string;
   summary: string;
   stack: string[];
-  /** Graine du visuel génératif de la carte. */
+  /** Graine du visuel génératif, en secours quand un projet n'a pas d'image. */
   seed: number;
+  /** Bandeau du cas d'étude, repris en vignette sur les cartes. */
+  cover: ProjectImage;
+  /** Ce que le projet donne à voir. Une galerie, après le récit. */
+  shots: ProjectImage[];
   sections: CaseSection[];
 }
 
@@ -75,6 +122,13 @@ export const projects: Project[] = [
       "Une plateforme d’apprentissage systémique qui visualise les mathématiques comme un graphe de connaissances interconnectées, du CP à l’université.",
     stack: ["React Native", "Expo", "TypeScript", "SQLite", "Jest"],
     seed: 1187,
+    cover: shot("noxus-cover", BANNER, "Le graphe complet, du primaire au supérieur."),
+    shots: [
+      shot("noxus-1", PHONE, "Le graphe filtré sur un cycle : chaque niveau a sa couleur."),
+      shot("noxus-2", PHONE, "Un nœud ouvert — cours, formules rendues en LaTeX, exercices."),
+      shot("noxus-3", PHONE, "Un chemin de remédiation, remonté depuis une notion non acquise."),
+      shot("noxus-4", PHONE, "La progression, branche par branche du curriculum."),
+    ],
     sections: [
       {
         title: "Contexte",
@@ -238,6 +292,13 @@ export const projects: Project[] = [
       "Une application mobile double-interface conçue pour l’autonomie des personnes ayant des troubles de la mémoire, sécurisée par un mode aidant.",
     stack: ["React Native", "Expo", "TypeScript", "Zustand", "Supabase"],
     seed: 5023,
+    cover: shot("plum-cover", BANNER, "L'écran d'accueil, en mode aidé."),
+    shots: [
+      shot("plum-1", PHONE, "La preuve par l'image : la photo qui confirme que c'est fait."),
+      shot("plum-2", PHONE, "Le mode aidant, côté famille."),
+      shot("plum-3", PHONE, "Une routine du matin, étape par étape."),
+      shot("plum-4", PHONE, "Les réglages d'accessibilité — corps du texte et contraste."),
+    ],
     sections: [
       {
         title: "Contexte",
@@ -421,6 +482,12 @@ export const projects: Project[] = [
       "Un SaaS qui transforme des données financières brutes en rapports lisibles, structurés et prêts à être partagés. Automatiser un processus long, répétitif et source d’erreurs.",
     stack: ["Next.js", "TypeScript", "Tailwind", "Docker", "GitHub Actions"],
     seed: 8801,
+    cover: shot("finalytics-cover", BANNER, "Le tableau de bord, à l'ouverture d'un dossier."),
+    shots: [
+      shot("finalytics-1", SCREEN, "L'éditeur de rapport et son aperçu, côte à côte."),
+      shot("finalytics-2", SCREEN, "Un rapport généré, prêt à l'export."),
+      shot("finalytics-3", SCREEN, "Le pipeline de génération, suivi d'exécution."),
+    ],
     sections: [
       {
         title: "Contexte",
@@ -521,6 +588,12 @@ export const projects: Project[] = [
       "Un site éditorial dédié à la vulgarisation des enjeux environnementaux : une information claire et fiable, dans un design respectueux de l’attention du lecteur.",
     stack: ["Next.js", "TypeScript", "Tailwind", "MDX"],
     seed: 3319,
+    cover: shot("climat-cover", BANNER, "La page d'accueil éditoriale."),
+    shots: [
+      shot("climat-1", SCREEN, "Un article en lecture longue, sommaire à gauche."),
+      shot("climat-2", SCREEN, "Les visualisations de données, posées dans le texte."),
+      shot("climat-3", SCREEN, "L'édition en MDX : le contenu et ses composants mêlés."),
+    ],
     sections: [
       {
         title: "Contexte",

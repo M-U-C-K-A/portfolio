@@ -144,61 +144,42 @@ appelées nulle part depuis les couvertures.
 
 ### Les couvertures de projet
 
-`src/lib/project-cover.ts` — quatre compositions, une par sujet. Une capture
+`src/lib/project-cover.ts` — quatre mosaïques, une par projet. Une capture
 d'écran réduite à un bandeau de 3,5:1 ne montre rien : le texte disparaît,
 l'interface devient une texture grise, et les quatre projets se ressemblent.
 
-| Motif     | Ce qu'il dessine                                          | Projet       |
-| --------- | --------------------------------------------------------- | ------------ |
-| `graph`   | Des nœuds reliés à leurs trois plus proches voisins        | Noxus        |
-| `routine` | Une matrice jour × étape, remplie à mesure                 | Plum         |
-| `series`  | Des chandeliers, puis les lignes du rapport qu'ils donnent | Finalytics   |
-| `corpus`  | Des rangées de références, traversées d'une anomalie       | Corpus Delta |
+Le cadre est découpé récursivement en tuiles de tailles très inégales, puis un
+champ propre au projet décide du ton de chacune : plus il est haut, plus la
+tuile est sombre, et plus elle a de chances de prendre la couleur. Le découpage
+garde une trace du sujet.
 
-Trois choix méritent d'être connus avant d'y toucher.
+| Motif     | Ce qu'il dessine                                  | Projet       | Couleur   |
+| --------- | ------------------------------------------------- | ------------ | --------- |
+| `graph`   | Un foyer et ses anneaux, coupes sans direction     | Noxus        | Rouge     |
+| `routine` | Des bandes régulières qui dérivent lentement       | Plum         | Vert      |
+| `series`  | Des colonnes, et une pente qui monte à droite      | Finalytics   | Or        |
+| `corpus`  | Des rangées empilées, traversées d'une diagonale   | Corpus Delta | Bleu ciel |
 
-**C'est du SVG rendu sur le serveur.** Donc visible sans JavaScript, à
-l'impression, et dans un flux RSS — ce qu'un `<canvas>` ne permet pas.
+Ce sont les seules surfaces colorées du site, et c'est voulu : elles
+distinguent les projets là où tout le reste est neutre. Les neutres restent
+les jetons du site — donc déjà inversés en mode sombre — et les couleurs
+passent par `light-dark()`, avec une valeur de nuit plus claire et moins
+saturée. La bascule ne coûte pas une ligne de JavaScript.
 
-**Les tons sortent en `var(--px-…)`, pas en hexadécimal.** La bascule
-clair/sombre inverse déjà ces jetons : la couverture suit sans rien savoir du
-thème, et sans composant client pour l'écouter.
+Trois réglages ont demandé à être trouvés plutôt que devinés :
 
-**Les cellules voisines de même ton sont fusionnées** (`coverRuns`) avant d'être
-émises, exactement comme le canvas fusionne ses `fillRect`. Un rectangle par
-cellule ferait des dizaines de milliers de nœuds sur la page d'accueil, qui en
-porte quatre.
+- **L'arrêt anticipé d'une découpe** ne vaut que pour les tuiles déjà petites.
+  Autorisé partout, il laissait des blocs occupant la moitié du cadre.
+- **Le champ est polarisé** avant usage. Brut, il reste massé autour de 0,5 :
+  beaucoup de tuiles, aucun contraste, et la couleur ne ressort plus.
+- **Le plancher de ton dépend de la taille.** Un aplat d'encre du quart du
+  cadre écrase tout le reste ; deux le rendent illisible.
 
-Le `viewBox` est en cellules et le rendu est en `slice` : la même composition
-remplit un bandeau très large comme une vignette en 4:3, sans que le calcul
-change et sans que les pixels cessent d'être carrés.
-
-`src/lib/og-wave.ts` en donne une troisième lecture, statique : le ruban de
-`flow` figé et tiré à pleine page derrière l'image de partage. Le tirage est
-semé, sinon la vignette changerait à chaque déploiement.
-
-Trois choses valent d'être sues avant d'y toucher.
-
-**Le champ passe par un SVG, pas par des `<div>`.** Satori décale les enfants
-en position absolue — mesuré à 20 px en horizontal et 30 en vertical, soit plus
-d'une cellule. Assez pour qu'une crête sombre calculée au-dessus de la ligne de
-pied vienne se poser dessus. Dans un SVG, le `viewBox` est le cadre et un
-`rect` est là où on l'écrit.
-
-**Les textes sont protégés par des rectangles codés en dur** (`KEEP_OUT`) :
-Satori ne mesure rien pour nous. La courbe est déjà choisie pour que son cœur
-passe à deux rangées du titre — les harmoniques viennent d'un balayage sous
-contrainte, la disposition « nom à gauche » n'ayant elle aucune solution à
-cette taille de titre — et le fondu n'éteint que la frange. Si un bloc de texte
-change de taille ou de place, il faut reporter son rectangle ;
-`tests/og-wave.test.ts` échoue si l'un d'eux laisse passer trop de gris.
-
-**Satori n'a pas accès aux polices du site.** Les deux graisses d'Inter Tight
-sont dans `assets/fonts/`, sous-ensemble latin et accents français — 44 ko
-chacune, contre 300 pour la fonte complète, et le bundle d'une image est
-plafonné à 500 ko. Un caractère hors de ce sous-ensemble rendrait en tofu ; le
-jeu couvre l'ASCII imprimable et les accents, ce qui suffit largement au nom,
-au rôle et au domaine.
+C'est du SVG rendu sur le serveur, donc visible sans JavaScript, à
+l'impression et dans un flux RSS. Le `viewBox` est en cellules et le rendu en
+`slice` : la même composition remplit un bandeau très large comme une vignette
+en 4:3, sans que le calcul change. `tests/project-cover.test.ts` vérifie que
+les tuiles pavent le cadre exactement — ni trou, ni recouvrement.
 
 ## Contenu
 

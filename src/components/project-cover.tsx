@@ -1,4 +1,4 @@
-import { COVER_TONES, coverRuns, type CoverMotif } from "@/lib/project-cover";
+import { coverTiles, coverTones, type CoverMotif } from "@/lib/project-cover";
 import { cn } from "@/lib/utils";
 
 interface ProjectCoverProps {
@@ -13,9 +13,10 @@ interface ProjectCoverProps {
 /**
  * Couverture d'un projet, en SVG rendu sur le serveur.
  *
- * Le `viewBox` est en cellules, donc la couverture s'étire sans que le calcul
- * change, et `slice` garde les pixels carrés en recadrant ce qui dépasse. Les
- * tons sont des jetons CSS : la bascule clair/sombre les inverse toute seule.
+ * Le `viewBox` est en cellules, donc la composition s'étire sans que le calcul
+ * change, et `slice` garde le pavage carré en recadrant ce qui dépasse. Les
+ * tuiles laissent un mince jour entre elles : c'est ce qui les fait lire comme
+ * une mosaïque plutôt que comme des aplats fondus les uns dans les autres.
  */
 export function ProjectCover({
   motif,
@@ -24,7 +25,8 @@ export function ProjectCover({
   rows,
   className,
 }: ProjectCoverProps) {
-  const runs = coverRuns({ motif, seed, cols, rows });
+  const tiles = coverTiles({ motif, seed, cols, rows });
+  const tones = coverTones(motif);
 
   return (
     <svg
@@ -33,14 +35,14 @@ export function ProjectCover({
       aria-hidden
       className={cn("block size-full", className)}
     >
-      {runs.map((run, index) => (
+      {tiles.map((tile, index) => (
         <rect
           key={index}
-          x={run.col + 0.1}
-          y={run.row + 0.1}
-          width={run.length - 0.2}
-          height={0.8}
-          fill={COVER_TONES[run.tone]}
+          x={tile.x + 0.06}
+          y={tile.y + 0.06}
+          width={tile.w - 0.12}
+          height={tile.h - 0.12}
+          fill={tones[tile.tone]}
         />
       ))}
     </svg>

@@ -71,9 +71,6 @@ export interface ProjectMedia {
   height: number;
 }
 
-/** Capture d'écran d'application mobile, et capture de site. */
-const PHONE: [number, number] = [900, 1600];
-const BANNER: [number, number] = [1600, 900];
 /** Capture de navigateur en 1440×800, prise au double du rapport de pixels. */
 const CAPTURE: [number, number] = [1920, 1067];
 
@@ -123,7 +120,12 @@ export interface Project {
    * qu'il vient de voir. Le premier paragraphe est composé plus grand.
    */
   intro: string[];
-  /** Ce que le projet donne à voir. Un carrousel, avant le récit. */
+  /**
+   * Ce que le projet donne à voir. Un carrousel, avant le récit.
+   *
+   * Peut être vide : mieux vaut pas d'image du tout qu'une image d'emprunt.
+   * Le carrousel disparaît alors, et la couverture porte seule.
+   */
   shots: ProjectMedia[];
   sections: CaseSection[];
 }
@@ -147,11 +149,6 @@ export const projects: Project[] = [
       "Le reste découle de deux contraintes tenues jusqu’au bout. Aucune donnée personnelle, donc une base locale et un contenu livré avec l’application — qui fonctionne par conséquent hors ligne, intégralement. Et une seule interface pour tous les niveaux : c’est le contenu qui change de ton, jamais l’écran, ce qui évite d’infantiliser un lycéen parce qu’un enfant de sept ans a besoin d’images.",
     ],
     shots: [
-      shot("noxus-cover.jpg", BANNER, "Le graphe complet, du primaire au supérieur. Plus de quatre cents nœuds qu’on parcourt au zoom et au déplacement : c’est l’écran d’accueil autant que la carte."),
-      shot("noxus-1.jpg", PHONE, "Le graphe filtré sur un cycle. Chaque niveau porte sa couleur, ce qui permet de se situer sans lire une seule étiquette."),
-      shot("noxus-2.jpg", PHONE, "Un nœud ouvert. Cours, formules rendues nativement en LaTeX plutôt qu’en captures d’image, exemples commentés et exercices — le contenu vit dans le nœud, pas à côté."),
-      shot("noxus-3.jpg", PHONE, "Un chemin de remédiation. Depuis une notion non acquise, l’application remonte la chaîne des pré-requis et désigne celui qui manque réellement."),
-      shot("noxus-4.jpg", PHONE, "La progression, branche par branche du curriculum. Expérience, niveaux et objectifs, mais aucune série à ne pas briser : la motivation vient de voir le graphe se remplir."),
     ],
     sections: [
       {
@@ -323,11 +320,6 @@ export const projects: Project[] = [
       "Deux modes cohabitent dans la même application : l’usage seul, et un accès encadré ouvert à un aidant. Le passage de l’un à l’autre est réversible, parce que l’autonomie ne l’est pas moins. L’aidant voit ce qui a été convenu, pas tout. Et rien ne part en clair : le serveur ne détient aucune clé, donc ne peut rien lire de ce qu’il stocke.",
     ],
     shots: [
-      shot("plum-cover.jpg", BANNER, "L’écran d’accueil, en mode aidé. Les tâches du jour en gros et dans l’ordre — rien d’autre à l’écran que ce qui reste à faire."),
-      shot("plum-1.jpg", PHONE, "La preuve par l’image. Une photo atteste que la chose est faite, et se reconsulte plus tard — au moment précis où le doute revient."),
-      shot("plum-2.jpg", PHONE, "Le mode aidant, côté famille. L’aidant voit ce qui a été convenu — les preuves, les alertes, l’historique — et rien de plus que cela."),
-      shot("plum-3.jpg", PHONE, "Une routine du matin, étape par étape. Les routines se composent librement et se suspendent sans que la progression se perde."),
-      shot("plum-4.jpg", PHONE, "Les réglages d’accessibilité. Corps du texte, contraste et taille des cibles tactiles, tenus au niveau AAA plutôt qu’au minimum réglementaire."),
     ],
     sections: [
       {

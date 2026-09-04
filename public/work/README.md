@@ -8,8 +8,9 @@ argument est le nom du fichier, **extension comprise** : `shot("plum-2.jpg", …
 lit `plum-2.jpg`. C'est là aussi que se trouve la légende de chaque image, qui
 dit ce qu'elle doit montrer.
 
-Finalytics a ses vraies captures. Les autres projets portent encore des photos
-de remplacement, en attendant les leurs.
+Finalytics et Corpus Delta ont leurs vraies captures. Noxus et Plum n'en ont
+aucune : mieux vaut pas d'image du tout qu'une image d'emprunt. Leur carrousel
+ne s'affiche pas tant qu'il est vide, et la couverture porte seule.
 
 ## Déposer une capture
 

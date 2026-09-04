@@ -59,13 +59,11 @@ function imageSize(bytes: Buffer) {
 }
 
 describe("visuels des projets", () => {
-  it("donne un motif de couverture et des aperçus à chaque projet", () => {
+  it("donne un motif de couverture à chaque projet", () => {
+    // Les aperçus, eux, peuvent manquer : un projet sans capture n'affiche pas
+    // de carrousel plutôt que des images d'emprunt.
     for (const project of projects) {
       assert.ok(project.motif, `${project.slug} n'a pas de motif de couverture`);
-      assert.ok(
-        project.shots.length >= 4,
-        `${project.slug} n'a que ${project.shots.length} aperçus`,
-      );
     }
   });
 

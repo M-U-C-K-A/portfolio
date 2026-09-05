@@ -142,44 +142,47 @@ dérivée d'une graine, cuite une fois et seulement seuillée à chaque image. E
 tenait lieu de vignette aux projets ; elle et `PixelThumb` ne sont plus
 appelées nulle part depuis les couvertures.
 
-### Les couvertures de projet
+### L'identité visuelle des projets
 
-`src/lib/project-cover.ts` — quatre mosaïques, une par projet. Une capture
-d'écran réduite à un bandeau de 3,5:1 ne montre rien : le texte disparaît,
-l'interface devient une texture grise, et les quatre projets se ressemblent.
+`src/lib/project-cover.ts` — une couleur par projet, et deux compositions
+générées à partir d'elle. Ce sont les seules surfaces colorées du site, et
+c'est précisément ce qui distingue les projets d'un contenu volontairement
+neutre.
 
-Le cadre est découpé récursivement en tuiles de tailles très inégales, puis un
-champ propre au projet décide du ton de chacune : plus il est haut, plus la
-tuile est sombre, et plus elle a de chances de prendre la couleur. Le découpage
-garde une trace du sujet.
+| Projet       | Couleur   | Rythme des barres                              |
+| ------------ | --------- | ---------------------------------------------- |
+| Noxus        | Rouge     | Longueurs très inégales — un graphe n'a pas de mesure |
+| Plum         | Vert      | Une cadence régulière, qui dérive à peine      |
+| Finalytics   | Or        | Des barres qui s'allongent vers la droite      |
+| Corpus Delta | Bleu      | Des barres longues, comme des lignes d'une bibliographie |
 
-| Motif     | Ce qu'il dessine                                  | Projet       | Couleur   |
-| --------- | ------------------------------------------------- | ------------ | --------- |
-| `graph`   | Un foyer et ses anneaux, coupes sans direction     | Noxus        | Rouge     |
-| `routine` | Des bandes régulières qui dérivent lentement       | Plum         | Vert      |
-| `series`  | Des colonnes, et une pente qui monte à droite      | Finalytics   | Or        |
-| `corpus`  | Des rangées empilées, traversées d'une diagonale   | Corpus Delta | Bleu ciel |
+**La vignette** est un motif de briques : des rangées de barres courtes, en
+deux tons seulement — la couleur sur son propre fond pâle. Chaque rangée
+démarre avec un décalage propre, sinon les barres s'alignent en colonnes et le
+motif devient un damier. La grille est volontairement grossière : à trente
+colonnes les barres forment une trame bruitée, à seize elles se lisent une par
+une.
 
-Ce sont les seules surfaces colorées du site, et c'est voulu : elles
-distinguent les projets là où tout le reste est neutre. Les neutres restent
-les jetons du site — donc déjà inversés en mode sombre — et les couleurs
-passent par `light-dark()`, avec une valeur de nuit plus claire et moins
-saturée. La bascule ne coûte pas une ligne de JavaScript.
+**Le bandeau du cas d'étude** porte le titre plutôt que de le précéder. Sur le
+fond coloré, de grands panneaux voilés de blanc se recouvrent — c'est le cumul
+des voiles qui donne la profondeur, pas leur découpe.
 
-Trois réglages ont demandé à être trouvés plutôt que devinés :
+Le titre étant posé dessus, les quatre couleurs de fond sont choisies pour
+tenir 4,5:1 sous du blanc **au point le plus clair du bandeau**, là où deux
+voiles se superposent — et non en moyenne. Un premier jeu, plus vif, tenait 6:1
+à plat et tombait à 4,2:1 sous les voiles ; `tests/project-cover.test.ts`
+recalcule ce pire cas et échoue si une couleur passe dessous. Le lien de retour
+fait 10 px, donc du blanc plein ; l'accroche est assez grande pour supporter
+0,85.
 
-- **L'arrêt anticipé d'une découpe** ne vaut que pour les tuiles déjà petites.
-  Autorisé partout, il laissait des blocs occupant la moitié du cadre.
-- **Le champ est polarisé** avant usage. Brut, il reste massé autour de 0,5 :
-  beaucoup de tuiles, aucun contraste, et la couleur ne ressort plus.
-- **Le plancher de ton dépend de la taille.** Un aplat d'encre du quart du
-  cadre écrase tout le reste ; deux le rendent illisible.
+Le fond du bandeau ne change pas avec le thème — un bandeau coloré se lit comme
+une image, pas comme une surface du site. Le motif de la vignette, lui, passe
+par `light-dark()` : sa couleur s'éclaircit et son fond s'assombrit la nuit.
 
-C'est du SVG rendu sur le serveur, donc visible sans JavaScript, à
+Tout est du SVG rendu sur le serveur, donc visible sans JavaScript, à
 l'impression et dans un flux RSS. Le `viewBox` est en cellules et le rendu en
-`slice` : la même composition remplit un bandeau très large comme une vignette
-en 4:3, sans que le calcul change. `tests/project-cover.test.ts` vérifie que
-les tuiles pavent le cadre exactement — ni trou, ni recouvrement.
+`slice` : le même motif remplit une vignette en 4:3 comme un bandeau très
+large, sans que le calcul change.
 
 ## Contenu
 

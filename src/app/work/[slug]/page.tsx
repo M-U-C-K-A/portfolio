@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ProjectCover } from "@/components/project-cover";
+import { ProjectBanner } from "@/components/project-banner";
 import { ProjectShots } from "@/components/project-shots";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -91,55 +91,61 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
       <SiteHeader />
 
       <main id="contenu">
-        <div className="shell pb-10 pt-10 md:pt-14">
-          <Link
-            href="/#projets"
-            className="label inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-ink"
-          >
-            <span aria-hidden>←</span> Tous les projets
-          </Link>
+        {/* Le bandeau porte le titre plutôt que de le précéder : c'est la
+            couleur du projet qui l'annonce, avant même qu'on lise son nom.
+            Le texte y est en blanc plein — les voiles des panneaux éclaircissent
+            le fond de quelques pour cent, et le contraste doit tenir au pire
+            endroit du bandeau, pas en moyenne. */}
+        <header className="relative isolate overflow-hidden">
+          <ProjectBanner motif={project.motif} seed={project.seed} />
+          <div className="shell relative py-16 md:py-24">
+            <Link
+              href="/#projets"
+              className="label inline-flex items-center gap-1.5 text-white transition-opacity hover:opacity-75"
+            >
+              <span aria-hidden>←</span> Tous les projets
+            </Link>
+            <h1 className="display display-l mt-8 max-w-4xl text-white md:mt-12">
+              {project.title}
+            </h1>
+            {/* 0,85 sur du texte de cette taille reste au-dessus de 3:1, le
+                seuil des grands corps. Sur le lien ci-dessus, qui fait 10 px,
+                il faudrait 4,5:1 — d'où le blanc plein. */}
+            <p className="display display-m mt-3 max-w-3xl text-white/85">
+              {project.tagline}
+            </p>
+          </div>
+        </header>
 
-          <div className="mt-10 grid gap-8 lg:grid-cols-12 lg:gap-10">
-            <div className="lg:col-span-7">
-              <h1 className="display display-l">{project.title}</h1>
-              <p className="display display-m mt-2 text-muted-foreground">
-                {project.tagline}
-              </p>
-            </div>
+        <div className="shell grid gap-8 border-b border-rule pb-10 pt-10 md:pt-14 lg:grid-cols-12 lg:gap-10">
+          <p className="body-text-l max-w-2xl lg:col-span-7">{project.summary}</p>
 
-            <div className="flex flex-col gap-5 lg:col-span-5 lg:border-l lg:border-rule lg:pl-8">
-              <p className="body-text max-w-md text-muted-foreground">
-                {project.summary}
-              </p>
-              <dl className="grid grid-cols-2 gap-4 border-t border-rule pt-4">
-                <div>
-                  <dt className="label text-muted-foreground">Rôle</dt>
-                  <dd className="body-text mt-1">{project.role}</dd>
-                </div>
-                <div>
-                  <dt className="label text-muted-foreground">Période</dt>
-                  <dd className="body-text mt-1">{project.year}</dd>
-                </div>
-              </dl>
-              <ul className="flex flex-wrap gap-1.5">
-                {project.stack.map((tech) => (
-                  <li key={tech}>
-                    <Badge
-                      variant="outline"
-                      className="label h-auto border-rule px-2 py-1 text-muted-foreground"
-                    >
-                      {tech}
-                    </Badge>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="flex flex-col gap-5 lg:col-span-5 lg:border-l lg:border-rule lg:pl-8">
+            <dl className="grid grid-cols-2 gap-4">
+              <div>
+                <dt className="label text-muted-foreground">Rôle</dt>
+                <dd className="body-text mt-1">{project.role}</dd>
+              </div>
+              <div>
+                <dt className="label text-muted-foreground">Période</dt>
+                <dd className="body-text mt-1">{project.year}</dd>
+              </div>
+            </dl>
+            <ul className="flex flex-wrap gap-1.5">
+              {project.stack.map((tech) => (
+                <li key={tech}>
+                  <Badge
+                    variant="outline"
+                    className="label h-auto border-rule px-2 py-1 text-muted-foreground"
+                  >
+                    {tech}
+                  </Badge>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        <div className="bg-grid h-[26vh] min-h-[170px] border-y border-rule md:h-[34vh]">
-          <ProjectCover motif={project.motif} seed={project.seed} cols={72} rows={20} />
-        </div>
         <ProjectShots shots={project.shots} />
 
         {/* Le chapô prend toute la colonne, sans libellé à sa gauche : c'est ce

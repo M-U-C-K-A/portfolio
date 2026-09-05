@@ -1,4 +1,4 @@
-import { coverTiles, coverTones, type CoverMotif } from "@/lib/project-cover";
+import { brickRows, paletteOf, type CoverMotif } from "@/lib/project-cover";
 import { cn } from "@/lib/utils";
 
 interface ProjectCoverProps {
@@ -11,12 +11,14 @@ interface ProjectCoverProps {
 }
 
 /**
- * Couverture d'un projet, en SVG rendu sur le serveur.
+ * Vignette d'un projet : un motif de briques dans sa couleur.
  *
- * Le `viewBox` est en cellules, donc la composition s'étire sans que le calcul
- * change, et `slice` garde le pavage carré en recadrant ce qui dépasse. Les
- * tuiles laissent un mince jour entre elles : c'est ce qui les fait lire comme
- * une mosaïque plutôt que comme des aplats fondus les uns dans les autres.
+ * Deux tons seulement — la couleur sur son propre fond pâle. Un dégradé de gris
+ * mêlé à la couleur ferait une image de plus ; deux tons font une signature.
+ *
+ * Le `viewBox` est en cellules, donc le motif s'étire sans que le calcul
+ * change, et `slice` garde les briques rectangulaires en recadrant ce qui
+ * dépasse.
  */
 export function ProjectCover({
   motif,
@@ -25,8 +27,8 @@ export function ProjectCover({
   rows,
   className,
 }: ProjectCoverProps) {
-  const tiles = coverTiles({ motif, seed, cols, rows });
-  const tones = coverTones(motif);
+  const palette = paletteOf(motif);
+  const bricks = brickRows({ motif, seed, cols, rows });
 
   return (
     <svg
@@ -35,14 +37,15 @@ export function ProjectCover({
       aria-hidden
       className={cn("block size-full", className)}
     >
-      {tiles.map((tile, index) => (
+      <rect width={cols} height={rows} fill={palette.ground} />
+      {bricks.map((brick, index) => (
         <rect
           key={index}
-          x={tile.x + 0.06}
-          y={tile.y + 0.06}
-          width={tile.w - 0.12}
-          height={tile.h - 0.12}
-          fill={tones[tile.tone]}
+          x={brick.x + 0.12}
+          y={brick.y + 0.16}
+          width={brick.w - 0.24}
+          height={0.68}
+          fill={palette.bar}
         />
       ))}
     </svg>

@@ -9,7 +9,10 @@ export function WorkCard({ project }: { project: Project }) {
       className="group flex flex-col gap-4 outline-none"
     >
       <div className="bg-grid relative aspect-[4/3] w-full overflow-hidden border border-rule transition-colors group-hover:border-ink group-focus-visible:border-ink">
-        <ProjectCover motif={project.motif} seed={project.seed} cols={30} rows={22} />
+        {/* Grille volontairement grossière. À trente colonnes les barres
+            forment une trame bruitée ; à onze elles se lisent une par une, ce
+            qui est tout l'intérêt d'un motif de briques. */}
+        <ProjectCover motif={project.motif} seed={project.seed} cols={11} rows={8} />
       </div>
 
       <div className="flex flex-col gap-2">

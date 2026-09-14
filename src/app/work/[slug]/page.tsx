@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectBanner } from "@/components/project-banner";
+import { paletteOf } from "@/lib/project-cover";
 import { ProjectShots } from "@/components/project-shots";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -85,6 +86,7 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
   if (!project) notFound();
 
   const others = projects.filter((item) => item.slug !== project.slug);
+  const palette = paletteOf(project.motif);
 
   return (
     <>
@@ -93,25 +95,28 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
       <main id="contenu">
         {/* Le bandeau porte le titre plutôt que de le précéder : c'est la
             couleur du projet qui l'annonce, avant même qu'on lise son nom.
-            Le texte y est en blanc plein — les voiles des panneaux éclaircissent
-            le fond de quelques pour cent, et le contraste doit tenir au pire
-            endroit du bandeau, pas en moyenne. */}
-        <header className="relative isolate overflow-hidden">
+            La couleur du texte vient de la palette — blanc sur les fonds
+            soutenus, encre sur l'or — et elle est tenue au point le moins
+            favorable du bandeau, pas en moyenne. */}
+        <header
+          className="relative isolate overflow-hidden"
+          style={{ color: palette.bannerText }}
+        >
           <ProjectBanner motif={project.motif} seed={project.seed} />
           <div className="shell relative py-16 md:py-24">
             <Link
               href="/#projets"
-              className="label inline-flex items-center gap-1.5 text-white transition-opacity hover:opacity-75"
+              className="label inline-flex items-center gap-1.5 transition-opacity hover:opacity-75"
             >
               <span aria-hidden>←</span> Tous les projets
             </Link>
-            <h1 className="display display-l mt-8 max-w-4xl text-white md:mt-12">
+            <h1 className="display display-l mt-8 max-w-4xl md:mt-12">
               {project.title}
             </h1>
-            {/* 0,85 sur du texte de cette taille reste au-dessus de 3:1, le
-                seuil des grands corps. Sur le lien ci-dessus, qui fait 10 px,
-                il faudrait 4,5:1 — d'où le blanc plein. */}
-            <p className="display display-m mt-3 max-w-3xl text-white/85">
+            {/* Atténuée à 0,85 : sur un corps de cette taille le seuil est de
+                3:1, largement tenu. Le lien ci-dessus fait 10 px et demande
+                4,5:1 — il garde la couleur pleine. */}
+            <p className="display display-m mt-3 max-w-3xl opacity-85">
               {project.tagline}
             </p>
           </div>

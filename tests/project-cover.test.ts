@@ -49,15 +49,25 @@ describe("identité visuelle des projets", () => {
     assert.equal(new Set(banners).size, projects.length, "deux projets partagent la même couleur");
   });
 
-  it("porte le texte blanc du bandeau, même au point le plus clair", () => {
-    // Le titre est posé sur le bandeau. Les panneaux l'éclaircissent par
-    // endroits : le contraste doit tenir là, pas en moyenne. Le pire cas est le
-    // recouvrement de deux voiles, soit environ 18 % de blanc.
-    const white = [255, 255, 255];
+  it("porte le texte du bandeau au point le moins favorable", () => {
+    // Le titre est posé sur le bandeau. Les voiles des panneaux le changent par
+    // endroits, et le contraste doit tenir là, pas en moyenne.
+    //  - Texte blanc : le pire point est le plus clair, soit deux voiles blancs
+    //    superposés, environ 18 % de blanc.
+    //  - Texte à l'encre : le pire point est le plus sombre, soit deux voiles
+    //    noirs superposés, environ 11 % de noir.
     for (const motif of MOTIFS) {
-      const worst = blend(white, parse(paletteOf(motif).banner), 0.18);
-      const ratio = contrast(white, worst);
-      assert.ok(ratio >= 4.5, `${motif} ne tient que ${ratio.toFixed(2)}:1 sous le blanc`);
+      const { banner, bannerText } = paletteOf(motif);
+      const text = parse(bannerText);
+      const light = luminance(text) > 0.5;
+      const worst = light
+        ? blend([255, 255, 255], parse(banner), 0.18)
+        : blend([0, 0, 0], parse(banner), 0.11);
+      const ratio = contrast(text, worst);
+      assert.ok(
+        ratio >= 4.5,
+        `${motif} ne tient que ${ratio.toFixed(2)}:1 au pire point du bandeau`,
+      );
     }
   });
 

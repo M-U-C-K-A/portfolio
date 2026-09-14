@@ -160,20 +160,25 @@ neutre.
 deux tons seulement — la couleur sur son propre fond pâle. Chaque rangée
 démarre avec un décalage propre, sinon les barres s'alignent en colonnes et le
 motif devient un damier. La grille est volontairement grossière : à trente
-colonnes les barres forment une trame bruitée, à seize elles se lisent une par
+colonnes les barres forment une trame bruitée, à onze elles se lisent une par
 une.
 
 **Le bandeau du cas d'étude** porte le titre plutôt que de le précéder. Sur le
 fond coloré, de grands panneaux voilés de blanc se recouvrent — c'est le cumul
 des voiles qui donne la profondeur, pas leur découpe.
 
-Le titre étant posé dessus, les quatre couleurs de fond sont choisies pour
-tenir 4,5:1 sous du blanc **au point le plus clair du bandeau**, là où deux
-voiles se superposent — et non en moyenne. Un premier jeu, plus vif, tenait 6:1
-à plat et tombait à 4,2:1 sous les voiles ; `tests/project-cover.test.ts`
-recalcule ce pire cas et échoue si une couleur passe dessous. Le lien de retour
-fait 10 px, donc du blanc plein ; l'accroche est assez grande pour supporter
-0,85.
+Le titre étant posé dessus, chaque fond est choisi avec la couleur de son
+texte (`bannerText`) pour tenir 4,5:1 **au point le moins favorable du
+bandeau**, et non en moyenne : là où deux voiles blancs se superposent pour un
+texte blanc, là où deux voiles sombres se superposent pour un texte à l'encre.
+`tests/project-cover.test.ts` recalcule ce pire cas et échoue si une couleur
+passe dessous. Le lien de retour fait 10 px, donc la couleur pleine ;
+l'accroche est assez grande pour supporter 0,85.
+
+Trois fonds portent du blanc, l'or porte de l'encre. Un premier jeu, plus vif,
+tenait 6:1 à plat et tombait à 4,2:1 sous les voiles ; le suivant assombrissait
+l'or jusqu'à porter du blanc, et l'or ainsi assombri tournait au marron. Un or
+franc sous du texte noir tient 10:1 à plat et 8:1 au pire point.
 
 Le fond du bandeau ne change pas avec le thème — un bandeau coloré se lit comme
 une image, pas comme une surface du site. Le motif de la vignette, lui, passe
@@ -183,6 +188,38 @@ Tout est du SVG rendu sur le serveur, donc visible sans JavaScript, à
 l'impression et dans un flux RSS. Le `viewBox` est en cellules et le rendu en
 `slice` : le même motif remplit une vignette en 4:3 comme un bandeau très
 large, sans que le calcul change.
+
+### Les images de partage
+
+Trois gabarits, repris du registre [ogimagecn](https://www.ogimagecn.com)
+(licence MIT, © Shadcn Labs) dans `src/components/og/` :
+
+| Route                                 | Gabarit             | Fond                      |
+| ------------------------------------- | ------------------- | ------------------------- |
+| `app/opengraph-image.tsx`             | Shadcn Registry 6   | Noir, du gabarit          |
+| `app/work/[slug]/opengraph-image.tsx` | Shiori              | La couleur du projet      |
+| `app/articles/[slug]/opengraph-image.tsx` | Shiori          | Le papier du site         |
+
+Les composants ont été copiés, pas installés par la CLI du registre, pour être
+relus avant d'entrer dans le dépôt. Shadcn Registry 6 est tel quel. Shiori a
+reçu deux retouches de mise en page, décrites en tête du fichier : le corps du
+titre diminue avec sa longueur — à 64 px, un titre d'article de 74 signes
+montait jusqu'au logo — et la colonne de la marque est élargie, avec une
+gouttière. L'original lui donnait 245 px sans jour ; « Finalytics » en mesure
+256 et venait se coller au titre.
+
+Une page de projet partage la même couleur que son bandeau : on retrouve en
+arrivant ce qu'on a vu dans le fil. Un article n'a pas de couleur, il prend le
+papier et l'encre du site — c'est la couleur qui distingue d'un coup d'œil un
+projet d'un texte.
+
+`src/lib/og.ts` fournit ce que les trois partagent. **Les polices**, parce que
+Satori n'a pas accès à celles du site : les deux graisses d'Inter Tight sont
+dans `assets/fonts/`, en sous-ensemble latin et accents français, 44 ko
+chacune contre 300 — le bundle d'une image est plafonné à 500 ko. Un caractère
+hors de ce jeu rendrait en tofu. **Le monogramme**, en URI de données puisqu'un
+`<img>` de Satori ne lit qu'une adresse ; il reprend pixel pour pixel le « HD »
+de `app/icon.svg`.
 
 ## Contenu
 

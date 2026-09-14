@@ -20,17 +20,24 @@ export type CoverMotif = "graph" | "routine" | "series" | "corpus";
 
 export interface CoverPalette {
   /**
-   * Fond du bandeau du cas d'étude, assez soutenu pour porter du texte blanc.
+   * Fond du bandeau du cas d'étude, et de son image de partage.
    *
-   * Les valeurs sont choisies pour tenir 4,5:1 **au point le plus clair du
-   * bandeau** — là où deux voiles de panneaux se recouvrent — et non en
-   * moyenne. À pleine couleur elles tournent autour de 8:1. Un premier jeu,
-   * plus vif, tenait 6:1 à plat mais tombait à 4,2:1 sous les voiles.
+   * Il porte du texte, donc sa valeur se choisit **au point le moins favorable
+   * du bandeau** — là où deux voiles de panneaux se recouvrent — et non en
+   * moyenne. `tests/project-cover.test.ts` recalcule ce pire cas.
    *
-   * Elles ne changent pas avec le thème : un bandeau coloré se lit comme une
-   * image, pas comme une surface du site.
+   * Il ne change pas avec le thème : un bandeau coloré se lit comme une image,
+   * pas comme une surface du site.
    */
   banner: string;
+  /**
+   * Couleur du texte posé sur le bandeau.
+   *
+   * Blanc sur les fonds soutenus, encre sur l'or. Un or assez sombre pour
+   * porter du blanc tourne au marron — c'était le cas, et ça se voyait dès le
+   * clic sur la carte.
+   */
+  bannerText: string;
   /** Les barres de la vignette. */
   bar: string;
   /** Le fond sur lequel elles reposent. */
@@ -41,24 +48,29 @@ const PALETTES: Record<CoverMotif, CoverPalette> = {
   // Noxus — rouge. Le contraire du bleu du site : une carte de lacunes.
   graph: {
     banner: "#96201d",
+    bannerText: "#ffffff",
     bar: "light-dark(#c9302b, #f27a72)",
     ground: "light-dark(#f3d6d4, #331715)",
   },
   // Plum — vert. Ce qui est fait, ce qui est vivant.
   routine: {
     banner: "#12602f",
+    bannerText: "#ffffff",
     bar: "light-dark(#1f8544, #56c97a)",
     ground: "light-dark(#d3e9da, #16301f)",
   },
   // Finalytics — or. La couleur de la valeur, sans le vert des marchés.
   series: {
-    banner: "#654a0c",
+    // Or franc, texte à l'encre : 10:1 à plat, 8:1 sous deux voiles sombres.
+    banner: "#f0b429",
+    bannerText: "#0f0f11",
     bar: "light-dark(#a97f14, #e0b03c)",
     ground: "light-dark(#efe0bd, #33280f)",
   },
   // Corpus Delta — bleu. L'atmosphère, et la mesure qu'on en fait.
   corpus: {
     banner: "#1745b0",
+    bannerText: "#ffffff",
     bar: "light-dark(#2159d6, #6d94ee)",
     ground: "light-dark(#d3ddf7, #172242)",
   },

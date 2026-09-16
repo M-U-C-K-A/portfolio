@@ -40,8 +40,11 @@ export function ogFonts() {
 }
 
 /**
- * Le « HD » en pixels de `app/icon.svg`, en coordonnées de sa grille 9 × 7.
- * Il doit rester identique au favicon : c'est la même marque.
+ * Le monogramme « HD » en pixels, en coordonnées d'une grille 9 × 7.
+ *
+ * C'était l'ancien favicon. Celui-ci est devenu un avatar, et les images de
+ * partage gardent le monogramme : à 64 px, les lettres se lisent mieux qu'un
+ * visage réduit.
  */
 const GLYPH = [
   [1, 1, 1, 5],

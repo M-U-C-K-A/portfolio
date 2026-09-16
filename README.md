@@ -218,8 +218,31 @@ Satori n'a pas accès à celles du site : les deux graisses d'Inter Tight sont
 dans `assets/fonts/`, en sous-ensemble latin et accents français, 44 ko
 chacune contre 300 — le bundle d'une image est plafonné à 500 ko. Un caractère
 hors de ce jeu rendrait en tofu. **Le monogramme**, en URI de données puisqu'un
-`<img>` de Satori ne lit qu'une adresse ; il reprend pixel pour pixel le « HD »
-de `app/icon.svg`.
+`<img>` de Satori ne lit qu'une adresse — le « HD » en pixels qui servait de
+favicon avant l'avatar.
+
+### Le favicon
+
+Un avatar de [Personas by Draftbit](https://personas.draftbit.com/), généré
+avec DiceBear, sous licence
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) : l'attribution est
+obligatoire. Les métadonnées de licence sont conservées dans `app/icon.svg`.
+
+Trois fichiers, parce qu'aucun format ne couvre tous les cas :
+
+| Fichier               | Pour qui                                                  |
+| --------------------- | --------------------------------------------------------- |
+| `app/icon.svg`        | Les navigateurs récents — net à toutes les tailles        |
+| `app/favicon.ico`     | Les outils et navigateurs qui réclament encore `/favicon.ico` |
+| `app/apple-icon.png`  | L'écran d'accueil iOS, qui n'accepte pas le SVG           |
+
+Le `viewBox` du SVG est resserré sur le dessin : il n'en occupait que 56 % de
+la largeur, et à 16 px le visage devenait illisible. `apple-icon.png` a un
+fond papier, parce qu'iOS remplit la transparence en noir. Les deux fichiers
+matriciels sont tirés d'un rendu de Chrome — le seul outil disponible qui
+gère fidèlement les masques et les modes de fusion du SVG ; ils sont à
+régénérer si l'avatar change.
+
 
 ## Contenu
 

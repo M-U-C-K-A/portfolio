@@ -512,9 +512,9 @@ export const projects: Project[] = [
     ],
     shots: [
       shot("finalytics-cover.png", [1900, 990], "La page d’accueil, et l’aperçu d’un rapport. Le produit montre son livrable avant de le décrire : position, valeur centrale, potentiel, et les trois méthodes qui y mènent."),
-      shot("finalytics-1.png", [1900, 990], "L’historique des rapports. Statut, coût en crédits, heure de lancement et de fin, filtres par type d’actif et de rapport — un livrable reste consultable à l’identique, sans être régénéré."),
-      shot("finalytics-2.png", [1900, 990], "Le tableau de bord. Solde de crédits, plan en cours, rapports récents et actions rapides : ce qui se décide en un coup d’œil avant de lancer une analyse."),
-      shot("finalytics-3.png", [3734, 2634], "Deux pages d’un rapport généré. Résumé exécutif à gauche, valorisation à droite : trois approches indépendantes, l’écart entre elles assumé, et la grille de sensibilité aux hypothèses."),
+      shot("finalytics-1.png", [1920, 1080], "L’information du moment, en tête du tableau de bord. Ici une décision de taux de la Fed, au-dessus des générations en cours — statut, type d’actif, type de rapport, coût en crédits."),
+      shot("finalytics-2.png", [1920, 1080], "L’actualité des sociétés suivies. Rapports trimestriels et annonces de financement tirés des dépôts SEC, juste sous la liste des générations, qui n’a plus de page à elle."),
+      shot("finalytics-3.png", [1920, 1080], "Deux pages d’un rapport généré. Le résumé exécutif, puis l’analyse fondamentale : multiples face à la médiane des pairs, rentabilité, structure financière."),
     ],
     sections: [
       {
@@ -598,6 +598,19 @@ export const projects: Project[] = [
         ],
       },
       {
+        title: "L’actualité, au même endroit",
+        blocks: [
+          {
+            type: "prose",
+            text: "Le tableau de bord s’ouvre sur l’information majeure du moment — une décision de taux d’une banque centrale, une acquisition qui redistribue un secteur — puis sur l’actualité des sociétés que l’utilisateur suit : rapports trimestriels et annonces de financement, tirés des dépôts publiés auprès de la SEC.",
+          },
+          {
+            type: "prose",
+            text: "Un rapport répond à une question posée à un instant donné. L’actualité dit quand la reposer : un résultat trimestriel ou une levée de fonds rendent une valorisation caduque, et c’est au même endroit qu’on relance l’analyse.",
+          },
+        ],
+      },
+      {
         title: "Le crédit comme unité",
         blocks: [
           {
@@ -606,7 +619,7 @@ export const projects: Project[] = [
           },
           {
             type: "prose",
-            text: "L’historique conserve tout — l’actif, le type d’analyse, le statut, le coût, l’heure de lancement et l’heure de fin — et se filtre par chacun de ces axes. Un rapport livré reste consultable et téléchargeable à l’identique : rien n’est régénéré à la volée, donc rien ne peut changer entre deux consultations.",
+            text: "La liste des générations conserve tout — l’actif, le type d’analyse, le statut, le coût, l’heure de lancement et l’heure de fin — et se filtre par chacun de ces axes. Elle n’a plus de page à part : elle vit dans le tableau de bord, sous l’actualité. Un rapport livré reste consultable et téléchargeable à l’identique : rien n’est régénéré à la volée, donc rien ne peut changer entre deux consultations.",
           },
         ],
       },

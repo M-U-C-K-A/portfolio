@@ -20,6 +20,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "yearly",
       priority: 0.7,
     },
+    // Atlas, le générateur de mondes (application servie depuis public/atlas).
+    {
+      url: `${site.url}/atlas`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
     ...projects.map((project) => ({
       url: `${site.url}/work/${project.slug}`,
       lastModified: now,

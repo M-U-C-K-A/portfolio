@@ -1,0 +1,288 @@
+/*
+ * Styles adaptés de warcraftcn/ui — https://github.com/TheOrcDev/warcraftcn-ui
+ * MIT License — Copyright (c) 2025 warcraftcn
+ * Composants d'origine en React/Tailwind ; ici repris en CSS pur pour l'info-bulle et la fiche.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+
+.fantasy {
+  font-family: 'Cinzel', 'Palatino Linotype', Palatino, Georgia, serif;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+}
+
+/* ---- Tooltip : fond commun + liseré selon la « rareté » ---- */
+.wc-tooltip-base {
+  background: linear-gradient(180deg, hsl(35 15% 8%) 0%, hsl(35 10% 5%) 100%);
+  color: #fef3c7;
+}
+.wc-tooltip {
+  border: 1px solid hsl(45 60% 35%);
+  box-shadow: inset 0 0 8px hsl(45 50% 25% / 0.12), 0 4px 20px hsl(0 0% 0% / 0.7);
+}
+.wc-tooltip-uncommon {
+  border: 1px solid hsl(120 35% 32%);
+  box-shadow: inset 0 0 8px hsl(120 30% 28% / 0.12), 0 4px 20px hsl(0 0% 0% / 0.7);
+}
+.wc-tooltip-rare {
+  border: 1px solid hsl(220 50% 42%);
+  box-shadow: inset 0 0 8px hsl(220 45% 38% / 0.12), 0 4px 20px hsl(0 0% 0% / 0.7);
+}
+.wc-tooltip-epic {
+  border: 1px solid hsl(280 40% 42%);
+  box-shadow: inset 0 0 10px hsl(280 35% 38% / 0.15), 0 4px 20px hsl(0 0% 0% / 0.7);
+}
+.wc-tooltip-legendary {
+  border: 1px solid hsl(30 70% 40%);
+  box-shadow: inset 0 0 10px hsl(30 60% 35% / 0.15), 0 4px 20px hsl(0 0% 0% / 0.7);
+}
+/* couleurs de titre (Tailwind amber/green/blue/purple/orange-400) */
+.wc-title-default { color: #fbbf24; }
+.wc-title-uncommon { color: #4ade80; }
+.wc-title-rare { color: #60a5fa; }
+.wc-title-epic { color: #c084fc; }
+.wc-title-legendary { color: #fb923c; }
+
+/* ---- Card : cadre bois et métal en border-image ---- */
+.wc-card {
+  border-style: solid;
+  /* tranche élargie (46 px de l'image) pour que le contenu reste sur le bois, pas sur le cerclage */
+  border-width: 26px 24px 22px;
+  border-image-source: url('/warcraftcn/card-bg.webp');
+  border-image-slice: 58 46 40 fill;
+  border-image-repeat: stretch;
+  color: #fef3c7;
+}
+/* variante compacte (bandeaux du HUD) : même image, cadre réduit */
+.wc-card-sm { border-width: 15px 14px 13px; }
+
+/* ---- Panneau : bois sombre à coins ouvragés (fond du « dropdown-menu » warcraftcn) ---- */
+.wc-panel {
+  border-style: solid;
+  border-width: 14px;
+  border-image-source: url('/warcraftcn/dropdown-menu-bg.webp');
+  border-image-slice: 34 fill;
+  border-image-repeat: stretch;
+  color: #fef3c7;
+}
+
+/* ---- Input : cadre de métal riveté ---- */
+.wc-input {
+  min-width: 0;
+  padding: 6px 10px;
+  border-style: solid;
+  border-width: 7px;
+  border-radius: 0;
+  border-image-source: url('/warcraftcn/input-frame.webp');
+  border-image-slice: 36 fill;
+  border-image-repeat: stretch;
+  background: #16120c;
+  color: #fef3c7;
+  font-family: 'Cinzel', 'Palatino Linotype', Palatino, Georgia, serif;
+  font-size: 13px;
+  outline: none;
+  transition: box-shadow 0.15s;
+}
+.wc-input:focus { box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.35), 0 0 10px rgba(251, 191, 36, 0.25); }
+.wc-input::placeholder { color: rgba(254, 243, 199, 0.4); }
+select.wc-input {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 28px;
+  background: #16120c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23f2c45c' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 8px center;
+  cursor: pointer;
+}
+select.wc-input option { background: #1b150d; color: #fef3c7; }
+
+/* ---- Libellé ---- */
+.wc-label { color: #fde68a; text-shadow: 0 0 6px rgba(251, 191, 36, 0.25); }
+
+/* ---- Case à cocher : cadre doré et coche en relief ---- */
+.wc-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  border: 0;
+  background: url('/warcraftcn/checkbox-default.webp') center / contain no-repeat;
+  cursor: pointer;
+}
+.wc-checkbox:checked { background-image: url('/warcraftcn/checkbox-default-checked.webp'); }
+.wc-checkbox:focus-visible { outline: none; filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.7)); }
+.wc-checkbox-human { background-image: url('/warcraftcn/checkbox-human.webp'); }
+.wc-checkbox-human:checked { background-image: url('/warcraftcn/checkbox-human-checked.webp'); }
+.wc-checkbox-orc { background-image: url('/warcraftcn/checkbox-orc.webp'); }
+.wc-checkbox-orc:checked { background-image: url('/warcraftcn/checkbox-orc-checked.webp'); }
+.wc-checkbox-elf { background-image: url('/warcraftcn/checkbox-elf.webp'); }
+.wc-checkbox-elf:checked { background-image: url('/warcraftcn/checkbox-elf-checked.webp'); }
+.wc-checkbox-undead { background-image: url('/warcraftcn/checkbox-undead.webp'); }
+.wc-checkbox-undead:checked { background-image: url('/warcraftcn/checkbox-undead-checked.webp'); }
+
+/* ---- Bouton : plaque bleue (et variante à cadre doré) ---- */
+.wc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-style: solid;
+  border-width: 5px;
+  border-radius: 0;
+  border-image-source: url('/warcraftcn/button-bg.webp');
+  border-image-slice: 16 fill;
+  border-image-repeat: stretch;
+  background: transparent;
+  color: #fff;
+  font: 700 12px/1.2 'Cinzel', 'Palatino Linotype', Palatino, Georgia, serif;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 2px #000;
+  cursor: pointer;
+  transition: filter 0.1s, transform 0.1s;
+}
+.wc-btn:hover { filter: brightness(1.12); color: #fff; }
+.wc-btn:active { transform: scale(0.95); filter: brightness(0.75); }
+.wc-btn:disabled { opacity: 0.45; pointer-events: none; }
+.wc-btn-frame {
+  border-image-source: url('/warcraftcn/button-bg-with-frame.webp');
+  /* l'image a des marges transparentes et des pattes latérales : on tranche au-delà */
+  border-width: 9px 16px;
+  border-image-slice: 100 190 fill;
+  padding: 3px 8px;
+  color: #fde68a;
+}
+
+/* ---- Accordion : en-tête à filigrane doré, contenu sur parchemin sombre ---- */
+.wc-acc { margin: 0 0 4px; }
+.wc-acc > summary {
+  list-style: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 4px 34px 4px 12px;
+  cursor: pointer;
+  border-style: solid;
+  border-width: 6px;
+  border-image-source: url('/warcraftcn/accordion-header.webp');
+  border-image-slice: 16 fill;
+  border-image-repeat: stretch;
+  color: #f3e7c4;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  transition: box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.wc-acc > summary::-webkit-details-marker { display: none; }
+.wc-acc > summary::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  background: url('/warcraftcn/svg/sword.svg') center / contain no-repeat;
+  filter: brightness(0) saturate(100%) invert(83%) sepia(38%) saturate(1148%) hue-rotate(349deg) brightness(102%) contrast(101%);
+  transition: transform 0.3s;
+}
+.wc-acc.icon-shield > summary::after {
+  background-image: url('/warcraftcn/svg/shield.svg');
+  filter: brightness(0) saturate(100%) invert(66%) sepia(30%) saturate(965%) hue-rotate(171deg) brightness(92%) contrast(88%);
+}
+.wc-acc.icon-rune > summary::after {
+  background-image: url('/warcraftcn/svg/rune-stone.svg');
+  filter: brightness(0) saturate(100%) invert(66%) sepia(18%) saturate(951%) hue-rotate(253deg) brightness(94%) contrast(91%);
+}
+.wc-acc[open] > summary {
+  box-shadow: 0 0 0 1px rgba(255, 215, 120, 0.4), 0 0 12px rgba(255, 200, 100, 0.3), 0 10px 24px rgba(0, 0, 0, 0.4);
+}
+.wc-acc[open] > summary::after { transform: rotate(180deg); }
+.wc-acc > .wc-acc-body {
+  border-style: solid;
+  border-width: 0;
+  border-image-source: url('/warcraftcn/accordion-content-bg.webp');
+  border-image-slice: 16 fill;
+  border-image-repeat: stretch;
+  padding: 4px 12px 12px;
+  color: #f3e7c4;
+  animation: wc-acc-down 0.2s ease-out;
+}
+.wc-acc > .wc-acc-body::before {
+  content: '✦';
+  display: block;
+  text-align: center;
+  color: #b98a3a;
+  line-height: 1;
+  margin: 2px 0 8px;
+  background: linear-gradient(90deg, transparent, #9a6f2f, transparent) center / 100% 1px no-repeat;
+  text-shadow: 0 0 4px rgba(120, 78, 24, 0.45);
+}
+@keyframes wc-acc-down {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Avatar : cadre ornementé, image dans les 60 % centraux ---- */
+.wc-avatar { position: relative; flex: none; }
+.wc-avatar > .wc-avatar-img { position: absolute; inset: 20%; overflow: hidden; }
+.wc-avatar > .wc-avatar-img > svg, .wc-avatar > .wc-avatar-img > img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.wc-avatar > .wc-avatar-frame {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+  background: var(--wc-frame-url) center / contain no-repeat;
+}
+.wc-avatar-default { --wc-frame-url: url('/warcraftcn/avatar-default.webp'); }
+.wc-avatar-human { --wc-frame-url: url('/warcraftcn/avatar-human.webp'); }
+.wc-avatar-elf { --wc-frame-url: url('/warcraftcn/avatar-elf.webp'); }
+.wc-avatar-orc { --wc-frame-url: url('/warcraftcn/avatar-orc.webp'); }
+.wc-avatar-undead { --wc-frame-url: url('/warcraftcn/avatar-undead.webp'); }
+
+/* ---- Tabs ---- */
+.wc-tabs { display: flex; gap: 2px; padding: 0 6px; }
+.wc-tab {
+  flex: 1;
+  height: 34px;
+  padding: 0 6px;
+  border: 0;
+  background: url('/warcraftcn/tabs/tab-list.webp') center / 100% 100% no-repeat;
+  color: #d9c79c;
+  font: 700 11.5px/1 'Cinzel', serif;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.wc-tab:hover { transform: translateY(-1px); color: #fff3cf; }
+.wc-tab.active { background-image: url('/warcraftcn/tabs/tab-list-active.webp'); color: #fff6d8; text-shadow: 0 0 8px rgba(251, 191, 36, 0.5); }
+.wc-tab-content {
+  border-style: solid;
+  border-width: 0;
+  border-image-source: url('/warcraftcn/tabs/tab-content.webp');
+  border-image-slice: 30 fill;
+  color: #f3e7c4;
+}
+
+/* ---- Curseurs de faction (PNG d'abord : tous les navigateurs ne lisent pas les .cur) ---- */
+.wc-cursor-human, .wc-cursor-human * { cursor: url('/warcraftcn/cursors/human.png') 0 0, url('/warcraftcn/cursors/human.cur'), auto !important; }
+.wc-cursor-orc, .wc-cursor-orc * { cursor: url('/warcraftcn/cursors/orc.png') 0 0, url('/warcraftcn/cursors/orc.cur'), auto !important; }
+.wc-cursor-elf, .wc-cursor-elf * { cursor: url('/warcraftcn/cursors/elf.png') 0 0, url('/warcraftcn/cursors/elf.cur'), auto !important; }
+.wc-cursor-undead, .wc-cursor-undead * { cursor: url('/warcraftcn/cursors/undead.png') 0 0, url('/warcraftcn/cursors/undead.cur'), auto !important; }
+
+/* ---- Badges (traits) ---- */
+.wc-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 0 4px 4px 0;
+  border: 1px solid hsl(45 60% 35%);
+  border-radius: 3px;
+  background: linear-gradient(180deg, hsl(35 20% 16%), hsl(35 15% 9%));
+  color: #fde68a;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 6px rgba(251, 191, 36, 0.35);
+}

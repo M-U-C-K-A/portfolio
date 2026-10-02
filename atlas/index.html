@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- page déjà sombre : pas de mode sombre forcé ni de recoloration par extension (Dark Reader) -->
+    <meta name="color-scheme" content="dark" />
+    <meta name="darkreader-lock" />
+    <title>Atlas — générateur de mondes</title>
+  </head>
+  <body>
+    <div id="app">
+      <main id="view">
+        <canvas id="gl"></canvas>
+        <canvas id="overlay"></canvas>
+        <canvas id="life"></canvas>
+        <header id="hud-top">
+          <div id="hud-left">
+            <div id="plaque" class="fantasy wc-card wc-card-sm"><span class="w-name">Atlas</span><span class="w-sub">Aucun monde</span></div>
+            <div id="legend" class="fantasy wc-panel"></div>
+          </div>
+          <nav id="hud-actions" class="fantasy">
+            <button class="wc-btn" data-act="codex" data-tip-title="Chroniques" data-tip="Encyclopédie du monde : pays et souverains, dynasties et lignées, cultures, religions — avec recherche." data-tip-key="C">📜 Chroniques</button>
+            <button class="wc-btn" data-act="timeline" data-tip-title="Frise historique" data-tip="Remontez le temps : la carte du monde année par année, avec ses guerres, unifications, indépendances, mariages et schismes." data-tip-key="Y">⌛ Frise</button>
+            <button class="wc-btn" data-act="editor" data-tip-title="Éditeur" data-tip="Déplacez les frontières au pinceau, renommez pays et villes, changez couleurs, régimes et souverains, puis exportez." data-tip-key="K">✎ Éditeur</button>
+            <button class="wc-btn" data-act="display" data-tip-title="Affichage" data-tip="Relief, fleuves, grille, nuages, jour / nuit, villes illustrées, vie marine, curseur de faction et export PNG.">⚙ Affichage</button>
+            <button class="wc-btn wc-btn-frame" data-act="create" data-tip-title="Recréer" data-tip="Nouveau monde (graine, résolution, planète, climat) ou nouvelle géopolitique sur le même terrain." data-tip-key="N">⟳ Recréer</button>
+          </nav>
+        </header>
+        <div id="display-menu" class="fantasy wc-panel" hidden></div>
+        <div id="timeline"></div>
+        <div id="modes" class="fantasy wc-card wc-card-sm"></div>
+        <div id="compass" aria-hidden="true"></div>
+        <div id="quick-toggles" class="fantasy"></div>
+        <div id="tooltip" hidden></div>
+        <aside id="info" hidden></aside>
+        <aside id="editor" hidden></aside>
+        <aside id="codex" hidden></aside>
+        <div id="creator" hidden></div>
+        <div id="exporter" hidden></div>
+        <div id="progress" hidden>
+          <canvas class="gen-globe"></canvas>
+          <div class="card fantasy wc-card">
+            <div class="title">Formation du monde</div>
+            <div class="gen-seed"></div>
+            <canvas class="gen-loupe" aria-hidden="true"></canvas>
+            <ol class="gen-steps"></ol>
+            <div class="stage"></div>
+            <div class="bar"><div></div></div>
+          </div>
+          <div class="gen-frame"><canvas class="gen-preview"></canvas><div class="gen-caption fantasy"></div></div>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

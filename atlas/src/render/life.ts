@@ -321,17 +321,34 @@ function hashStr(s: string): number {
   return h >>> 0;
 }
 
-// ---------- navire : caraque à trois mâts, vue de profil ----------
-function drawShip(ctx: CanvasRenderingContext2D, x: number, y: number, dir: 1 | -1, size: number, flag: string, t: number): void {
+// ---------- navire : deux illustrations, une par sens de marche ----------
+/**
+ * Les navires étaient dessinés au Canvas — coque, trois mâts, voiles, haubans,
+ * pavillon — sur environ cent soixante lignes. Deux illustrations les
+ * remplacent : le gréement, les sabords et les voiles usées qu'un tracé
+ * vectoriel n'atteignait pas.
+ *
+ * Elles sont chargées une fois, et simplement ignorées tant qu'elles ne le sont
+ * pas : la carte continue de tourner, les navires apparaissent dès qu'elles
+ * arrivent.
+ *
+ * Ce que le dessin portait et que l'illustration ne porte plus : la couleur du
+ * pays, qui flottait sur son pavillon. Elle demanderait une version teintée par
+ * pays, donc un cache de sprites.
+ */
+const shipArt: Record<1 | -1, HTMLImageElement> = { 1: new Image(), [-1]: new Image() };
+shipArt[1].src = `${import.meta.env.BASE_URL}ships/right.png`;
+shipArt[-1].src = `${import.meta.env.BASE_URL}ships/left.png`;
+
+function drawShip(ctx: CanvasRenderingContext2D, x: number, y: number, dir: 1 | -1, size: number, _flag: string, t: number): void {
   const u = size / 24;
-  const detailed = size > 18;
+
+  // Le sillage reste tracé : c'est lui qui donne le sens de la marche.
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(dir * u, u);
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
-
-  // sillage et écume
   const wake = ctx.createLinearGradient(-30, 0, -8, 0);
   wake.addColorStop(0, 'rgba(225, 236, 240, 0)');
   wake.addColorStop(1, 'rgba(225, 236, 240, 0.55)');
@@ -343,142 +360,20 @@ function drawShip(ctx: CanvasRenderingContext2D, x: number, y: number, dir: 1 | 
   ctx.moveTo(-9, 2.4);
   ctx.quadraticCurveTo(-18, 4.4, -29, 5.4 + Math.sin(t * 2.1 + 1) * 0.5);
   ctx.stroke();
-  ctx.fillStyle = 'rgba(235, 242, 245, 0.55)';
-  ctx.beginPath();
-  ctx.ellipse(10.5, 1.9, 2.2, 0.7, 0, 0, Math.PI * 2);
-  ctx.fill();
-  // ombre dans l'eau
-  ctx.fillStyle = 'rgba(8, 18, 26, 0.3)';
-  ctx.beginPath();
-  ctx.ellipse(0.5, 2.6, 11.5, 1.6, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  // coque : château arrière haut, pont bas, gaillard d'avant, guibre
-  const hull = new Path2D();
-  hull.moveTo(-10.5, -4.2);
-  hull.lineTo(-7, -4.2);
-  hull.lineTo(-6.4, -2.6);
-  hull.quadraticCurveTo(1, -1.7, 6.5, -2.4);
-  hull.lineTo(7.2, -3.6);
-  hull.lineTo(9.6, -3.4);
-  hull.lineTo(12.6, -2.5);
-  hull.lineTo(10.4, -1.2);
-  hull.quadraticCurveTo(9.2, 1.7, 5.5, 2.2);
-  hull.lineTo(-7.5, 2.2);
-  hull.quadraticCurveTo(-10.2, 1.4, -10.5, -4.2);
-  hull.closePath();
-  const hg = ctx.createLinearGradient(0, -4.2, 0, 2.2);
-  hg.addColorStop(0, '#8a6038');
-  hg.addColorStop(0.45, '#6a4527');
-  hg.addColorStop(1, '#3a2414');
-  ctx.fillStyle = hg;
-  ctx.fill(hull);
-  ctx.save();
-  ctx.clip(hull);
-  // préceinte claire, sabords, coque immergée
-  ctx.strokeStyle = 'rgba(214, 186, 128, 0.7)';
-  ctx.lineWidth = 0.32;
-  ctx.beginPath();
-  ctx.moveTo(-10.5, -0.9);
-  ctx.quadraticCurveTo(1, 0, 11, -0.9);
-  ctx.stroke();
-  if (detailed) {
-    ctx.fillStyle = '#1b120a';
-    for (let gx = -5.5; gx <= 6.5; gx += 2.4) ctx.fillRect(gx, -0.5 + Math.abs(gx) * 0.02, 0.8, 0.7);
-  }
-  ctx.fillStyle = 'rgba(28, 52, 64, 0.5)';
-  ctx.fillRect(-12, 1.15, 26, 2);
   ctx.restore();
-  ctx.strokeStyle = '#1d1209';
-  ctx.lineWidth = 0.35;
-  ctx.stroke(hull);
 
-  // mâts et beaupré
-  ctx.strokeStyle = '#2a1b0f';
-  ctx.lineWidth = 0.42;
-  ctx.beginPath();
-  ctx.moveTo(4.6, -2.3);
-  ctx.lineTo(4.6, -15.5);
-  ctx.moveTo(-0.6, -1.8);
-  ctx.lineTo(-0.6, -19);
-  ctx.moveTo(-6, -2.6);
-  ctx.lineTo(-6, -13.5);
-  ctx.moveTo(11.6, -2.8);
-  ctx.lineTo(16.5, -6);
-  ctx.stroke();
-
-  // voiles carrées gonflées, ombrées
-  const sail = (mx: number, top: number, bottom: number, half: number) => {
-    const p = new Path2D();
-    p.moveTo(mx - half, top);
-    p.lineTo(mx + half, top);
-    p.quadraticCurveTo(mx + half + 1.1, (top + bottom) / 2, mx + half * 0.92, bottom);
-    p.quadraticCurveTo(mx, bottom + 1.1, mx - half * 0.92, bottom);
-    p.quadraticCurveTo(mx - half + 0.5, (top + bottom) / 2, mx - half, top);
-    p.closePath();
-    const g = ctx.createLinearGradient(mx - half, 0, mx + half + 1, 0);
-    g.addColorStop(0, '#d9ccad');
-    g.addColorStop(0.55, '#f2e9d4');
-    g.addColorStop(1, '#c8b993');
-    ctx.fillStyle = g;
-    ctx.fill(p);
-    ctx.strokeStyle = 'rgba(96, 78, 52, 0.85)';
-    ctx.lineWidth = 0.26;
-    ctx.stroke(p);
-    ctx.strokeStyle = '#2a1b0f';
-    ctx.lineWidth = 0.3;
-    ctx.beginPath();
-    ctx.moveTo(mx - half - 0.3, top);
-    ctx.lineTo(mx + half + 0.3, top);
-    ctx.stroke();
-  };
-  sail(-0.6, -17.6, -11.4, 4.6);
-  sail(-0.6, -10.6, -3.6, 5.6);
-  sail(4.6, -14.4, -9.6, 3.5);
-  sail(4.6, -8.9, -3.4, 4.3);
-  // voile latine d'artimon et foc
-  ctx.fillStyle = '#e6dcc2';
-  ctx.strokeStyle = 'rgba(96, 78, 52, 0.85)';
-  ctx.lineWidth = 0.26;
-  ctx.beginPath();
-  ctx.moveTo(-6, -13);
-  ctx.lineTo(-9.8, -4);
-  ctx.lineTo(-3.2, -4.4);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(16.3, -5.9);
-  ctx.lineTo(5, -14.6);
-  ctx.lineTo(9.2, -4.2);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-  // haubans
-  if (detailed) {
-    ctx.strokeStyle = 'rgba(40, 28, 16, 0.55)';
-    ctx.lineWidth = 0.18;
-    ctx.beginPath();
-    ctx.moveTo(-0.6, -19);
-    ctx.lineTo(-10.2, -4.2);
-    ctx.moveTo(-0.6, -19);
-    ctx.lineTo(4.6, -15.5);
-    ctx.lineTo(16.5, -6);
-    ctx.stroke();
-  }
-  // flamme aux couleurs du pays
-  ctx.fillStyle = flag;
-  ctx.strokeStyle = 'rgba(20, 14, 8, 0.7)';
-  ctx.lineWidth = 0.2;
-  ctx.beginPath();
-  ctx.moveTo(-0.6, -19);
-  ctx.quadraticCurveTo(2.5, -19.6 + Math.sin(t * 4) * 0.4, 5.5, -18.7 + Math.sin(t * 4 + 1) * 0.5);
-  ctx.lineTo(-0.6, -17.9);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-  ctx.restore();
+  const art = shipArt[dir];
+  if (!art.complete || art.naturalWidth === 0) return;
+  // 0,7 × size. Reprendre l'emprise du dessin remplacé (2,2) donnait des
+  // navires qui couvraient des îles entières : il était large et plat, là où
+  // l'illustration est dense et haute, donc bien plus lourde à surface égale.
+  // La ligne de flottaison tombe aux neuf dixièmes de l'image, la coque
+  // trempant un peu dans l'eau.
+  const w = size * 0.7;
+  const h = (w * art.naturalHeight) / art.naturalWidth;
+  ctx.drawImage(art, x - w / 2, y - h * 0.9, w, h);
 }
+
 
 // ---------- créatures : serpent de mer et léviathan, tons sourds, émergeant de l'eau ----------
 function foam(ctx: CanvasRenderingContext2D, x: number, y: number, rx: number, ry: number, a: number): void {

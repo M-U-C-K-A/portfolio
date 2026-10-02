@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "predev": "node -e \"require('fs').existsSync('public/atlas/index.html')||require('child_process').execSync('npm run build:atlas',{stdio:'inherit'})\"",
+    "dev:atlas": "npm run --prefix atlas dev",
+    "build": "npm run build:atlas && next build",
+    "build:atlas": "npm ci --prefix atlas --include=dev --no-audit --no-fund && npm run --prefix atlas build:site",
     "start": "next start",
     "lint": "eslint",
     "test": "node --experimental-strip-types --test tests/*.test.ts"

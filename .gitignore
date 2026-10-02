@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# atlas (générateur de mondes) : dépendances et build déposé dans public/
+/atlas/node_modules
+/public/atlas

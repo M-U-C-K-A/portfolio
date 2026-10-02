@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Atlas est un projet Vite autonome (TypeScript sans React), lint à part.
+    "atlas/**",
+    "public/atlas/**",
   ]),
 ]);
 

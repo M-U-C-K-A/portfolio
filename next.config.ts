@@ -43,6 +43,8 @@ const nextConfig: NextConfig = {
         destination: "/work/corpus-delta",
         permanent: true,
       },
+      // Noxus a quitté la sélection ; Atlas a pris sa place.
+      { source: "/work/noxus", destination: "/work/atlas", permanent: true },
     ];
   },
 };

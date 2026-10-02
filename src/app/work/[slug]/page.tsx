@@ -119,6 +119,18 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
             <p className="display display-m mt-3 max-w-3xl opacity-85">
               {project.tagline}
             </p>
+            {/* Le projet se visite : autant le dire tout de suite, avant le
+                récit. Le cadre reprend la couleur du texte du bandeau, donc le
+                contraste est celui qui a déjà été vérifié pour le titre. */}
+            {project.live ? (
+              <Link
+                href={project.live.href}
+                className="label mt-8 inline-flex items-center gap-2 border border-current px-4 py-2.5 transition-opacity hover:opacity-75 md:mt-10"
+              >
+                {project.live.label}
+                <span aria-hidden>→</span>
+              </Link>
+            ) : null}
           </div>
         </header>
 

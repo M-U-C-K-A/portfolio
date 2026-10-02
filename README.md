@@ -151,7 +151,7 @@ neutre.
 
 | Projet       | Couleur   | Rythme des barres                              |
 | ------------ | --------- | ---------------------------------------------- |
-| Noxus        | Rouge     | Longueurs très inégales — un graphe n'a pas de mesure |
+| Atlas        | Rouge     | Longueurs très inégales — une côte n'a pas de mesure |
 | Plum         | Vert      | Une cadence régulière, qui dérive à peine      |
 | Finalytics   | Or        | Des barres qui s'allongent vers la droite      |
 | Corpus Delta | Bleu      | Des barres longues, comme des lignes d'une bibliographie |

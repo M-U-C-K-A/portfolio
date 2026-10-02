@@ -73,6 +73,8 @@ export interface ProjectMedia {
 
 /** Capture de navigateur en 1440×800, prise au double du rapport de pixels. */
 const CAPTURE: [number, number] = [1920, 1067];
+/** Carte exportée par Atlas : une projection équirectangulaire, d'où le 2,5:1. */
+const MAP: [number, number] = [2048, 820];
 
 /**
  * Visuel d'un projet, servi depuis `public/work/`.
@@ -113,6 +115,13 @@ export interface Project {
   /** Sujet traité par la couverture — voir `project-cover.ts`. */
   motif: CoverMotif;
   /**
+   * Démonstration en ligne, quand le projet en a une.
+   *
+   * Un cas d'étude qui raconte un outil sans laisser l'essayer rate quelque
+   * chose : le lien est posé dans le bandeau, à côté du titre.
+   */
+  live?: { href: string; label: string };
+  /**
    * Chapô du cas d'étude, après les aperçus et avant le récit détaillé.
    *
    * Le résumé de l'en-tête tient en deux lignes et sert de vignette ; il ne
@@ -132,144 +141,156 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    slug: "noxus",
-    title: "Noxus",
-    tagline: "La cartographie du savoir mathématique",
-    date: "Décembre 2024",
-    year: "2024",
-    role: "Conception, contenu & développement mobile",
+    slug: "atlas",
+    title: "Atlas",
+    tagline: "Un monde entier, engendré par sa géologie",
+    date: "Octobre 2026",
+    year: "2026",
+    role: "Conception & développement",
     summary:
-      "Une plateforme d’apprentissage systémique qui visualise les mathématiques comme un graphe de connaissances interconnectées, du CP à l’université.",
-    stack: ["React Native", "Expo", "TypeScript", "SQLite", "Jest"],
-    seed: 1187,
+      "Un générateur procédural de mondes : tectonique, relief, érosion, climat, fleuves et biomes, puis villes, pays, cultures, religions et routes commerciales. Chaque graine produit une planète différente et reproductible, rendue comme un atlas peint.",
+    stack: ["TypeScript", "WebGL2", "Web Worker", "Vite", "Canvas 2D"],
+    seed: 7714,
     motif: "graph",
+    live: { href: "/atlas", label: "Ouvrir le générateur" },
     intro: [
-      "Une application mobile d’apprentissage des mathématiques, du CP à la licence, construite autour d’une seule idée : une lacune n’est presque jamais un manque de travail, c’est une dépendance manquante.",
-      "Le contenu pédagogique ne manque pas — il en existe des montagnes. Ce qui manque, c’est la carte : ce qui vient avant quoi, et ce qui s’effondre quand une notion n’est pas acquise. Noxus rend cette structure visible sous forme de graphe, plus de quatre cents nœuds couvrant le curriculum français, et s’en sert pour remonter à la cause d’un échec plutôt que d’en constater l’effet.",
-      "Le reste découle de deux contraintes tenues jusqu’au bout. Aucune donnée personnelle, donc une base locale et un contenu livré avec l’application — qui fonctionne par conséquent hors ligne, intégralement. Et une seule interface pour tous les niveaux : c’est le contenu qui change de ton, jamais l’écran, ce qui évite d’infantiliser un lycéen parce qu’un enfant de sept ans a besoin d’images.",
+      "Un générateur de mondes : on donne une graine, il rend une planète complète — plaques tectoniques, montagnes, climats, fleuves, forêts, puis villes, pays, cultures, religions et routes commerciales. Le rendu est celui d’un atlas peint, dans la lignée des cartes de Hearts of Iron.",
+      "Rien n’y est dessiné à la main, et rien n’y est tiré au sort non plus : chaque couche découle de la précédente. Les chaînes de montagnes naissent là où deux plaques se rencontrent, les déserts là où l’air redescend sec, les villes aux confluences et aux embouchures, les frontières sur les crêtes et les grands fleuves. C’est cette chaîne de causes qui fait qu’un monde paraît vrai — pas la quantité de détail.",
+      "Tout tient dans un onglet. La simulation complète monte à vingt-sept millions de cellules dans un Web Worker, le rendu passe par un seul shader WebGL2, et la graine tient dans l’adresse : un lien suffit à partager un monde.",
     ],
     shots: [
+      shot("atlas-1.jpg", MAP, "Le monde fini. Les biomes naissent du croisement température × aridité, de l’altitude et de la pente — la forêt est peinte dans le terrain, pas posée dessus."),
+      shot("atlas-2.jpg", MAP, "Les plaques tectoniques, au commencement. Chaque frontière est classée convergente, divergente ou transformante d’après la vitesse relative des deux plaques."),
+      shot("atlas-3.jpg", MAP, "Le relief qui en découle : collisions, subductions, arcs insulaires, dorsales, points chauds. Le niveau de la mer est ensuite fixé pour obtenir exactement la part de terres demandée."),
+      shot("atlas-4.jpg", MAP, "Les précipitations. Cellules de Hadley, courants océaniques, pluies orographiques — et l’ombre pluviométrique derrière chaque relief."),
+      shot("atlas-5.jpg", MAP, "Les pays. Capitales espacées parmi les grandes villes, puis expansion sur le graphe des provinces, que montagnes, fleuves frontaliers et détroits freinent."),
+      shot("atlas-6.jpg", MAP, "Le commerce. Routes tracées par A* sur le terrain, lignes maritimes entre ports, et flux entre toutes les paires de villes cumulés tronçon par tronçon."),
     ],
     sections: [
       {
-        title: "Contexte",
+        title: "Le parti pris",
         blocks: [
           {
             type: "prose",
-            text: "Les applications éducatives traitent les mathématiques de manière linéaire, comme si chaque chapitre était indépendant. Or les mathématiques sont par essence interconnectées : comprendre les dérivées suppose de maîtriser les limites, qui dépendent elles-mêmes de la notion de fonction, laquelle suppose celle de relation.",
+            text: "Un générateur de cartes peut tricher de deux façons : dessiner à la main ce qu’il n’arrive pas à simuler, ou empiler du bruit jusqu’à ce que le résultat ait l’air riche. Les deux produisent des mondes qui ne tiennent pas au second regard — un fleuve qui remonte une pente, un désert sous le vent d’un océan, une capitale au milieu d’une banquise.",
           },
           {
             type: "prose",
-            text: "Noxus part d’un principe simple : une lacune est presque toujours une dépendance manquante. On ne peut pas comprendre les puissances sans maîtriser la multiplication. L’enjeu n’est donc pas d’ajouter du contenu — il en existe déjà énormément — mais de rendre visible la structure qui le relie.",
+            text: "Ici chaque couche est la conséquence de la précédente, et le réalisme vient de cet enchaînement plutôt que du détail. C’est aussi ce qui rend le monde explorable : une montagne a une raison d’être là, et la fiche d’un pays peut la raconter.",
           },
         ],
       },
       {
-        title: "Le problème",
+        title: "De la tectonique au climat",
         blocks: [
           {
             type: "prose",
-            text: "L’enseignement traditionnel souffre de quatre défauts qui se renforcent les uns les autres, et l’élève finit par confondre « je n’y arrive pas » avec « je ne suis pas fait pour ça ».",
+            text: "La grille est équirectangulaire et bouclée en longitude, mais tous les bruits sont échantillonnés sur la sphère en trois dimensions : pas de couture au méridien, et une déformation polaire juste. Le reste s’enchaîne dans un Web Worker.",
           },
           {
             type: "list",
             items: [
-              "La linéarité forcée : un parcours imposé, identique pour tous, qui ignore le niveau réel de chacun.",
-              "L’accumulation de lacunes : chaque trou non comblé fragilise silencieusement tout ce qui vient après.",
-              "L’absence de vision globale : impossible de situer une notion dans l’ensemble, donc de comprendre à quoi elle sert.",
-              "La démotivation : on échoue sans jamais savoir où se situe la cause réelle de l’échec.",
+              "Des plaques tectoniques en rotation rigide autour d’un pôle d’Euler, dont chaque frontière est classée convergente, divergente ou transformante selon la vitesse relative.",
+              "Un relief qui en découle : collision et plateau, subduction avec cordillère et fosse, arcs insulaires, dorsales médio-océaniques, rifts, points chauds alignés sur le mouvement de la plaque, vieilles chaînes érodées.",
+              "Une circulation atmosphérique complète — cellules de Hadley, Ferrel et polaire, courants océaniques, upwellings froids, advection de l’humidité, pluies orographiques et continentalité.",
+              "Une érosion fluviale par loi de puissance, résolue avec le schéma implicite de Braun & Willett, l’aire drainée étant pondérée par la pluie.",
+              "Une hydrographie à bilan hydrique : lacs d’eau douce à exutoire, ou lacs salés endoréiques dont le niveau baisse jusqu’à l’équilibre — jusqu’au salar.",
+            ],
+          },
+          {
+            type: "note",
+            text: "Le niveau de la mer n’est pas choisi, il est résolu : on le fixe pour obtenir exactement la part de terres demandée. C’est le seul moyen de garder un réglage lisible — « 40 % de terres » — sur un relief qu’on ne contrôle pas directement.",
+          },
+        ],
+      },
+      {
+        title: "Ce que la grille fait au hasard",
+        blocks: [
+          {
+            type: "prose",
+            text: "Deux fois, le résultat a trahi la grille sous-jacente au lieu de la cacher. La croissance des plaques se faisait d’abord par sommes de pas entre voisins : les frontières, les rifts et les lacs sortaient rectilignes, alignés sur les huit directions de la grille. Il a fallu une priorité fondée sur la distance réelle au germe, décalée par un bruit propre à chaque plaque, pour obtenir des frontières sinueuses à toutes les échelles.",
+          },
+          {
+            type: "prose",
+            text: "Le second piège était plus discret : chaque point d’une frontière imposait ses propriétés à un rayon de terrain, ce qui laissait des crêtes rectilignes perpendiculaires à la frontière. Lisser les profils tectoniques sur une quarantaine de kilomètres avant d’ajouter la rugosité les a fait disparaître. Dans les deux cas, le hasard n’était pas en cause — c’est la façon de mesurer les distances qui transparaissait.",
+          },
+        ],
+      },
+      {
+        title: "Des peuples avant des frontières",
+        blocks: [
+          {
+            type: "prose",
+            text: "La géopolitique se recalcule seule, sans toucher au terrain. Elle part du peuplement — habitabilité par biome, altitude, pente, fleuves et côtes — puis pose les villes sur les sites favorables, découpe les provinces, et fait croître les pays sur leur graphe.",
+          },
+          {
+            type: "prose",
+            text: "L’ordre compte : les cultures sont diffusées depuis des foyers historiques **avant** que les États n’existent, donc indépendamment des frontières actuelles. On obtient des minorités et des peuples transfrontaliers, et des États qui suivent de préférence les lignes culturelles sans jamais les épouser exactement. Les religions se propagent de la même façon, par le commerce et l’affinité culturelle, avec religions d’État, conversions partielles et schismes régionaux.",
+          },
+          {
+            type: "list",
+            items: [
+              "Des langues procédurales par famille et par dialecte : les toponymes d’un peuple partagent sa phonologie.",
+              "Des dynasties avec lignée, numéros de règne, branches cadettes, unions, devise et armoiries blasonnées en français héraldique.",
+              "Des États et des régions historiques à la manière de HOI4, nommés dans la langue du peuple — « Haute- », « Val de », « Monts de ».",
             ],
           },
         ],
       },
       {
-        title: "Le graphe",
+        title: "L’histoire déroulée à rebours",
         blocks: [
           {
             type: "prose",
-            text: "La réponse est une cartographie complète du savoir mathématique sous forme de graphe. Chaque notion est un nœud portant son propre contenu pédagogique ; chaque lien représente un pré-requis ou un débouché. L’apprenant visualise son chemin de progression et peut, à tout moment, remonter la source d’une incompréhension jusqu’à la notion qui manque réellement.",
+            text: "La frise historique ne simule pas des siècles pour voir où l’on arrive : elle part de la carte actuelle et remonte le temps. On défait les conquêtes, on dissout les pays fondés cette année-là — retour dans celui dont ils ont fait sécession, ou éclatement en principautés qu’ils avaient unifiées — et l’on recrée les pays disparus.",
+          },
+          {
+            type: "note",
+            text: "Relue dans l’ordre, la suite de transferts aboutit exactement à la carte actuelle. C’est vérifié, et c’est tout l’intérêt de la méthode : une simulation en avant doit être rattrapée pour retomber sur le monde qu’on voulait, alors qu’à rebours la cohérence est acquise par construction. Environ cent soixante-dix pays à l’origine, avec guerres nommées, unifications, indépendances, héritages et schismes.",
+          },
+        ],
+      },
+      {
+        title: "Un seul atlas peint",
+        blocks: [
+          {
+            type: "prose",
+            text: "Le terrain tient dans un unique fragment shader : altitude bicubique, micro-relief procédural révélé au zoom, ombrage, couleur de végétation continue, roche et neige selon la pente et la température, bathymétrie, banquise, côtes par champ de distance signée.",
+          },
+          {
+            type: "prose",
+            text: "La règle d’identité tient en une phrase : les forêts et les eaux font partie de la peinture du terrain, seules les œuvres humaines sont des illustrations. Une forêt dessinée par-dessus se lit comme un autocollant ; peinte dans le shader, avec ses houppiers éclairés comme le relief et son ombre portée, elle reste visible même sous les teintes politiques.",
           },
           {
             type: "list",
             items: [
-              "Plus de 400 nœuds couvrant l’intégralité du curriculum français, du primaire au supérieur.",
-              "Navigation par zoom et déplacement dans le graphe, avec recherche instantanée sur l’ensemble.",
-              "Filtrage par niveau — primaire, collège, lycée, licence — chaque niveau ayant sa couleur, ce qui permet de se repérer visuellement sans lire.",
-              "Chemins de remédiation : depuis un nœud non acquis, l’application remonte automatiquement la chaîne des pré-requis manquants.",
+              "Des villes en perspective cavalière dont la forme suit le peuple — pignon, croupe, terrasses au désert, colombages au nord — et le lieu de culte la religion.",
+              "Des fleuves en rubans dont la largeur croît avec le débit, chaque affluent raccordé exactement à la rivière qui le reçoit.",
+              "Des frontières lissées par vote majoritaire bilinéaire : pas d’escaliers de pixels.",
+              "Un ciel à part entière : nuages advectés par les vents dominants, cycle jour / nuit avec terminateur et halos des villes selon leur population.",
             ],
           },
         ],
       },
       {
-        title: "Les modules",
+        title: "Ce qui tient dans un onglet",
         blocks: [
           {
             type: "prose",
-            text: "Un cours n’est pas un bloc de texte. Le moteur de rendu a été écrit sur mesure pour supporter les formats dont les mathématiques ont besoin, sans quoi la moitié du contenu serait des captures d’image illisibles.",
+            text: "La simulation complète monte à 8 192 × 3 277, soit vingt-sept millions de cellules, environ quatre minutes et trois gigaoctets pour le worker ; les textures partent au GPU par bandes pour ne pas doubler la mémoire. Au-delà, soixante millions de cellules et sept gigaoctets, ce n’est plus un onglet — mais l’export grave quand même le monde en 12 288 pixels, par tuiles WebGL.",
           },
           {
             type: "list",
             items: [
-              "Markdown et LaTeX pour les formules, rendues nativement plutôt qu’en images.",
-              "Médias intégrés, tableaux et références croisées entre nœuds.",
-              "Exercices interactifs et exemples commentés pas à pas.",
+              "Terrain calculé en demi-résolution pendant un geste, net à l’arrêt.",
+              "Fleuves simplifiés selon le zoom et gardés en cache le temps du geste ; icônes de villes regroupées par paliers de taille et conservées en ImageBitmap, avec un budget de création par image.",
+              "Environ 17 ms par image pendant un zoom continu, 60 images par seconde en déplacement, sur un M4 en retina simulé.",
+              "Le dernier monde est sauvegardé dans le navigateur depuis le worker : un rafraîchissement le recharge en quelques secondes au lieu de tout régénérer.",
             ],
           },
           {
             type: "prose",
-            text: "Chaque module suit la même structure progressive — introduction, définitions, explications, exemples, exercices, pour aller plus loin. Cette régularité compte autant que le contenu : l’apprenant sait toujours où il est dans le module, et où trouver ce qu’il cherche.",
-          },
-        ],
-      },
-      {
-        title: "Adapter le ton, pas l’interface",
-        blocks: [
-          {
-            type: "prose",
-            text: "Un module « Addition » destiné au CP et un module « Statistiques inférentielles » destiné à la licence partagent exactement la même interface. Ce qui change, c’est le contenu : le vocabulaire, les exemples, le calibrage des exercices.",
-          },
-          {
-            type: "prose",
-            text: "C’est ce qui permet à Noxus de servir un enfant de sept ans comme un étudiant en prépa sans maintenir deux applications. Et cela évite l’écueil habituel des applications éducatives : infantiliser l’adolescent parce que l’enfant a besoin d’images.",
-          },
-        ],
-      },
-      {
-        title: "Progression",
-        blocks: [
-          {
-            type: "prose",
-            text: "Un système de progression complet — expérience, niveaux, badges, statistiques détaillées, objectifs personnalisés — mais volontairement sobre et non intrusif. Pas de notification culpabilisante, pas de série à ne pas briser : la motivation vient de voir le graphe se remplir, pas d’une pression extérieure.",
-          },
-        ],
-      },
-      {
-        title: "Interface",
-        blocks: [
-          {
-            type: "prose",
-            text: "L’interface est délibérément sobre et professionnelle, inspirée d’outils de productivité comme Obsidian, pour installer une posture d’apprentissage sérieuse quel que soit l’âge de l’utilisateur.",
-          },
-          {
-            type: "list",
-            items: [
-              "Minimalisme fonctionnel : chaque élément visuel doit justifier sa présence.",
-              "Contraste optimal et hiérarchie typographique claire, y compris sur les formules.",
-              "Animations subtiles, uniquement pour signaler un changement d’état — jamais décoratives.",
-            ],
-          },
-        ],
-      },
-      {
-        title: "Confidentialité",
-        blocks: [
-          {
-            type: "prose",
-            text: "Privacy by design, ce qui n’est pas négociable pour une application éducative destinée à des enfants : aucune collecte de données personnelles, stockage local par défaut, synchronisation strictement optionnelle, aucun compte obligatoire pour utiliser l’application.",
-          },
-          {
-            type: "prose",
-            text: "Cette contrainte a orienté toute l’architecture. Une base SQLite locale plutôt qu’un backend, un contenu versionné et livré avec l’application plutôt que servi à la demande. Elle a aussi un effet secondaire appréciable : l’application fonctionne intégralement hors ligne.",
+            text: "L’export suit la même logique d’économie : sous Chrome et Edge, il demande où écrire puis grave chaque fichier dès qu’il est prêt, en flux. Une archive de plusieurs centaines de mégaoctets ne passe jamais par la mémoire JavaScript. Ailleurs, elle est téléchargée d’un bloc, parce que les navigateurs bloquent les téléchargements successifs.",
           },
         ],
       },
@@ -279,24 +300,11 @@ export const projects: Project[] = [
           {
             type: "list",
             items: [
-              "React Native et Expo, avec un moteur de rendu custom pour les modules.",
-              "Graphe interactif, animations, gestion d’état et navigation.",
-              "SQLite en local, architecture modulaire, système de progression et versioning du contenu.",
-              "TypeScript, ESLint et Prettier, Jest, EAS Build, Sentry.",
+              "TypeScript, construit par Vite ; aucune dépendance de rendu.",
+              "La génération entière dans un Web Worker, l’état sauvegardé en IndexedDB depuis le worker.",
+              "WebGL2 pour le terrain et le ciel, Canvas 2D pour les fleuves, les noms, les villes et le réseau commercial.",
+              "Styles de warcraftcn/ui (MIT) repris en CSS pur pour l’interface.",
             ],
-          },
-        ],
-      },
-      {
-        title: "Ce que j’en retiens",
-        blocks: [
-          {
-            type: "prose",
-            text: "Apprendre en comprenant plutôt qu’en mémorisant suppose trois choses : pouvoir identifier ses lacunes, personnaliser son parcours, et faire des connexions entre des notions qu’on croyait séparées.",
-          },
-          {
-            type: "prose",
-            text: "L’objectif final n’est pas le contenu, c’est l’autonomie : l’habitude d’aller chercher les fondations quand quelque chose ne tient pas. Techniquement, le projet m’a surtout appris qu’un moteur de rendu écrit sur mesure coûte cher au départ et se rentabilise dès le vingtième module.",
           },
         ],
       },
@@ -1040,9 +1048,9 @@ export const cv = {
   /** Projets détaillés ailleurs sur le site ; ici en une ligne chacun. */
   selectedWork: [
     {
-      name: "Noxus",
-      text: "Plateforme d’apprentissage des mathématiques sous forme de graphe de connaissances. React Native, plus de 400 nœuds, fonctionnement hors ligne.",
-      slug: "noxus",
+      name: "Atlas",
+      text: "Générateur procédural de mondes : tectonique, climat et érosion, puis peuples, États et commerce. TypeScript, WebGL2, Web Worker.",
+      slug: "atlas",
     },
     {
       name: "Plum",

@@ -45,7 +45,7 @@ export interface CoverPalette {
 }
 
 const PALETTES: Record<CoverMotif, CoverPalette> = {
-  // Noxus — rouge. Le contraire du bleu du site : une carte de lacunes.
+  // Atlas — rouge. Les teintes des cartes politiques dont il s'inspire.
   graph: {
     banner: "#96201d",
     bannerText: "#ffffff",
